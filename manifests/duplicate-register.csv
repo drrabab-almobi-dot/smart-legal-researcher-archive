@@ -1,1 +1,2 @@
 duplicate_id,duplicate_name,duplicate_sha256,canonical_source_id,canonical_name,match_method,match_confidence,decision,reviewed_at,notes
+derived-001,higher-judiciary-principles-1391-1437-runtime.pdf,56d90ae1e6cddc8e03ef1abb45a114bd13a99f8ed0f1f0eb154659121695dfe3,source-higher-principles,higher-judiciary-principles-1391-1437.pdf,semantic_source_identity,1.0,exclude_from_source_count,2026-08-27,"نسخة تشغيلية مُصلحة من المصدر نفسه؛ تحفظ ولا تعد مصدراً مستقلاً"
