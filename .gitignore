@@ -1,0 +1,12 @@
+# Temporary processing files
+tmp/
+work/
+*.partial
+*.tmp
+.DS_Store
+Thumbs.db
+
+# Secrets
+.env
+.env.*
+!.env.example
