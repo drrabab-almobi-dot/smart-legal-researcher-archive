@@ -1,0 +1,53 @@
+name: Collector - inspect source structure
+
+on:
+  push:
+    branches: [collector-import]
+    paths:
+      - '.github/workflows/inspect-collector-source.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: collector-import
+          fetch-depth: 1
+          lfs: true
+      - name: Pull LFS and install tools
+        run: |
+          git lfs pull
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq poppler-utils
+      - name: Extract structure sample
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p diagnostics
+          PDF='archive-sources/moj/1434/moj-judgments-1434-volume-1.pdf'
+          pdftotext -f 1 -l 80 -layout "$PDF" diagnostics/volume-1-first-80-pages.txt
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          t=Path('diagnostics/volume-1-first-80-pages.txt').read_text(encoding='utf-8',errors='ignore')
+          lines=[x.rstrip() for x in t.splitlines()]
+          keep=[]
+          for i,line in enumerate(lines,1):
+              s=line.strip()
+              if not s: continue
+              if re.search(r'(فهرس|الموضوع|القضية|الدعوى|الصك|الحكم|صفحة|الصفحة|^[0-9٠-٩]{1,4}\s*$)',s):
+                  keep.append(f'{i}: {s}')
+              elif re.search(r'[\.ـ]{3,}\s*[0-9٠-٩]{1,4}\s*$',s):
+                  keep.append(f'{i}: {s}')
+          Path('diagnostics/volume-1-structure-candidates.txt').write_text('\n'.join(keep[:1200]),encoding='utf-8')
+          PY
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add diagnostics
+          git commit -m 'collector: استخراج بنية فهرس المجلد الأول' || true
+          git push origin collector-import
