@@ -138,8 +138,8 @@ jobs:
                       continue
                   seen_text_hashes.add(text_hash)
 
-                  out=Path('extracted/collector-judgments')/(rid+'.pdf')
-                  subprocess.run(['qpdf',str(pdf),'--pages',str(pdf),f'{start}-{end}','--',str(out)],check=True)
+                  out=Path('extracted/collector-judgments')/(rid+'.txt')
+                  out.write_text(span,encoding='utf-8')
                   out_sha=sha256(out); size=out.stat().st_size
 
                   records.append({
