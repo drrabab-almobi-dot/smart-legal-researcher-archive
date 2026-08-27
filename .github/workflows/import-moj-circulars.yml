@@ -39,7 +39,7 @@ jobs:
           src=Path('manifests/incoming/moj-tameem-1436-1445-urls.txt')
           urls=[x.strip() for x in src.read_text(encoding='utf-8').splitlines() if x.strip() and not x.startswith('#')]
           outdir=Path('extracted/collector-circulars')
-          log=[]; index=[]
+          log=[]; index=[]; seen_sha={}; seen_number={}
           session=requests.Session()
           session.headers.update({'User-Agent':'Mozilla/5.0'})
 
@@ -117,14 +117,31 @@ jobs:
                   continue
 
               s=sha256(saved); size=saved.stat().st_size
+              if s in seen_sha:
+                  saved.unlink(missing_ok=True)
+                  log.append([portal_id,url,number or '',date or '',subject,'',s,'duplicate_sha',f'canonical={seen_sha[s]}'])
+                  continue
+              if number and number in seen_number:
+                  saved.unlink(missing_ok=True)
+                  log.append([portal_id,url,number,date or '',subject,'',s,'duplicate_number',f'canonical={seen_number[number]}'])
+                  continue
+              seen_sha[s]=portal_id
+              if number: seen_number[number]=portal_id
               pages=''
               try:
                   import subprocess
                   pi=subprocess.run(['pdfinfo',str(saved)],capture_output=True,text=True).stdout
                   m=re.search(r'^Pages:\s*(\d+)',pi,re.M); pages=m.group(1) if m else ''
               except Exception: pass
-              index.append([portal_id,saved.name,number or '',date or '',subject,url,final_url,s,size,pages])
-              log.append([portal_id,url,number or '',date or '',subject,saved.name,s,'imported',''])
+              txt=outdir/f'moj-circular-{portal_id}.txt'
+              try:
+                  import subprocess
+                  subprocess.run(['pdftotext','-layout',str(saved),str(txt)],check=True)
+              except Exception:
+                  txt.write_text('',encoding='utf-8')
+              saved.unlink(missing_ok=True)
+              index.append([portal_id,txt.name,number or '',date or '',subject,url,final_url,s,size,pages])
+              log.append([portal_id,url,number or '',date or '',subject,txt.name,s,'imported_text','original URL and checksum preserved'])
               time.sleep(0.2)
 
           with open('manifests/collector/circular-register.csv','w',encoding='utf-8',newline='') as f:
@@ -135,8 +152,7 @@ jobs:
           print('IMPORTED_CIRCULARS=',len(index))
           print('FAILED_OR_NO_PDF=',len(urls)-len(index))
           PY
-          git lfs track 'extracted/collector-circulars/*.pdf'
-          git add .gitattributes extracted/collector-circulars manifests/collector diagnostics/circulars
+          git add extracted/collector-circulars manifests/collector diagnostics/circulars
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           if ! git diff --cached --quiet; then
