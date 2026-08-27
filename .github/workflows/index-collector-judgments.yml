@@ -200,5 +200,6 @@ jobs:
           git add extracted/collector-judgments indices/collector manifests/collector
           if ! git diff --cached --quiet; then
             git commit -m 'collector: فصل وفهرسة كل حكم بعنوان القضية ورقمها وتاريخها'
+            git pull --rebase origin collector-import
             git push origin collector-import
           fi
