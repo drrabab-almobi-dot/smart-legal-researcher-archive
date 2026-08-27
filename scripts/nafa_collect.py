@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import csv
+import gzip
 import hashlib
 import json
 import os
@@ -27,6 +28,7 @@ SOURCE_DIR = ROOT / "sources" / "nafa-judicial-library-1445"
 OUT = ROOT / "extracted" / "nafa"
 INDEX = ROOT / "indices" / "nafa" / "documents.ndjson"
 MANIFESTS = ROOT / "manifests" / "nafa"
+PLATFORM_DIR = ROOT / "platform-import" / "nafa"
 MAX_BYTES = 60 * 1024 * 1024
 WORKERS = int(os.environ.get("NAFA_WORKERS", "10"))
 OCR_MAX_PAGES = int(os.environ.get("NAFA_OCR_MAX_PAGES", "0"))
@@ -326,7 +328,7 @@ def main() -> None:
     raw_hash_owner = {}
     text_hash_owner = {value: "existing_archive" for value in existing_hashes}
     legal_key_owner = {}
-    records, duplicates, duplicate_candidates, source_rows = [], [], [], []
+    records, platform_records, duplicates, duplicate_candidates, source_rows = [], [], [], [], []
 
     for item in sorted(results, key=lambda value: value["id"]):
         if item["status"] != "downloaded":
@@ -388,6 +390,22 @@ def main() -> None:
                 "archive": {"granularity": "document", "sourceIndex": "Nafa Judicial Library 1445"},
             }
             records.append(record)
+            platform_records.append({
+                "id": record_id,
+                "title": record["title"] or f"{doc_type} من مكتبة نفع",
+                "documentType": doc_type,
+                "referenceNo": deed or circular or decision or case,
+                "issuer": "مكتبة نفع القضائية",
+                "publishingAuthority": "مكتبة نفع القضائية",
+                "originatingAuthority": None,
+                "hijriYear": None,
+                "specialty": "أخرى",
+                "summary": f"{doc_type} مستخرج كوثيقة مستقلة من مكتبة نفع القضائية 1445هـ.",
+                "extractedText": chunk,
+                "sourceUrl": item["url"],
+                "sourceChecksum": raw_hash,
+                "textChecksum": text_hash,
+            })
             if case and not deed:
                 duplicate_candidates.append([record_id, "case_number_only", case, "kept_pending_review"])
             accepted += 1
@@ -407,7 +425,16 @@ def main() -> None:
         writer.writerow(["record_id", "reason", "value", "disposition"])
         writer.writerows(duplicate_candidates)
     platform_index = ROOT / "indices" / "platform-import.ndjson"
-    platform_index.write_text(INDEX.read_text(encoding="utf-8"), encoding="utf-8")
+    platform_index.write_text("".join(json.dumps(record, ensure_ascii=False, separators=(",", ":")) + "\n" for record in platform_records), encoding="utf-8")
+    if PLATFORM_DIR.exists():
+        shutil.rmtree(PLATFORM_DIR)
+    PLATFORM_DIR.mkdir(parents=True, exist_ok=True)
+    batch_size = 100
+    for offset in range(0, len(platform_records), batch_size):
+        batch = platform_records[offset:offset + batch_size]
+        path = PLATFORM_DIR / f"nafa-batch-{offset // batch_size + 1:03d}.json.gz"
+        with gzip.open(path, "wt", encoding="utf-8", compresslevel=9) as handle:
+            json.dump(batch, handle, ensure_ascii=False, separators=(",", ":"))
     counts = {
         "source_urls": len(sources),
         "downloaded_unique_binaries": len(raw_hash_owner),
@@ -416,6 +443,7 @@ def main() -> None:
         "duplicate_candidates_kept_for_review": len(duplicate_candidates),
         "download_failures": sum(1 for row in source_rows if row[5] == "failed"),
         "extraction_failures": sum(1 for row in source_rows if row[5] in {"ocr_render_failed", "ocr_empty", "unsupported_binary", "unsupported_zip"}),
+        "platform_batches": (len(platform_records) + batch_size - 1) // batch_size,
         "by_type": {},
     }
     for record in records:
