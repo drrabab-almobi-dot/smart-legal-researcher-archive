@@ -1,0 +1,49 @@
+name: Collector - build platform import
+on:
+  push:
+    branches: [collector-import]
+    paths:
+      - 'scripts/build_platform_import.py'
+      - '.github/workflows/build-platform-import.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: collector-platform-import
+  cancel-in-progress: true
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: collector-import
+          fetch-depth: 0
+          lfs: true
+      - name: Verify reference ancestry
+        run: git merge-base --is-ancestor b3a4d80109ab86b281d840336ad41efbb0694f35 HEAD
+      - name: Build unified legal import
+        run: python3 scripts/build_platform_import.py
+      - name: Validate NDJSON
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('indices/platform-import.ndjson')
+          assert p.exists() and p.stat().st_size>0
+          n=0
+          for line in p.open(encoding='utf-8'):
+            o=json.loads(line); n+=1
+            for k in ('id','documentType','title','textChecksum'): assert o.get(k), (n,k)
+          print('VALID_IMPORT_RECORDS=',n)
+          PY
+      - name: Commit verified results
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add indices/platform-import.ndjson manifests/platform-import
+          if ! git diff --cached --quiet; then
+            git commit -m 'collector: بناء فهرس الاستيراد النهائي والتحقق منه'
+            git pull --rebase origin collector-import
+            git push origin collector-import
+          fi
