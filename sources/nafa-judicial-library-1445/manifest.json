@@ -1,0 +1,11 @@
+{
+  "title": "مكتبة نفع القضائية — فهرس قانوني متعدد الاختصاصات",
+  "source_file": "nafa-judicial-library-1445.pdf",
+  "source_sha256": "4a18af64080e904511edaa705b3beb8b47d9c83d77baaf2b4df8da337136c523",
+  "source_bytes": 2963659,
+  "pages": 77,
+  "extracted_links": 1273,
+  "unique_external_urls": 804,
+  "processing_rule": "استخراج الأحكام والتعاميم فقط كسجلات مستقلة، مع استبعاد المكرر والكتب والمقالات والأنظمة والروابط المعطلة.",
+  "status": "source_and_links_archived; content_extraction_pending"
+}
