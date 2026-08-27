@@ -1,0 +1,197 @@
+name: Collector - index extracted judgments
+
+on:
+  push:
+    branches: [collector-import]
+    paths:
+      - 'archive-sources/**/*.pdf'
+      - '.github/workflows/index-collector-judgments.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  index:
+    if: github.ref == 'refs/heads/collector-import'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: collector-import
+          fetch-depth: 1
+
+      - name: Install PDF tools
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq poppler-utils qpdf
+
+      - name: Build collector-only judgment index
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p extracted/collector-judgments indices/collector manifests/collector
+          python3 - <<'PY'
+          import csv, hashlib, json, os, re, subprocess, unicodedata
+          from pathlib import Path
+
+          roots = [Path('archive-sources')]
+          pdfs = []
+          for root in roots:
+              if root.exists():
+                  pdfs.extend(sorted(root.rglob('*.pdf')))
+
+          case_index = Path('indices/collector/case-register.ndjson')
+          file_register = Path('manifests/collector/judgment-file-register.csv')
+          processing = Path('manifests/collector/processing-log.csv')
+
+          existing_ids = set()
+          if case_index.exists():
+              for line in case_index.read_text(encoding='utf-8', errors='ignore').splitlines():
+                  try:
+                      existing_ids.add(json.loads(line).get('id'))
+                  except Exception:
+                      pass
+
+          def sha256(path):
+              h = hashlib.sha256()
+              with open(path,'rb') as f:
+                  for chunk in iter(lambda:f.read(1024*1024), b''):
+                      h.update(chunk)
+              return h.hexdigest()
+
+          def pdf_pages(path):
+              out = subprocess.run(['pdfinfo', str(path)], capture_output=True, text=True, errors='ignore').stdout
+              m = re.search(r'^Pages:\s*(\d+)', out, re.M)
+              return int(m.group(1)) if m else 0
+
+          def page_text(path, page):
+              p = subprocess.run(['pdftotext','-f',str(page),'-l',str(page),'-layout',str(path),'-'], capture_output=True, text=True, errors='ignore')
+              return p.stdout or ''
+
+          def norm(s):
+              s = unicodedata.normalize('NFKC', s)
+              s = re.sub(r'[\u064B-\u065F\u0670]', '', s)
+              s = re.sub(r'\s+', ' ', s)
+              return s.strip()
+
+          deed_patterns = [
+              re.compile(r'(?:رقم\s*(?:الصك|الحكم|القرار)\s*[:：-]?\s*)([0-9٠-٩]{5,20})'),
+              re.compile(r'([0-9٠-٩]{6,20})\s*(?:رقم\s*(?:الصك|الحكم))')
+          ]
+          lawsuit_patterns = [
+              re.compile(r'(?:رقم\s*(?:الدعوى|القضية)\s*[:：-]?\s*)([0-9٠-٩]{4,20})')
+          ]
+
+          trans = str.maketrans('٠١٢٣٤٥٦٧٨٩','0123456789')
+          def first_match(patterns, text):
+              for p in patterns:
+                  m = p.search(text)
+                  if m:
+                      return m.group(1).translate(trans)
+              return None
+
+          def title_from(text):
+              lines = [norm(x) for x in text.splitlines() if norm(x)]
+              reject = ('رقم الصك','رقم الحكم','رقم الدعوى','رقم القضية','وزارة العدل','المملكة العربية السعودية')
+              for line in lines:
+                  if len(line) >= 18 and not any(r in line for r in reject):
+                      return line[:500]
+              return ''
+
+          new_records=[]
+          new_files=[]
+          proc=[]
+
+          for pdf in pdfs:
+              pages = pdf_pages(pdf)
+              if pages <= 0:
+                  proc.append([pdf.name,'0','0','failed','no_pages'])
+                  continue
+              source_sha=sha256(pdf)
+              candidates=[]
+              for p in range(1,pages+1):
+                  txt=page_text(pdf,p)
+                  deed=first_match(deed_patterns,txt)
+                  lawsuit=first_match(lawsuit_patterns,txt)
+                  # Conservative boundary: require a legal identifier plus enough page text.
+                  if (deed or lawsuit) and len(norm(txt)) > 120:
+                      candidates.append((p,deed,lawsuit,txt))
+              # remove near-duplicate boundary detections on consecutive pages carrying same IDs
+              starts=[]
+              last_key=None
+              for item in candidates:
+                  p,deed,lawsuit,txt=item
+                  key=(deed or '',lawsuit or '')
+                  if key != ('','') and key == last_key:
+                      continue
+                  starts.append(item)
+                  last_key=key
+              if not starts:
+                  proc.append([pdf.name,str(pages),'0','needs_review','no_case_boundaries_detected'])
+                  continue
+
+              for i,(start,deed,lawsuit,txt) in enumerate(starts):
+                  end=(starts[i+1][0]-1) if i+1<len(starts) else pages
+                  stable = deed or lawsuit or f'p{start}'
+                  volm=re.search(r'volume-(\d+)', pdf.name)
+                  vol=int(volm.group(1)) if volm else None
+                  yearm=re.search(r'(14\d{2})', pdf.name)
+                  year=yearm.group(1) if yearm else None
+                  rid=f"collector-{year or 'na'}-v{vol or 'na'}-p{start}-{stable}"
+                  rid=re.sub(r'[^A-Za-z0-9_-]','-',rid)
+                  if rid in existing_ids:
+                      continue
+                  out=Path('extracted/collector-judgments')/(rid+'.pdf')
+                  subprocess.run(['qpdf',str(pdf),'--pages',str(pdf),f'{start}-{end}','--',str(out)],check=True)
+                  out_sha=sha256(out)
+                  size=out.stat().st_size
+                  title=title_from(txt)
+                  rec={
+                      'id':rid,
+                      'volume':vol,
+                      'year':year,
+                      'deedNumber':deed,
+                      'lawsuitNumber':lawsuit,
+                      'title':title,
+                      'sourceFile':pdf.name,
+                      'sourceChecksum':source_sha,
+                      'reviewStatus':'auto_indexed_needs_review',
+                      'archive':{
+                          'granularity':'case',
+                          'originalSourceFile':pdf.name,
+                          'originalStartPage':start,
+                          'originalEndPage':end,
+                          'preservedOriginalPages':True
+                      }
+                  }
+                  new_records.append(rec)
+                  new_files.append([rid,out.name,pdf.name,start,end,end-start+1,out_sha,size,True])
+                  existing_ids.add(rid)
+              proc.append([pdf.name,str(pages),str(len(starts)),'indexed','collector_only'])
+
+          if new_records:
+              with case_index.open('a',encoding='utf-8') as f:
+                  for r in new_records:
+                      f.write(json.dumps(r,ensure_ascii=False,separators=(',',':'))+'\n')
+
+          new_file = not file_register.exists()
+          with file_register.open('a',encoding='utf-8',newline='') as f:
+              w=csv.writer(f)
+              if new_file:
+                  w.writerow(['id','file','source_file','start_page','end_page','pages','sha256','bytes','preserved_original_pages'])
+              w.writerows(new_files)
+
+          new_proc = not processing.exists()
+          with processing.open('a',encoding='utf-8',newline='') as f:
+              w=csv.writer(f)
+              if new_proc:
+                  w.writerow(['source_file','pages','detected_records','status','notes'])
+              w.writerows(proc)
+          PY
+
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add extracted/collector-judgments indices/collector manifests/collector
+          if ! git diff --cached --quiet; then
+            git commit -m 'collector: فهرسة الأحكام المستخرجة كسجلات مستقلة'
+            git push origin collector-import
+          fi
