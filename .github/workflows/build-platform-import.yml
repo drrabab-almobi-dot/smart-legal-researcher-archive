@@ -4,6 +4,7 @@ on:
     branches: [collector-import]
     paths:
       - 'scripts/build_platform_import.py'
+      - 'scripts/validate_platform_import.py'
       - '.github/workflows/build-platform-import.yml'
   workflow_dispatch:
 permissions:
@@ -37,6 +38,8 @@ jobs:
             for k in ('id','documentType','title','textChecksum'): assert o.get(k), (n,k)
           print('VALID_IMPORT_RECORDS=',n)
           PY
+      - name: Validate platform compatibility
+        run: python3 scripts/validate_platform_import.py
       - name: Commit verified results
         run: |
           git config user.name 'github-actions[bot]'
