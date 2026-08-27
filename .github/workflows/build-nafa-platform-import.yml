@@ -1,0 +1,51 @@
+name: Nafa - build verified platform import
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: collector-import
+          fetch-depth: 1
+          lfs: true
+      - name: Build Nafa-only import
+        run: python3 scripts/build_nafa_platform_import.py
+      - name: Verify Nafa-only import
+        run: |
+          python3 - <<'PY'
+          import json,hashlib,re,unicodedata
+          from pathlib import Path
+          p=Path('indices/nafa/platform-import.ndjson')
+          assert p.exists() and p.stat().st_size>0
+          marks=re.compile(r'[\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06ED]')
+          bidi=re.compile(r'[\u200e\u200f\u202a-\u202e\u2066-\u2069\ufeff]')
+          trans=str.maketrans('٠١٢٣٤٥٦٧٨٩۰۱۲۳۴۵۶۷۸۹','01234567890123456789')
+          def norm(s):
+              s=unicodedata.normalize('NFKC',str(s or '')).translate(trans); s=bidi.sub('',s); s=marks.sub('',s).replace('ـ',''); return re.sub(r'\s+',' ',s).strip()
+          n=0
+          for line in p.open(encoding='utf-8'):
+              o=json.loads(line); n+=1
+              assert norm(o.get('extractedText')), (n,'missing extractedText')
+              assert hashlib.sha256(norm(o['extractedText']).encode()).hexdigest()==o.get('textChecksum'), (n,'checksum')
+              assert o.get('documentType')!='وثيقة قانونية', (n,'generic type')
+              assert o.get('sourceChecksum'), (n,'source checksum')
+              assert o.get('sourceUrl') or o.get('sourceFile'), (n,'source')
+          print('NAFA_IMPORT_VALID=',n)
+          PY
+      - name: Commit Nafa-only verified results
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add indices/nafa/platform-import.ndjson platform-import/nafa manifests/nafa
+          if ! git diff --cached --quiet; then
+            git commit -m 'nafa: بناء دفعات الاستيراد بعد اكتمال OCR والتحقق من النصوص'
+            git pull --rebase origin collector-import
+            git push origin collector-import
+          fi
