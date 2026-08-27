@@ -20,7 +20,7 @@ jobs:
   collect:
     if: github.ref == 'refs/heads/collector-import'
     runs-on: ubuntu-latest
-    timeout-minutes: 180
+    timeout-minutes: 360
     steps:
       - uses: actions/checkout@v4
         with:
@@ -31,7 +31,7 @@ jobs:
         run: |
           git lfs pull
           sudo apt-get update -qq
-          sudo apt-get install -y -qq poppler-utils
+          sudo apt-get install -y -qq poppler-utils tesseract-ocr tesseract-ocr-ara tesseract-ocr-eng
           python -m pip install --quiet requests
       - name: Extract, split, classify, and deduplicate
         env:
@@ -41,7 +41,7 @@ jobs:
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add extracted/nafa indices/nafa manifests/nafa
+          git add extracted/nafa indices/nafa indices/platform-import.ndjson manifests/nafa
           if ! git diff --cached --quiet; then
             git commit -m 'collector: استخراج محتويات مكتبة نفع ومنع التكرار'
             git pull --rebase origin collector-import
