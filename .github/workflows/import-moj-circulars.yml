@@ -1,0 +1,145 @@
+name: Collector - import MOJ circulars
+
+on:
+  push:
+    branches: [collector-import]
+    paths:
+      - '.github/workflows/import-moj-circulars.yml'
+      - 'manifests/incoming/moj-tameem-1436-1445-urls.txt'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: collector-import
+          fetch-depth: 1
+          lfs: true
+      - name: Install tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq poppler-utils python3-bs4 python3-requests
+      - name: Extract each circular as an independent file
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p extracted/collector-circulars manifests/collector diagnostics/circulars
+          python3 - <<'PY'
+          import csv, hashlib, re, sys, time
+          from pathlib import Path
+          from urllib.parse import urljoin, urlparse, parse_qs
+          import requests
+          from bs4 import BeautifulSoup
+
+          src=Path('manifests/incoming/moj-tameem-1436-1445-urls.txt')
+          urls=[x.strip() for x in src.read_text(encoding='utf-8').splitlines() if x.strip() and not x.startswith('#')]
+          outdir=Path('extracted/collector-circulars')
+          log=[]; index=[]
+          session=requests.Session()
+          session.headers.update({'User-Agent':'Mozilla/5.0'})
+
+          def sha256(p):
+              h=hashlib.sha256()
+              with open(p,'rb') as f:
+                  for c in iter(lambda:f.read(1024*1024),b''): h.update(c)
+              return h.hexdigest()
+
+          def clean(s):
+              return re.sub(r'\s+',' ',s or '').strip()
+
+          for i,url in enumerate(urls,1):
+              q=parse_qs(urlparse(url).query)
+              portal_id=(q.get('id') or [f'row-{i}'])[0]
+              try:
+                  r=session.get(url,timeout=30,allow_redirects=True)
+                  r.raise_for_status()
+              except Exception as e:
+                  log.append([portal_id,url,'','','','','page_failed',str(e)[:300]])
+                  continue
+              html=r.text
+              Path(f'diagnostics/circulars/{portal_id}.html').write_text(html,encoding='utf-8',errors='ignore')
+              soup=BeautifulSoup(html,'html.parser')
+              text=clean(soup.get_text(' ',strip=True))
+
+              # Capture likely circular number/date/subject conservatively.
+              number=None; date=None; subject=''
+              for pat in [r'(?:رقم\s*(?:التعميم|التعاميم)?\s*[:：-]?\s*)([0-9٠-٩/\-]{2,30})', r'(?:تعميم\s*رقم\s*[:：-]?\s*)([0-9٠-٩/\-]{2,30})']:
+                  m=re.search(pat,text)
+                  if m: number=m.group(1); break
+              for pat in [r'(?:تاريخ\s*[:：-]?\s*)([0-9٠-٩]{1,2}\s*[/\-]\s*[0-9٠-٩]{1,2}\s*[/\-]\s*1[34][0-9٠-٩]{2})', r'([0-9٠-٩]{1,2}\s*[/\-]\s*[0-9٠-٩]{1,2}\s*[/\-]\s*1[34][0-9٠-٩]{2}\s*هـ?)']:
+                  m=re.search(pat,text)
+                  if m: date=m.group(1); break
+              title=soup.title.get_text(' ',strip=True) if soup.title else ''
+              if title and 'تعميم' in title: subject=clean(title)
+              if not subject:
+                  for tag in soup.find_all(['h1','h2','h3','span','label','td']):
+                      t=clean(tag.get_text(' ',strip=True))
+                      if len(t)>=8 and ('موضوع' in t or 'تعميم' in t):
+                          subject=t[:500]; break
+
+              # Find candidate attachments: PDF first, then obvious download handlers.
+              candidates=[]
+              for a in soup.find_all('a',href=True):
+                  href=urljoin(r.url,a['href'])
+                  label=clean(a.get_text(' ',strip=True)).lower()
+                  hlow=href.lower()
+                  score=0
+                  if '.pdf' in hlow: score+=100
+                  if 'download' in hlow or 'attachment' in hlow or 'file' in hlow: score+=40
+                  if 'تحميل' in label or 'مرفق' in label or 'عرض' in label: score+=20
+                  if score: candidates.append((score,href))
+              candidates=sorted(set(candidates),reverse=True)
+
+              saved=None; final_url=''; mime=''
+              for _,href in candidates:
+                  try:
+                      fr=session.get(href,timeout=45,allow_redirects=True)
+                      if fr.status_code!=200: continue
+                      ctype=(fr.headers.get('content-type') or '').lower()
+                      data=fr.content
+                      is_pdf=data[:4]==b'%PDF' or 'application/pdf' in ctype
+                      if not is_pdf: continue
+                      fname=f'moj-circular-{portal_id}.pdf'
+                      saved=outdir/fname
+                      saved.write_bytes(data)
+                      final_url=fr.url; mime=ctype
+                      break
+                  except Exception:
+                      continue
+
+              if not saved:
+                  log.append([portal_id,url,number or '',date or '',subject,'','','no_pdf_found','no downloadable PDF attachment detected'])
+                  continue
+
+              s=sha256(saved); size=saved.stat().st_size
+              pages=''
+              try:
+                  import subprocess
+                  pi=subprocess.run(['pdfinfo',str(saved)],capture_output=True,text=True).stdout
+                  m=re.search(r'^Pages:\s*(\d+)',pi,re.M); pages=m.group(1) if m else ''
+              except Exception: pass
+              index.append([portal_id,saved.name,number or '',date or '',subject,url,final_url,s,size,pages])
+              log.append([portal_id,url,number or '',date or '',subject,saved.name,s,'imported',''])
+              time.sleep(0.2)
+
+          with open('manifests/collector/circular-register.csv','w',encoding='utf-8',newline='') as f:
+              w=csv.writer(f); w.writerow(['portal_id','file','circular_number','circular_date','subject','source_page','attachment_url','sha256','bytes','pages']); w.writerows(index)
+          with open('manifests/collector/circular-import-log.csv','w',encoding='utf-8',newline='') as f:
+              w=csv.writer(f); w.writerow(['portal_id','source_page','circular_number','circular_date','subject','file','sha256','status','notes']); w.writerows(log)
+          print('TOTAL_URLS=',len(urls))
+          print('IMPORTED_CIRCULARS=',len(index))
+          print('FAILED_OR_NO_PDF=',len(urls)-len(index))
+          PY
+          git lfs track 'extracted/collector-circulars/*.pdf'
+          git add .gitattributes extracted/collector-circulars manifests/collector diagnostics/circulars
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          if ! git diff --cached --quiet; then
+            git commit -m 'collector: استخراج تعاميم وزارة العدل كملفات مستقلة'
+            git push origin collector-import
+          fi
