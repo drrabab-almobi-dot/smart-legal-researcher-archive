@@ -1,0 +1,17 @@
+{
+  "source_urls": 804,
+  "downloaded_unique_binaries": 795,
+  "documents_unique": 1964,
+  "duplicates_excluded": 577,
+  "download_failures": 6,
+  "by_type": {
+    "مرجع قانوني": 138,
+    "نظام أو لائحة": 312,
+    "مبدأ قضائي": 6,
+    "سابقة قضائية": 12,
+    "حكم قضائي": 1426,
+    "بحث قانوني": 55,
+    "قرار": 12,
+    "تعميم": 3
+  }
+}
