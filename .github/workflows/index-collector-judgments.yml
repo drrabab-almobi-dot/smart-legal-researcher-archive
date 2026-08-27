@@ -62,17 +62,29 @@ jobs:
               return re.sub(r'\s+',' ',s).strip()
 
           tr=str.maketrans('٠١٢٣٤٥٦٧٨٩','0123456789')
-          deed_patterns=[re.compile(r'(?:رقم\s*(?:الصك|الحكم|القرار)\s*[:：-]?\s*)([0-9٠-٩]{5,20})'),re.compile(r'([0-9٠-٩]{6,20})\s*(?:رقم\s*(?:الصك|الحكم))')]
-          lawsuit_patterns=[re.compile(r'(?:رقم\s*(?:الدعوى|القضية)\s*[:：-]?\s*)([0-9٠-٩]{4,20})')]
+          deed_patterns=[
+              re.compile(r'(?:رقم\s*(?:الصك|الحكم|القرار)\s*[:：-]?\s*)([0-9٠-٩]{5,20})'),
+              re.compile(r'([0-9٠-٩]{6,20})\s*(?:رقم\s*(?:الصك|الحكم))')
+          ]
+          lawsuit_patterns=[
+              re.compile(r'(?:رقم\s*(?:الدعوى|القضية)\s*[:：-]?\s*)([0-9٠-٩]{4,20})')
+          ]
+          date_patterns=[
+              re.compile(r'(?:تاريخ\s*(?:الحكم|الصك|القرار|الجلسة)?\s*[:：-]?\s*)([0-9٠-٩]{1,2}\s*[/\-]\s*[0-9٠-٩]{1,2}\s*[/\-]\s*1[34][0-9٠-٩]{2})'),
+              re.compile(r'([0-9٠-٩]{1,2}\s*[/\-]\s*[0-9٠-٩]{1,2}\s*[/\-]\s*1[34][0-9٠-٩]{2}\s*هـ?)')
+          ]
+
           def first_match(patterns,text):
               for p in patterns:
                   m=p.search(text)
-                  if m: return m.group(1).translate(tr)
+                  if m:
+                      return m.group(1).translate(tr).replace(' ','')
               return None
 
           def title_from(text):
-              reject=('رقم الصك','رقم الحكم','رقم الدعوى','رقم القضية','وزارة العدل','المملكة العربية السعودية')
-              for line in [norm(x) for x in text.splitlines() if norm(x)]:
+              reject=('رقم الصك','رقم الحكم','رقم الدعوى','رقم القضية','وزارة العدل','المملكة العربية السعودية','تاريخ الحكم','تاريخ الصك')
+              lines=[norm(x) for x in text.splitlines() if norm(x)]
+              for line in lines:
                   if len(line)>=18 and not any(r in line for r in reject):
                       return line[:500]
               return ''
@@ -87,44 +99,91 @@ jobs:
               candidates=[]
               for p in range(1,pages+1):
                   txt=page_text(pdf,p)
-                  deed=first_match(deed_patterns,txt); lawsuit=first_match(lawsuit_patterns,txt)
+                  deed=first_match(deed_patterns,txt)
+                  lawsuit=first_match(lawsuit_patterns,txt)
                   if (deed or lawsuit) and len(norm(txt))>120:
                       candidates.append((p,deed,lawsuit,txt))
+
               starts=[]; last_key=None
               for item in candidates:
                   key=(item[1] or '',item[2] or '')
-                  if key==last_key and key!=('',''): continue
+                  if key==last_key and key!=('',''):
+                      continue
                   starts.append(item); last_key=key
+
               if not starts:
                   proc.append([pdf.name,pages,0,'needs_review','no_case_boundaries_detected'])
                   continue
+
               for i,(start,deed,lawsuit,txt) in enumerate(starts):
                   end=starts[i+1][0]-1 if i+1<len(starts) else pages
                   stable=deed or lawsuit or f'p{start}'
                   vm=re.search(r'volume-(\d+)',pdf.name); vol=int(vm.group(1)) if vm else None
                   ym=re.search(r'(14\d{2})',pdf.name); year=ym.group(1) if ym else None
                   rid=re.sub(r'[^A-Za-z0-9_-]','-',f"collector-{year or 'na'}-v{vol or 'na'}-p{start}-{stable}")
-                  if rid in seen: continue
+                  if rid in seen:
+                      continue
                   seen.add(rid)
+
+                  # Read the full case span for stronger title/date extraction.
+                  span=subprocess.run(['pdftotext','-f',str(start),'-l',str(end),'-layout',str(pdf),'-'],capture_output=True,text=True,errors='ignore').stdout or txt
+                  case_title=title_from(span)
+                  decision_date=first_match(date_patterns,span)
+
                   out=Path('extracted/collector-judgments')/(rid+'.pdf')
                   subprocess.run(['qpdf',str(pdf),'--pages',str(pdf),f'{start}-{end}','--',str(out)],check=True)
                   out_sha=sha256(out); size=out.stat().st_size
-                  records.append({'id':rid,'volume':vol,'year':year,'deedNumber':deed,'lawsuitNumber':lawsuit,'title':title_from(txt),'sourceFile':pdf.name,'sourceChecksum':source_sha,'reviewStatus':'auto_indexed_needs_review','archive':{'granularity':'case','originalSourceFile':pdf.name,'originalStartPage':start,'originalEndPage':end,'preservedOriginalPages':True}})
-                  files.append([rid,out.name,pdf.name,start,end,end-start+1,out_sha,size,True])
+
+                  records.append({
+                      'id':rid,
+                      'documentType':'حكم قضائي',
+                      'caseTitle':case_title,
+                      'title':case_title,
+                      'caseNumber':lawsuit,
+                      'lawsuitNumber':lawsuit,
+                      'deedNumber':deed,
+                      'decisionDate':decision_date,
+                      'hijriDate':decision_date,
+                      'volume':vol,
+                      'year':year,
+                      'sourceFile':pdf.name,
+                      'sourceChecksum':source_sha,
+                      'file':out.name,
+                      'fileChecksum':out_sha,
+                      'pages':end-start+1,
+                      'reviewStatus':'auto_indexed_needs_review',
+                      'archive':{
+                          'granularity':'case',
+                          'originalSourceFile':pdf.name,
+                          'originalStartPage':start,
+                          'originalEndPage':end,
+                          'preservedOriginalPages':True
+                      }
+                  })
+                  files.append([rid,out.name,pdf.name,start,end,end-start+1,out_sha,size,True,case_title,lawsuit,deed,decision_date])
               proc.append([pdf.name,pages,len(starts),'indexed','collector_only'])
 
           with case_index.open('w',encoding='utf-8') as f:
-              for r in records: f.write(json.dumps(r,ensure_ascii=False,separators=(',',':'))+'\n')
+              for r in records:
+                  f.write(json.dumps(r,ensure_ascii=False,separators=(',',':'))+'\n')
+
           with file_register.open('w',encoding='utf-8',newline='') as f:
-              w=csv.writer(f); w.writerow(['id','file','source_file','start_page','end_page','pages','sha256','bytes','preserved_original_pages']); w.writerows(files)
+              w=csv.writer(f)
+              w.writerow(['id','file','source_file','start_page','end_page','pages','sha256','bytes','preserved_original_pages','case_title','case_number','deed_number','decision_date'])
+              w.writerows(files)
+
           with processing.open('w',encoding='utf-8',newline='') as f:
-              w=csv.writer(f); w.writerow(['source_file','pages','detected_records','status','notes']); w.writerows(proc)
+              w=csv.writer(f)
+              w.writerow(['source_file','pages','detected_records','status','notes'])
+              w.writerows(proc)
+
           print(f'INDEXED_RECORDS={len(records)}')
           PY
+
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add extracted/collector-judgments indices/collector manifests/collector
           if ! git diff --cached --quiet; then
-            git commit -m 'collector: فهرسة فعلية للأحكام المستخرجة بعد إصلاح LFS'
+            git commit -m 'collector: فصل وفهرسة كل حكم بعنوان القضية ورقمها وتاريخها'
             git push origin collector-import
           fi
