@@ -1,7 +1,8 @@
-name: Import MOJ judgment PDFs
+name: Collector - import MOJ source PDFs
 
 on:
   push:
+    branches: [collector-import]
     paths:
       - '.github/workflows/import-moj-judgments.yml'
       - 'manifests/incoming/moj-judgments-1434-1435-urls.txt'
@@ -12,62 +13,83 @@ permissions:
 
 jobs:
   import:
+    if: github.ref == 'refs/heads/collector-import'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
+          ref: collector-import
           fetch-depth: 1
-      - name: Download verified PDFs and update registers
+
+      - name: Install PDF metadata tools
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq poppler-utils
+
+      - name: Download originals using archive schema
         shell: bash
         run: |
           set -euo pipefail
-          mkdir -p sources/moj/1434 sources/moj/1435 manifests/import-logs
-          LOG="manifests/import-logs/moj-judgments-1434-1435.csv"
-          if [ ! -f "$LOG" ]; then
-            echo 'url,path,sha256,bytes,status' > "$LOG"
-          fi
+          mkdir -p archive-sources/moj/1434 archive-sources/moj/1435 manifests/collector
+          LOG='manifests/collector/import-log.csv'
+          PENDING='manifests/collector/pending-source-register.csv'
+          DUP='manifests/collector/pending-duplicates.csv'
+
+          [ -f "$LOG" ] || echo 'source_file,url,sha256,bytes,pages,status,notes' > "$LOG"
+          [ -f "$PENDING" ] || echo 'source_file,sha256,bytes,pages,document_type,granularity,status' > "$PENDING"
+          [ -f "$DUP" ] || echo 'duplicate_name,duplicate_sha256,canonical_name,match_method,decision,notes' > "$DUP"
+
           while IFS= read -r url; do
             case "$url" in
-              https://www.moj.gov.sa/*AhkamGroup_1434/*.pdf)
-                year=1434 ;;
-              https://www.moj.gov.sa/*AhkamGroup_1435/*.pdf)
-                year=1435 ;;
+              https://www.moj.gov.sa/*AhkamGroup_1434/*.pdf) year=1434 ;;
+              https://www.moj.gov.sa/*AhkamGroup_1435/*.pdf) year=1435 ;;
               *) continue ;;
             esac
+
             n=$(basename "$url" .pdf)
-            dest="sources/moj/$year/moj-judgments-$year-volume-$n.pdf"
+            name="moj-judgments-$year-volume-$n.pdf"
+            dest="archive-sources/moj/$year/$name"
+
+            # Do not overwrite an original already collected on this branch.
             if [ -f "$dest" ]; then
-              echo "$url,$dest,,,already_present" >> "$LOG"
+              echo "$name,$url,,,,already_present,original preserved" >> "$LOG"
               continue
             fi
+
             tmp=$(mktemp)
-            if ! curl -fL --retry 3 --retry-delay 2 --connect-timeout 20 --max-time 180 "$url" -o "$tmp"; then
-              echo "$url,$dest,,,download_failed" >> "$LOG"
+            if ! curl -fL --retry 3 --retry-delay 2 --connect-timeout 20 --max-time 240 "$url" -o "$tmp"; then
+              echo "$name,$url,,,,download_failed,source unavailable" >> "$LOG"
               rm -f "$tmp"
               continue
             fi
-            if [ "$(head -c 4 "$tmp" 2>/dev/null || true)" != "%PDF" ]; then
-              echo "$url,$dest,,,not_pdf" >> "$LOG"
+
+            if [ "$(head -c 4 "$tmp" 2>/dev/null || true)" != '%PDF' ]; then
+              echo "$name,$url,,,,not_pdf,rejected" >> "$LOG"
               rm -f "$tmp"
               continue
             fi
+
             sha=$(sha256sum "$tmp" | awk '{print $1}')
             bytes=$(stat -c%s "$tmp")
-            if grep -Fq "$sha" manifests/source-register.csv 2>/dev/null; then
-              echo "$url,$dest,$sha,$bytes,duplicate_sha" >> "$LOG"
+            pages=$(pdfinfo "$tmp" 2>/dev/null | awk -F: '/^Pages:/ {gsub(/ /,"",$2); print $2; exit}')
+            pages=${pages:-0}
+
+            # Match the researcher's rule: SHA first, never overwrite/delete a duplicate.
+            canonical=$(awk -F',' -v s="$sha" 'NR>1 {gsub(/"/,"",$2); if ($2==s) {gsub(/"/,"",$1); print $1; exit}}' manifests/source-register.csv 2>/dev/null || true)
+            if [ -n "$canonical" ]; then
+              echo "$name,$sha,$canonical,sha256,exclude_from_source_count,exact binary duplicate; original retained at canonical source" >> "$DUP"
+              echo "$name,$url,$sha,$bytes,$pages,duplicate_sha,canonical=$canonical" >> "$LOG"
               rm -f "$tmp"
               continue
             fi
+
             mv "$tmp" "$dest"
-            echo "$url,$dest,$sha,$bytes,imported" >> "$LOG"
+            echo "$name,$sha,$bytes,$pages,مدونة أحكام,document,مصدر قضايا وزارة العدل" >> "$PENDING"
+            echo "$name,$url,$sha,$bytes,$pages,imported,original preserved unchanged" >> "$LOG"
           done < manifests/incoming/moj-judgments-1434-1435-urls.txt
 
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add sources/moj manifests/import-logs
-          if git diff --cached --quiet; then
-            echo 'No new PDFs to commit.'
-          else
-            git commit -m 'استيراد ملفات أحكام وزارة العدل 1434-1435'
-            git push
+          git add archive-sources manifests/collector
+          if ! git diff --cached --quiet; then
+            git commit -m 'collector: استيراد أصول أحكام وزارة العدل وفق سياسة الباحثة'
+            git push origin collector-import
           fi
