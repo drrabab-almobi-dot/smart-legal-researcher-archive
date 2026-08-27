@@ -1,0 +1,49 @@
+name: Collector - extract Nafa library contents
+
+on:
+  push:
+    branches: [collector-import]
+    paths:
+      - '.github/workflows/collect-nafa-library.yml'
+      - 'scripts/nafa_collect.py'
+      - 'sources/nafa-judicial-library-1445/**'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: collector-nafa-library
+  cancel-in-progress: false
+
+jobs:
+  collect:
+    if: github.ref == 'refs/heads/collector-import'
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: collector-import
+          fetch-depth: 1
+          lfs: true
+      - name: Install safe extraction tools
+        run: |
+          git lfs pull
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq poppler-utils
+          python -m pip install --quiet requests
+      - name: Extract, split, classify, and deduplicate
+        env:
+          NAFA_WORKERS: '10'
+        run: python scripts/nafa_collect.py
+      - name: Commit verified extraction
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add extracted/nafa indices/nafa manifests/nafa
+          if ! git diff --cached --quiet; then
+            git commit -m 'collector: استخراج محتويات مكتبة نفع ومنع التكرار'
+            git pull --rebase origin collector-import
+            git push origin collector-import
+          fi
