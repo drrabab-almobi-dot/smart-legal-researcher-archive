@@ -1,0 +1,1 @@
+ALTER TABLE `archive_files` ADD `search_text` text DEFAULT '' NOT NULL;

@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX `legal_documents_text_checksum_unique` ON `legal_documents` (`text_checksum`);
