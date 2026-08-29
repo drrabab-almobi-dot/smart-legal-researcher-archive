@@ -2,6 +2,7 @@ import { PDFDocument } from "pdf-lib";
 import caseIndex from "@/app/case-index.generated.json";
 import specializedCaseIndex from "@/app/specialized-case-index.generated.json";
 import snippetIndex from "@/app/snippet-index.generated.json";
+import saipCopyrightIndex from "@/app/saip-copyright-index.generated.json";
 
 type ArchiveRecord = {
   id: string;
@@ -24,9 +25,10 @@ export async function GET(
 ) {
   const { id } = await context.params;
   const ministryRecord = caseIndex.find((item) => item.id === id);
+  const saipRecord = (saipCopyrightIndex as ArchiveRecord[]).find((item) => item.id === id);
   const specializedRecord = (specializedCaseIndex as ArchiveRecord[]).find((item) => item.id === id);
   const snippetRecord = (snippetIndex as ArchiveRecord[]).find((item) => item.id === id);
-  const archiveRecord = specializedRecord ?? snippetRecord;
+  const archiveRecord = saipRecord ?? specializedRecord ?? snippetRecord;
   const sourceFile = ministryRecord?.archive?.originalSourceFile ?? archiveRecord?.sourceFile;
   const startPage = ministryRecord?.archive?.originalStartPage ?? archiveRecord?.startPage;
   const endPage = ministryRecord?.archive?.originalEndPage ?? archiveRecord?.endPage;

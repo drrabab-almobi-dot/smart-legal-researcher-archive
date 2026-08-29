@@ -3,11 +3,12 @@ import referenceText from "./reference-text.generated.json";
 import specializedText from "./specialized-text.generated.json";
 import specializedCaseIndex from "./specialized-case-index.generated.json";
 import snippetIndex from "./snippet-index.generated.json";
+import saipCopyrightIndex from "./saip-copyright-index.generated.json";
 
 export type LegalDocument = {
   id: string;
   title: string;
-  type: "تعميم وزاري" | "تعميم قضائي" | "مدونة قضائية" | "مجموعة أحكام" | "مبدأ قضائي" | "سابقة قضائية" | "بحث قضائي" | "حكم قضائي" | "دليل قانوني";
+  type: "تعميم وزاري" | "تعميم قضائي" | "مدونة قضائية" | "مجموعة أحكام" | "مبدأ قضائي" | "مبدأ قضائي دولي" | "قرار ملكية فكرية" | "سابقة قضائية" | "بحث قضائي" | "حكم قضائي" | "دليل قانوني";
   publishingAuthority: string;
   originatingAuthority: string;
   hijriYear: string;
@@ -84,22 +85,21 @@ const baseLegalDocuments: LegalDocument[] = [
     searchText: specializedText["nafa-judicial-library"],
   },
   {
-    id: "library-ip-judgments-1446",
-    title: "أحكام قضائية في الملكية الفكرية",
+    id: "library-saip-copyright-precedents-2019",
+    title: "المبادئ والسوابق القضائية المحلية والدولية في مجال حقوق المؤلف",
     type: "مجموعة أحكام",
-    publishingAuthority: "إعداد عمر صالح الشهري",
-    originatingAuthority: "المحكمتان التجاريتان في الرياض وجدة",
-    hijriYear: "1446",
-    reference: "ذو الحجة 1446هـ — يونيو 2025م",
-    subject: "الملكية الفكرية والعلامات التجارية وحقوق المؤلف",
+    publishingAuthority: "الهيئة السعودية للملكية الفكرية",
+    originatingAuthority: "لجنة النظر في مخالفات نظام حماية حقوق المؤلف وسوابق دولية مختارة",
+    hijriYear: "2019م",
+    reference: "53 قرارًا ومبدأً",
+    subject: "حقوق المؤلف",
     summary:
-      "تجميع بحثي غير رسمي لسبعة أحكام أو مقتطفات أحكام من عام 1445هـ في العلامات التجارية وحقوق المؤلف والصور وتقليد العلامات ودعاوى إلغاء قرارات الهيئة السعودية للملكية الفكرية.",
-    keywords: ["ملكية فكرية", "علامة تجارية", "حقوق مؤلف", "تقليد علامة", "الهيئة السعودية للملكية الفكرية", "المحكمة التجارية"],
-    sourceUrl: "/library/ip-judgments-1446.pdf",
-    sourceLabel: "نسخة PDF مرفوعة — تجميع بحثي غير رسمي",
-    verified: false,
+      "الإصدار الأساسي للهيئة السعودية للملكية الفكرية، ويضم 36 قرارًا محليًا و17 مبدأً وسابقة دولية في حقوق المؤلف. فُهرست كل مادة منه كسجل ومستند مستقل.",
+    keywords: ["ملكية فكرية", "حقوق المؤلف", "قرارات محلية", "سوابق دولية", "الهيئة السعودية للملكية الفكرية"],
+    sourceUrl: "/library/saip-copyright-precedents-2019.pdf",
+    sourceLabel: "الإصدار الأساسي — الهيئة السعودية للملكية الفكرية",
+    verified: true,
     granularity: "document",
-    searchText: specializedText["ip-judgments-1446"],
   },
   {
     id: "library-ip-precedents-guide",
@@ -520,7 +520,7 @@ const ipCaseDocuments: LegalDocument[] = [
     id: "case-ip-4530226536",
     title: "عدم قبول الطعن على تسجيل علامة KLEENZ لفوات المدة",
     type: "حكم قضائي",
-    publishingAuthority: "إعداد عمر صالح الشهري",
+    publishingAuthority: "تجميع بحثي غير رسمي",
     originatingAuthority: "المحكمة التجارية بالرياض",
     hijriYear: "1445",
     reference: "الحكم 4530226536",
@@ -536,7 +536,7 @@ const ipCaseDocuments: LegalDocument[] = [
     id: "case-ip-4530301286",
     title: "التعويض عن نشر صورة فوتوغرافية دون إذن صاحبها",
     type: "حكم قضائي",
-    publishingAuthority: "إعداد عمر صالح الشهري",
+    publishingAuthority: "تجميع بحثي غير رسمي",
     originatingAuthority: "المحكمة التجارية بالرياض",
     hijriYear: "1445",
     reference: "الحكم الابتدائي 4530301286",
@@ -552,7 +552,7 @@ const ipCaseDocuments: LegalDocument[] = [
     id: "case-ip-4530360213",
     title: "عدم قبول دعوى شطب علامة Lale Thermos لرفعها قبل أوانها",
     type: "حكم قضائي",
-    publishingAuthority: "إعداد عمر صالح الشهري",
+    publishingAuthority: "تجميع بحثي غير رسمي",
     originatingAuthority: "المحكمة التجارية بالرياض",
     hijriYear: "1445",
     reference: "الحكم الابتدائي 4530360213",
@@ -568,7 +568,7 @@ const ipCaseDocuments: LegalDocument[] = [
     id: "case-ip-4530405408",
     title: "إدانة حيازة وعرض منتجات تحمل علامات مقلدة",
     type: "حكم قضائي",
-    publishingAuthority: "إعداد عمر صالح الشهري",
+    publishingAuthority: "تجميع بحثي غير رسمي",
     originatingAuthority: "المحكمة التجارية بجدة",
     hijriYear: "1445",
     reference: "الحكم الابتدائي 4530405408",
@@ -584,7 +584,7 @@ const ipCaseDocuments: LegalDocument[] = [
     id: "case-ip-4530406780",
     title: "إدانة بيع منتجات مقلدة مع المصادرة والإتلاف",
     type: "حكم قضائي",
-    publishingAuthority: "إعداد عمر صالح الشهري",
+    publishingAuthority: "تجميع بحثي غير رسمي",
     originatingAuthority: "المحكمة التجارية بجدة",
     hijriYear: "1445",
     reference: "الحكم الابتدائي 4530406780",
@@ -600,7 +600,7 @@ const ipCaseDocuments: LegalDocument[] = [
     id: "case-ip-4530329147",
     title: "إدانة بيع نظارات تحمل علامات تجارية مقلدة",
     type: "حكم قضائي",
-    publishingAuthority: "إعداد عمر صالح الشهري",
+    publishingAuthority: "تجميع بحثي غير رسمي",
     originatingAuthority: "المحكمة التجارية بجدة",
     hijriYear: "1445",
     reference: "الحكم الابتدائي 4530329147",
@@ -616,7 +616,7 @@ const ipCaseDocuments: LegalDocument[] = [
     id: "case-ip-4530253532",
     title: "رفض دعوى إلغاء قرار تسجيل علامة لانتفاء التشابه المضلل",
     type: "حكم قضائي",
-    publishingAuthority: "إعداد عمر صالح الشهري",
+    publishingAuthority: "تجميع بحثي غير رسمي",
     originatingAuthority: "المحكمة التجارية بالرياض",
     hijriYear: "1445",
     reference: "الحكم الابتدائي 4530253532",
@@ -629,6 +629,28 @@ const ipCaseDocuments: LegalDocument[] = [
     granularity: "case",
   },
 ];
+
+const saipCopyrightDocuments: LegalDocument[] = saipCopyrightIndex.map((item) => ({
+  id: item.id,
+  title: item.title,
+  type: item.documentType as "قرار ملكية فكرية" | "مبدأ قضائي دولي",
+  publishingAuthority: item.publishingAuthority,
+  originatingAuthority: item.originatingAuthority,
+  hijriYear: item.hijriYear,
+  reference: item.documentType === "قرار ملكية فكرية"
+    ? `القرار ${item.reference}`
+    : `المبدأ ${item.reference}`,
+  subject: item.subject,
+  summary: item.documentType === "قرار ملكية فكرية"
+    ? "قرار محلي مستقل في حقوق المؤلف، مفصول من الإصدار الأساسي مع الاحتفاظ بصفحاته الأصلية."
+    : "مبدأ أو سابقة قضائية دولية مستقلة في حقوق المؤلف، مفصولة من الإصدار الأساسي مع الاحتفاظ بصفحاتها الأصلية.",
+  keywords: ["حقوق المؤلف", "ملكية فكرية", item.subject, item.reference],
+  sourceUrl: `/api/cases/${item.id}`,
+  sourceLabel: "الإصدار الأساسي — الهيئة السعودية للملكية الفكرية",
+  verified: true,
+  searchText: item.searchText,
+  granularity: "case",
+}));
 
 const uncitralCaseDocuments: LegalDocument[] = specializedCaseIndex
   .filter((item) => item.id.startsWith("uncitral-"))
@@ -708,7 +730,7 @@ const commercialPrecedentDocuments: LegalDocument[] = specializedCaseIndex
     granularity: "case",
   }));
 
-export const indexedCaseCount = caseDocuments.length + ipCaseDocuments.length;
+export const indexedCaseCount = caseDocuments.length + saipCopyrightDocuments.length;
 export const indexedPrincipleCount = principleDocuments.length;
 export const indexedPrecedentCount = administrativePrecedentDocuments.length + commercialPrecedentDocuments.length + uncitralCaseDocuments.length;
 export const privateLibraryFileCount = 35;
@@ -716,7 +738,7 @@ export const privateLibraryFileCount = 35;
 export const legalDocuments: LegalDocument[] = [
   ...baseLegalDocuments,
   ...volumeDocuments,
-  ...ipCaseDocuments,
+  ...saipCopyrightDocuments,
   ...uncitralCaseDocuments,
   ...principleDocuments,
   ...administrativePrecedentDocuments,

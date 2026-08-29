@@ -95,6 +95,14 @@ function databaseRecord(item: IndexedDatabaseRecord): ArchivedSearchRecord {
   };
 }
 
+function visiblePublishingAuthority(item: ArchivedSearchRecord) {
+  const publisher = item.publishingAuthority ?? item.issuer;
+  if (publisher && normalizeArabic(publisher).includes("اعداد عمر صالح الشهري")) {
+    return item.originatingAuthority ?? item.issuer;
+  }
+  return publisher;
+}
+
 type MainCollection =
   | "الكل"
   | "الأحكام القضائية"
@@ -120,6 +128,7 @@ function isJudgmentType(documentType: string) {
 function matchesMainCollection(
   collection: MainCollection,
   record: {
+    id?: string;
     documentType: string;
     specialty: string;
     publishingAuthority?: string | null;
@@ -129,26 +138,26 @@ function matchesMainCollection(
   },
 ) {
   if (collection === "الكل") return true;
-  const context = normalizeArabic([
-    record.specialty,
+  const authority = normalizeArabic([
     record.publishingAuthority,
     record.originatingAuthority,
-    record.subject,
-    record.title,
   ].filter(Boolean).join(" "));
   const isIp = record.specialty === "ملكية فكرية"
-    || /ملكيه فكريه|حقوق المؤلف|علامه تجاريه|براءه اختراع/.test(context);
+    || record.id?.startsWith("saip-copyright-")
+    || record.documentType === "قرار ملكية فكرية"
+    || record.documentType === "مبدأ قضائي دولي";
   const isAdministrativePrecedent = record.documentType === "سابقة قضائية"
-    && (/ديوان المظالم|محكمه اداريه|المحاكم الاداريه/.test(context) || record.specialty === "إداري");
+    && (record.id?.startsWith("bog-precedent-")
+      || /ديوان المظالم|محكمه اداريه|المحاكم الاداريه/.test(authority));
 
   if (collection === "الأحكام القضائية") return isJudgmentType(record.documentType) && !isIp && !isAdministrativePrecedent;
   if (collection === "السوابق القضائية الإدارية") return isAdministrativePrecedent;
   if (collection === "سوابق وقرارات الملكية الفكرية") {
-    return isIp && (isJudgmentType(record.documentType) || record.documentType.includes("قرار"));
+    return isIp;
   }
   if (collection === "المبادئ والقرارات القضائية") {
     return record.documentType === "مبدأ قضائي"
-      || (record.documentType.includes("قرار") && !isIp);
+      || (record.documentType.includes("قرار") && !isIp && !isAdministrativePrecedent);
   }
   return record.documentType.startsWith("تعميم");
 }
@@ -208,13 +217,23 @@ export default function LegalSearch() {
 
   const staticStats = useMemo(() => {
     const records = searchCorpus.filter(({ item }) => item.granularity === "case");
-    const judgments = records.filter(({ item }) => isJudgmentType(item.type)).length;
+    const judgments = records.filter((entry) => matchesMainCollection(
+      "الأحكام القضائية",
+      {
+        id: entry.item.id,
+        documentType: entry.item.type,
+        specialty: entry.specialty,
+        publishingAuthority: entry.item.publishingAuthority,
+        originatingAuthority: entry.item.originatingAuthority,
+      },
+    )).length;
     const decisions = records.filter(({ item }) => item.type.includes("قرار")).length;
     const principles = records.filter(({ item }) => item.type === "مبدأ قضائي").length;
     const circulars = records.filter(({ item }) => item.type.startsWith("تعميم")).length;
     const administrativePrecedents = records.filter((entry) => matchesMainCollection(
       "السوابق القضائية الإدارية",
       {
+        id: entry.item.id,
         documentType: entry.item.type,
         specialty: entry.specialty,
         publishingAuthority: entry.item.publishingAuthority,
@@ -226,6 +245,7 @@ export default function LegalSearch() {
     const ipPrecedentsOrDecisions = records.filter((entry) => matchesMainCollection(
       "سوابق وقرارات الملكية الفكرية",
       {
+        id: entry.item.id,
         documentType: entry.item.type,
         specialty: entry.specialty,
         publishingAuthority: entry.item.publishingAuthority,
@@ -237,6 +257,7 @@ export default function LegalSearch() {
     const judicialPrinciplesOrDecisions = records.filter((entry) => matchesMainCollection(
       "المبادئ والقرارات القضائية",
       {
+        id: entry.item.id,
         documentType: entry.item.type,
         specialty: entry.specialty,
         publishingAuthority: entry.item.publishingAuthority,
@@ -250,7 +271,7 @@ export default function LegalSearch() {
       decisions,
       principles,
       circulars,
-      contentTotal: judgments + decisions + principles + circulars,
+      contentTotal: judgments + administrativePrecedents + ipPrecedentsOrDecisions + judicialPrinciplesOrDecisions + circulars,
       administrativePrecedents,
       ipPrecedentsOrDecisions,
       judicialPrinciplesOrDecisions,
@@ -281,6 +302,7 @@ export default function LegalSearch() {
       if (item.granularity !== "case") return false;
       const matchesQuery = !submittedQuery.trim() || item.relevance > 0;
       const matchesCollection = matchesMainCollection(collection, {
+        id: item.id,
         documentType: item.type,
         specialty: item.inferredSpecialty,
         publishingAuthority: item.publishingAuthority,
@@ -311,12 +333,13 @@ export default function LegalSearch() {
         || item.documentType === "مبدأ قضائي";
       if (!isBeneficiaryRecord) return false;
       if (item.granularity !== "case") return false;
-      const archivePublisher = item.publishingAuthority ?? item.issuer;
+      const archivePublisher = visiblePublishingAuthority(item);
       const matchesIssuer = issuer === "الكل" || archivePublisher === issuer;
       const matchesOrigin = origin === "الكل" || item.originatingAuthority === origin;
       const matchesYear = year === "الكل" || item.hijriYear === year;
       const archiveSpecialty = inferSpecialty(`${item.subject ?? ""} ${item.documentType}`);
       const matchesCollection = matchesMainCollection(collection, {
+        id: item.id,
         documentType: item.documentType,
         specialty: item.specialty || archiveSpecialty,
         publishingAuthority: archivePublisher,
@@ -472,9 +495,10 @@ export default function LegalSearch() {
 
           <div className="trust-strip">
             <div className="total-stat"><strong>{archiveStatsLoaded ? combinedStats.contentTotal.toLocaleString("en-US") : "—"}</strong><span>إجمالي المواد القانونية المفهرسة</span></div>
-            <div><strong>{archiveStatsLoaded ? combinedStats.judgments.toLocaleString("en-US") : "—"}</strong><span>حكمًا قضائيًا شاملًا السوابق</span></div>
-            <div><strong>{archiveStatsLoaded ? combinedStats.decisions.toLocaleString("en-US") : "—"}</strong><span>قرارًا قضائيًا أو شبه قضائي</span></div>
-            <div><strong>{archiveStatsLoaded ? combinedStats.principles.toLocaleString("en-US") : "—"}</strong><span>مبدأ قضائيًا</span></div>
+            <div><strong>{archiveStatsLoaded ? combinedStats.judgments.toLocaleString("en-US") : "—"}</strong><span>حكمًا قضائيًا</span></div>
+            <div><strong>{archiveStatsLoaded ? combinedStats.administrativePrecedents.toLocaleString("en-US") : "—"}</strong><span>سابقة قضائية إدارية</span></div>
+            <div><strong>{archiveStatsLoaded ? combinedStats.ipPrecedentsOrDecisions.toLocaleString("en-US") : "—"}</strong><span>سابقة أو قرار ملكية فكرية</span></div>
+            <div><strong>{archiveStatsLoaded ? combinedStats.judicialPrinciplesOrDecisions.toLocaleString("en-US") : "—"}</strong><span>مبدأ أو قرار قضائي</span></div>
             <div><strong>{archiveStatsLoaded ? combinedStats.circulars.toLocaleString("en-US") : "—"}</strong><span>تعميمًا</span></div>
           </div>
         </div>
@@ -615,8 +639,8 @@ export default function LegalSearch() {
                       )}
                       <p>
                         {item.documentType}
-                        {(item.publishingAuthority ?? item.issuer) ? ` · الناشر: ${item.publishingAuthority ?? item.issuer}` : ""}
-                        {item.originatingAuthority ? ` · الأصل: ${item.originatingAuthority}` : ""}
+                        {visiblePublishingAuthority(item) ? ` · جهة النشر: ${visiblePublishingAuthority(item)}` : ""}
+                        {item.originatingAuthority ? ` · الجهة الأصلية: ${item.originatingAuthority}` : ""}
                         {item.hijriYear ? ` · ${item.hijriYear}هـ` : ""}
                         {` · ${item.sourceKind === "official_moj" || item.sourceKind === "official_bog" ? "مصدر رسمي" : "محفوظ في الأرشيف"}`}
                       </p>
@@ -652,8 +676,10 @@ export default function LegalSearch() {
                 <h3>{item.title}</h3>
                 <div className="meta-row">
                   <span className="specialty-meta">{inferSpecialty(`${item.title} ${item.subject} ${item.keywords.join(" ")} ${item.searchText ?? ""}`)}</span>
-                  <span className="authority-meta"><b>الناشر</b>{item.publishingAuthority}</span>
-                  <span className="authority-meta"><b>الأصل</b>{item.originatingAuthority}</span>
+                  <span className="authority-meta"><b>الجهة الأصلية</b>{item.originatingAuthority}</span>
+                  {item.publishingAuthority !== item.originatingAuthority && (
+                    <span className="authority-meta"><b>جهة النشر</b>{item.publishingAuthority}</span>
+                  )}
                   <span>{item.subject}</span>
                   <span>{/^\d/.test(item.hijriYear) ? `${item.hijriYear}هـ` : item.hijriYear}</span>
                 </div>

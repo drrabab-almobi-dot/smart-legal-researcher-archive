@@ -467,13 +467,17 @@ export async function getArchiveStats() {
   `).first<{ total: number; indexed: number | null; official: number | null }>(),
   DB.prepare(`
     SELECT
-      SUM(CASE WHEN ld.granularity = 'case' AND ld.document_type IN ('حكم قضائي', 'صك قضائي', 'سابقة قضائية') THEN 1 ELSE 0 END) AS judgments,
+      SUM(CASE WHEN ld.granularity = 'case'
+        AND ld.document_type IN ('حكم قضائي', 'صك قضائي', 'سابقة قضائية')
+        AND NOT (ld.specialty = 'ملكية فكرية' OR ld.document_type IN ('قرار ملكية فكرية', 'مبدأ قضائي دولي'))
+        AND NOT (ld.document_type = 'سابقة قضائية' AND (ld.specialty = 'إداري' OR COALESCE(ld.originating_authority, '') LIKE '%ديوان المظالم%' OR COALESCE(ld.publishing_authority, '') LIKE '%ديوان المظالم%'))
+        THEN 1 ELSE 0 END) AS judgments,
       SUM(CASE WHEN ld.granularity = 'case' AND ld.document_type LIKE 'تعميم%' THEN 1 ELSE 0 END) AS circulars,
       SUM(CASE WHEN ld.granularity = 'case' AND ld.document_type LIKE '%قرار%' THEN 1 ELSE 0 END) AS decisions,
       SUM(CASE WHEN ld.granularity = 'case' AND ld.document_type = 'سابقة قضائية' THEN 1 ELSE 0 END) AS precedents,
       SUM(CASE WHEN ld.granularity = 'case' AND ld.document_type = 'مبدأ قضائي' THEN 1 ELSE 0 END) AS principles,
       COUNT(DISTINCT CASE WHEN ld.granularity = 'case' AND (
-        ld.document_type IN ('حكم قضائي', 'صك قضائي', 'سابقة قضائية', 'مبدأ قضائي')
+        ld.document_type IN ('حكم قضائي', 'صك قضائي', 'سابقة قضائية', 'مبدأ قضائي', 'مبدأ قضائي دولي')
         OR ld.document_type LIKE '%قرار%'
         OR ld.document_type LIKE 'تعميم%'
       ) THEN ld.id END) AS contentTotal,
@@ -482,11 +486,11 @@ export async function getArchiveStats() {
         THEN 1 ELSE 0 END) AS administrativePrecedents,
       SUM(CASE WHEN ld.granularity = 'case'
         AND (ld.specialty = 'ملكية فكرية' OR COALESCE(ld.subject, '') LIKE '%ملكية فكرية%' OR COALESCE(ld.subject, '') LIKE '%حقوق المؤلف%' OR COALESCE(ld.subject, '') LIKE '%علامة تجارية%')
-        AND (ld.document_type IN ('حكم قضائي', 'صك قضائي', 'سابقة قضائية') OR ld.document_type LIKE '%قرار%')
+        AND (ld.document_type IN ('حكم قضائي', 'صك قضائي', 'سابقة قضائية', 'مبدأ قضائي دولي') OR ld.document_type LIKE '%قرار%')
         THEN 1 ELSE 0 END) AS ipPrecedentsOrDecisions,
       SUM(CASE WHEN ld.granularity = 'case'
         AND (ld.document_type = 'مبدأ قضائي' OR ld.document_type LIKE '%قرار%')
-        AND NOT (ld.specialty = 'ملكية فكرية' OR COALESCE(ld.subject, '') LIKE '%ملكية فكرية%' OR COALESCE(ld.subject, '') LIKE '%حقوق المؤلف%' OR COALESCE(ld.subject, '') LIKE '%علامة تجارية%')
+        AND NOT (ld.specialty = 'ملكية فكرية' OR ld.document_type IN ('قرار ملكية فكرية', 'مبدأ قضائي دولي') OR COALESCE(ld.subject, '') LIKE '%ملكية فكرية%' OR COALESCE(ld.subject, '') LIKE '%حقوق المؤلف%' OR COALESCE(ld.subject, '') LIKE '%علامة تجارية%')
         THEN 1 ELSE 0 END) AS judicialPrinciplesOrDecisions
     FROM legal_documents AS ld
     LEFT JOIN archive_files AS af ON af.id = ld.archive_file_id

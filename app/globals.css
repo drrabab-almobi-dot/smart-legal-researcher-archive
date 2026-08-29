@@ -145,7 +145,7 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .quick-row { margin-top: 18px; display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 9px; font-size: 11px; color: #ccb9d6; }
 .quick-row button { border: 1px solid rgba(255,255,255,.14); border-radius: 999px; background: rgba(255,255,255,.08); color: white; padding: 7px 12px; cursor: pointer; }
 .quick-row button:hover { background: rgba(255,255,255,.16); }
-.trust-strip { width: min(1020px, 100%); display: grid; grid-template-columns: repeat(5,1fr); margin-top: 42px; border-top: 1px solid rgba(255,255,255,.12); padding-top: 26px; }
+.trust-strip { width: min(1120px, 100%); display: grid; grid-template-columns: repeat(6,1fr); margin-top: 42px; border-top: 1px solid rgba(255,255,255,.12); padding-top: 26px; }
 .trust-strip div { display: flex; flex-direction: column; gap: 3px; border-left: 1px solid rgba(255,255,255,.12); }
 .trust-strip div:last-child { border-left: 0; }
 .trust-strip strong { font-size: 22px; color: white; }
