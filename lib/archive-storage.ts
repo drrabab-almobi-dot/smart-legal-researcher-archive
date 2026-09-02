@@ -473,7 +473,11 @@ export async function getArchiveStats() {
         AND NOT (ld.document_type = 'سابقة قضائية' AND (ld.specialty = 'إداري' OR COALESCE(ld.originating_authority, '') LIKE '%ديوان المظالم%' OR COALESCE(ld.publishing_authority, '') LIKE '%ديوان المظالم%'))
         THEN 1 ELSE 0 END) AS judgments,
       SUM(CASE WHEN ld.granularity = 'case' AND ld.document_type LIKE 'تعميم%' THEN 1 ELSE 0 END) AS circulars,
-      SUM(CASE WHEN ld.granularity = 'case' AND ld.document_type LIKE '%قرار%' THEN 1 ELSE 0 END) AS decisions,
+      SUM(CASE WHEN ld.granularity = 'case'
+        AND ld.document_type LIKE '%قرار%'
+        AND NOT (ld.specialty = 'ملكية فكرية' OR ld.document_type IN ('قرار ملكية فكرية', 'مبدأ قضائي دولي') OR COALESCE(ld.subject, '') LIKE '%ملكية فكرية%' OR COALESCE(ld.subject, '') LIKE '%حقوق المؤلف%' OR COALESCE(ld.subject, '') LIKE '%علامة تجارية%')
+        AND NOT (ld.document_type = 'سابقة قضائية' AND (ld.specialty = 'إداري' OR COALESCE(ld.originating_authority, '') LIKE '%ديوان المظالم%' OR COALESCE(ld.publishing_authority, '') LIKE '%ديوان المظالم%'))
+        THEN 1 ELSE 0 END) AS decisions,
       SUM(CASE WHEN ld.granularity = 'case' AND ld.document_type = 'سابقة قضائية' THEN 1 ELSE 0 END) AS precedents,
       SUM(CASE WHEN ld.granularity = 'case' AND ld.document_type = 'مبدأ قضائي' THEN 1 ELSE 0 END) AS principles,
       COUNT(DISTINCT CASE WHEN ld.granularity = 'case' AND (
