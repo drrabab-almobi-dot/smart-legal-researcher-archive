@@ -40,3 +40,8 @@ next-env.d.ts
 /.sites-runtime/
 /outputs/
 /work/
+
+# Restored from generated-archives during verified builds
+/app/case-index.generated.json
+/app/snippet-index.generated.json
+/app/specialized-text.generated.json
