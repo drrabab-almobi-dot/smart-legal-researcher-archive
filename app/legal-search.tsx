@@ -7,7 +7,7 @@ import {
   type LegalDocument,
 } from "./legal-data";
 import ArchivePanel from "./archive-panel";
-import { legalSearchTerms, normalizeArabic, relevanceScore } from "@/lib/arabic-search";
+import { legalSearchTerms, normalizeArabic, relevanceScore, shouldShowSearchResults } from "@/lib/arabic-search";
 
 const quickSearches = ["التعويضات", "الاستحكام", "أحكام تجارية", "مبادئ إدارية"];
 const specialties = ["تجاري", "جزائي", "إداري", "عقاري", "أحوال شخصية", "عمالي", "ملكية فكرية", "إجراءات"];
@@ -227,7 +227,20 @@ export default function LegalSearch() {
         originatingAuthority: entry.item.originatingAuthority,
       },
     )).length;
-    const decisions = records.filter(({ item }) => item.type.includes("قرار")).length;
+    // These counters are intentionally disjoint. IP and administrative records
+    // belong to their dedicated collections and must not be counted again here.
+    const decisions = records.filter((entry) => matchesMainCollection(
+      "المبادئ والقرارات القضائية",
+      {
+        id: entry.item.id,
+        documentType: entry.item.type,
+        specialty: entry.specialty,
+        publishingAuthority: entry.item.publishingAuthority,
+        originatingAuthority: entry.item.originatingAuthority,
+        subject: entry.item.subject,
+        title: entry.item.title,
+      },
+    ) && entry.item.type.includes("قرار")).length;
     const principles = records.filter(({ item }) => item.type === "مبدأ قضائي").length;
     const circulars = records.filter(({ item }) => item.type.startsWith("تعميم")).length;
     const administrativePrecedents = records.filter((entry) => matchesMainCollection(
@@ -290,6 +303,9 @@ export default function LegalSearch() {
   };
 
   const results = useMemo(() => {
+    // The search page must stay empty until the beneficiary submits a query.
+    // Filters refine a search; they must not expose an arbitrary first page of cases.
+    if (!shouldShowSearchResults(submittedQuery)) return [];
     return searchCorpus.map((entry) => {
       const relevance = scoreIndexedDocument(entry, submittedQuery);
       return {
@@ -300,7 +316,7 @@ export default function LegalSearch() {
       };
     }).filter((item) => {
       if (item.granularity !== "case") return false;
-      const matchesQuery = !submittedQuery.trim() || item.relevance > 0;
+      const matchesQuery = item.relevance > 0;
       const matchesCollection = matchesMainCollection(collection, {
         id: item.id,
         documentType: item.type,
@@ -337,11 +353,11 @@ export default function LegalSearch() {
       const matchesIssuer = issuer === "الكل" || archivePublisher === issuer;
       const matchesOrigin = origin === "الكل" || item.originatingAuthority === origin;
       const matchesYear = year === "الكل" || item.hijriYear === year;
-      const archiveSpecialty = inferSpecialty(`${item.subject ?? ""} ${item.documentType}`);
+      const archiveSpecialty = item.specialty || inferSpecialty(`${item.subject ?? ""} ${item.documentType}`);
       const matchesCollection = matchesMainCollection(collection, {
         id: item.id,
         documentType: item.documentType,
-        specialty: item.specialty || archiveSpecialty,
+        specialty: archiveSpecialty,
         publishingAuthority: archivePublisher,
         originatingAuthority: item.originatingAuthority,
         subject: item.subject,

@@ -53,6 +53,11 @@ export function legalSearchTerms(query: string) {
   };
 }
 
+/** A beneficiary must submit a non-blank query before case results are exposed. */
+export function shouldShowSearchResults(query: string) {
+  return normalizeArabic(query).length > 0;
+}
+
 function containsWholeTerm(field: string, term: string) {
   if (!field || !term) return false;
   const padded = ` ${field.replace(/[./-]+/g, " ").replace(/\s+/g, " ")} `;
