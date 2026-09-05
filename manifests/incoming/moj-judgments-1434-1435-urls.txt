@@ -45,3 +45,4 @@ https://www.moj.gov.sa/ar-sa/ministry/versions/Documents/backupFiles3/AhkamGroup
 https://www.moj.gov.sa/ar-sa/ministry/versions/Documents/backupFiles3/AhkamGroup_1435/12.pdf
 https://www.moj.gov.sa/ar-sa/ministry/versions/Documents/backupFiles3/AhkamGroup_1435/13.pdf
 https://www.moj.gov.sa/ar-sa/ministry/versions/Documents/backupFiles3/AhkamGroup_1435/14.pdf
+# re-run collector 2026-09-05
