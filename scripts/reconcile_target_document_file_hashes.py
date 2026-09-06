@@ -97,8 +97,12 @@ def main() -> None:
             row["sha256"] = actual
         updated_targets.append((target, rows))
 
-    if target_total != len(collector_by_path):
-        raise ValueError(f"Identity coverage mismatch: target={target_total}, collector={len(collector_by_path)}")
+    # The collector may contain newly recovered review records that have not been
+    # admitted to the separate target-schema batch.  This reconciliation updates
+    # only pre-existing target rows; it must neither require target coverage of
+    # every collector record nor import a newly collected judgment implicitly.
+    if target_total > len(collector_by_path):
+        raise ValueError(f"Target has more file rows than collector records: target={target_total}, collector={len(collector_by_path)}")
     if not reconciliations:
         print(json.dumps({"valid": True, "records_reconciled": 0}, ensure_ascii=False))
         return

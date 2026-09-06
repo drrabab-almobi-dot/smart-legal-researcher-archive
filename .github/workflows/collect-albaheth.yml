@@ -1,57 +1,17 @@
-name: Collect Albaheth judgments
+name: Disabled — Albaheth bulk collection not permitted
 
 on:
   workflow_dispatch:
-    inputs:
-      start:
-        description: Start judgment ID
-        required: true
-        default: '1'
-      end:
-        description: End judgment ID
-        required: true
-        default: '20000'
-  push:
-    branches:
-      - collector-import
-    paths:
-      - '.github/triggers/albaheth-run.txt'
 
 permissions:
-  contents: write
-
-concurrency:
-  group: albaheth-collector
-  cancel-in-progress: false
+  contents: read
 
 jobs:
-  collect:
+  prohibited_bulk_extraction:
     runs-on: ubuntu-latest
-    timeout-minutes: 350
-    env:
-      START_ID: ${{ github.event.inputs.start || '1' }}
-      END_ID: ${{ github.event.inputs.end || '20000' }}
     steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: collector-import
-          fetch-depth: 1
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-      - run: pip install requests beautifulsoup4 lxml
-      - name: Collect public judgments
-        run: python scripts/collect_albaheth.py --start "$START_ID" --end "$END_ID" --delay 0.45
-      - name: Commit archive batch safely
+      - name: Record prohibition
         run: |
-          set -euo pipefail
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add archive-sources/albaheth manifests/albaheth
-          if git diff --cached --quiet; then exit 0; fi
-          git commit -m "collector: archive albaheth judgments ${START_ID}-${END_ID}"
-          for attempt in 1 2 3 4; do
-            git pull --rebase origin collector-import && git push origin collector-import && exit 0
-            sleep $((attempt * 8))
-          done
-          exit 1
+          echo 'Albaheth bulk extraction is disabled.'
+          echo 'The platform terms prohibit automated bulk data extraction.'
+          echo 'Use only authorized original URLs from the Ministry of Justice.'

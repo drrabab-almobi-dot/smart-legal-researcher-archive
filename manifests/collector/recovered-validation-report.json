@@ -2,13 +2,13 @@
   "status": "passed",
   "errors": [],
   "acquired_original_files": 24,
-  "review_records": 981,
+  "review_records": 70,
   "records_by_type": {
-    "حكم قضائي": 981
+    "حكم قضائي": 70
   },
   "standalone_pdf_files": 981,
-  "exact_duplicate_candidates": 0,
-  "reference_collision_rows": 7,
+  "exact_duplicate_candidates": 911,
+  "reference_collision_rows": 1,
   "duplicate_ids": 0,
   "duplicate_file_hashes": 0,
   "duplicate_text_hashes": 0,

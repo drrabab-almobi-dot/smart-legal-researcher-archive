@@ -1,0 +1,51 @@
+{
+  "schema_version": "1.0",
+  "performed_at": "2026-09-06T15:24:30+03:00",
+  "repository": "drrabab-almobi-dot/smart-legal-researcher-archive",
+  "branch": "collector-import",
+  "target": {
+    "database_project": "rabab-legal-ai-prod",
+    "project_ref": "psumrktqizfepbpddktb",
+    "table": "public.document_files"
+  },
+  "scope": {
+    "operation": "conditional SHA-256 and file_size reconciliation for regenerated standalone judgment PDFs",
+    "new_documents_created": 0,
+    "documents_deleted": 0,
+    "document_identity_changed": false,
+    "source_page_boundaries_changed": false,
+    "search_or_download_access_enabled": false
+  },
+  "preflight": {
+    "chunks": 14,
+    "payload_records": 1366,
+    "existing_document_files": 1366,
+    "old_hash_matches": 1366,
+    "new_hash_matches": 0,
+    "unexpected_hashes": 0,
+    "ready_to_apply": true
+  },
+  "application": {
+    "chunks": 14,
+    "updated_records": 1366,
+    "applied_as_expected": true,
+    "guard": "Each update required both the immutable document_file UUID and the prior SHA-256 value."
+  },
+  "post_application_verification": {
+    "chunks": 14,
+    "payload_records": 1366,
+    "existing_document_files": 1366,
+    "reconciled_records": 1366,
+    "mismatched_records": 0,
+    "verified": true,
+    "legal_documents": 1758,
+    "active_documents": 0,
+    "document_files": 1419,
+    "downloadable_files": 0,
+    "document_status_counts": {
+      "review": 1746,
+      "duplicate": 12
+    }
+  },
+  "result": "passed"
+}

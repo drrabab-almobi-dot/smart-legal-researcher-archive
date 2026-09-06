@@ -1,0 +1,52 @@
+{
+  "schema_version": "1.0",
+  "performed_at": "2026-09-06T16:01:12+03:00",
+  "repository": "drrabab-almobi-dot/smart-legal-researcher-archive",
+  "branch": "collector-import",
+  "scope": "private review-only archive metadata reconciliation",
+  "cause": "A concurrent collector workflow regenerated derived PDFs with a non-static PDF document identifier, changing SHA-256 values without changing document identity, source linkage, page span, size, or policy.",
+  "remediation": {
+    "derivation": "qpdf --static-id is now used for all newly produced Ministry-derived PDFs.",
+    "determinism_test": {
+      "source": "moj-judgments-1434-volume-1.pdf",
+      "page_span": "27-42",
+      "repeat_outputs_byte_identical": true
+    },
+    "target_schema_audit": "manifests/audit/moj-document-file-hash-reconciliation-20260906T1548+0300.ndjson"
+  },
+  "database_target": {
+    "project_ref": "psumrktqizfepbpddktb",
+    "table": "public.document_files",
+    "mutation": "conditional update of sha256 and file_size only"
+  },
+  "preflight": {
+    "chunks": 14,
+    "payload_records": 1366,
+    "existing_document_files": 1366,
+    "expected_old_hash_matches": 1366,
+    "already_new_hash_matches": 0,
+    "unexpected_hashes": 0,
+    "passed": true
+  },
+  "application": {
+    "updated_records": 1366,
+    "identity_changed": false,
+    "source_linkage_changed": false,
+    "page_boundaries_changed": false,
+    "document_created": false,
+    "document_deleted": false,
+    "search_or_download_access_enabled": false
+  },
+  "post_application_verification": {
+    "payload_records": 1366,
+    "existing_document_files": 1366,
+    "reconciled_records": 1366,
+    "mismatched_records": 0,
+    "passed": true,
+    "legal_documents": 1758,
+    "active_documents": 0,
+    "document_files": 1419,
+    "downloadable_files": 0
+  },
+  "result": "passed"
+}

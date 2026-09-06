@@ -94,7 +94,10 @@ def make_pdf(source: Path, start: int, end: int, destination: Path) -> None:
         temporary = Path(handle.name)
     try:
         result = subprocess.run(
-            ["qpdf", "--empty", "--pages", str(source), f"{start}-{end}", "--", str(temporary)],
+            [
+                "qpdf", "--static-id", "--empty", "--pages", str(source),
+                f"{start}-{end}", "--", str(temporary),
+            ],
             capture_output=True,
             text=True,
             errors="ignore",

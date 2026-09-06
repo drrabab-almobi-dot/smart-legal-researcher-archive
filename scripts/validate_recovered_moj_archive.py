@@ -172,7 +172,10 @@ def main() -> None:
             errors.append(f"duplicate_candidate_file:{row['candidate_id']}")
         if row["canonical_id"] not in all_known_ids:
             errors.append(f"duplicate_canonical_id:{row['candidate_id']}")
-        if row["match_method"] not in {"exact_file_sha256", "exact_normalized_text"}:
+        if row["match_method"] not in {
+            "exact_file_sha256", "exact_normalized_text",
+            "exact_source_page_span_and_normalized_text",
+        }:
             errors.append(f"duplicate_match_method:{row['candidate_id']}")
     for row in pending:
         if row["candidate_id"] not in set(ids):

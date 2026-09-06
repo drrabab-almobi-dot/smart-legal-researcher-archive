@@ -245,7 +245,10 @@ def make_case_pdf(source: Path, start: int, end: int, destination: Path) -> None
     with tempfile.NamedTemporaryFile(prefix="case-", suffix=".pdf", dir=destination.parent, delete=False) as handle:
         temp = Path(handle.name)
     try:
-        command = ["qpdf", "--empty", "--pages", str(source), f"{start}-{end}", "--", str(temp)]
+        command = [
+            "qpdf", "--static-id", "--empty", "--pages", str(source),
+            f"{start}-{end}", "--", str(temp),
+        ]
         result = subprocess.run(command, capture_output=True, text=True, errors="ignore", check=False)
         if result.returncode != 0 or not temp.exists() or temp.stat().st_size < 100:
             raise RuntimeError((result.stderr or result.stdout or "qpdf_failed").strip()[:500])

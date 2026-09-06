@@ -12,6 +12,16 @@ BASE = "https://albaheth.app"
 UA = "RababLegalArchive/1.0 (+archival research; respectful crawler)"
 
 
+def prohibited_bulk_extraction() -> None:
+    raise SystemExit(
+        "Disabled: Albaheth terms prohibit automated bulk data extraction and "
+        "commercial copying or redistribution without permission. Do not use this "
+        "script to collect judgments. Treat Albaheth as a discovery lead only, then "
+        "retrieve and verify each authorized original from its official Ministry of "
+        "Justice URL under the private archive workflow."
+    )
+
+
 def norm(s):
     return re.sub(r"\s+", " ", s or "").strip()
 
@@ -37,6 +47,7 @@ def load_existing(path):
 
 
 def main():
+    prohibited_bulk_extraction()
     ap = argparse.ArgumentParser()
     ap.add_argument("--start", type=int, required=True)
     ap.add_argument("--end", type=int, required=True)
