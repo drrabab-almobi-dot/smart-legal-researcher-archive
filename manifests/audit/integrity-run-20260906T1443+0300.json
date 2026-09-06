@@ -1,0 +1,64 @@
+{
+  "schema_version": "1.0",
+  "checked_at": "2026-09-06T14:43:10+03:00",
+  "repository": "drrabab-almobi-dot/smart-legal-researcher-archive",
+  "branch": "collector-import",
+  "synchronization": {
+    "status": "synchronized_fast_forward",
+    "head_before_sync": "3e64daa",
+    "head_after_sync": "df13d3f"
+  },
+  "manifest_hash_refresh": {
+    "trigger": "collector branch update regenerated 1366 standalone judgment PDFs while target document-file manifests still contained prior SHA-256 values",
+    "document_file_records_refreshed": 1366,
+    "document_identity_changed": false,
+    "source_page_boundaries_changed": false,
+    "new_hashes_unique": true,
+    "target_manifest_hash_validation": "passed",
+    "review_database_reconciliation_required": true,
+    "review_database_reconciliation_applied": false,
+    "generated_sql_chunks_not_applied": 14
+  },
+  "validation": {
+    "collector_validation": "passed",
+    "target_validation": "passed",
+    "case_pdfs": 1366,
+    "verified_case_records_ready_for_review": 191,
+    "case_records_pending_review": 1175,
+    "target_documents": 1758,
+    "target_document_files": 1419,
+    "document_file_hash_errors": 0,
+    "duplicate_ids": 0,
+    "duplicate_text_checksums": 0,
+    "page_range_mismatches": 0,
+    "legal_search_eligible_records": 0,
+    "public_downloads_enabled": false,
+    "platform_database_modified": false
+  },
+  "ndjson_audit": {
+    "records": 1366,
+    "duplicate_ids": 0,
+    "duplicate_text_checksums": 0,
+    "computed_fallback_content_hash_collisions": 14,
+    "interpretation": "The 14 fallback collisions are derived from title-only fallback where pending records have no full text. They are not confirmed duplicate IDs or text checksums and remain subject to the separate duplicate-review workflow."
+  },
+  "source_reconciliation": {
+    "declared_source_rows": 57,
+    "stored_checksum_match": 21,
+    "declared_original_not_physically_present": 35,
+    "same_name_checksum_mismatch": 1,
+    "mismatch_source": "moj-judgments-1434-volume-29.pdf",
+    "index_referenced_not_declared": 0,
+    "action": "No original was replaced, deleted, or inferred. Exceptions remain review evidence."
+  },
+  "manual_review": {
+    "confirmed_case_duplicates": 0,
+    "pending_case_reference_collisions": 4,
+    "historical_exact_binary_duplicates_retained": 48,
+    "metadata_incomplete_judgments": 1175,
+    "skipped_boundaries_without_sufficient_subject": 24,
+    "missing_original_sources": 5,
+    "quarantined_missing_original_records": 3700
+  },
+  "result": "passed_with_manual_review_and_database_reconciliation_pending"
+}

@@ -2,9 +2,6 @@
   "schema_version": "1.0",
   "batch_id": "moj-remaining-judgments-pending-review-001",
   "batch_status": "review",
-  "platform_import_performed": true,
-  "platform_import_mode": "review_only",
-  "platform_imported_records": 1175,
   "source_file_count": 17,
   "documents_detected": 1175,
   "documents_by_type": {

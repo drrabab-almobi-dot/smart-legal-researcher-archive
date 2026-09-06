@@ -1,0 +1,23 @@
+{
+  "files": [
+    {
+      "path": "/home/ubuntu/work/smart-legal-researcher-archive/indices/collector/case-register.ndjson",
+      "records": 191,
+      "errors": []
+    },
+    {
+      "path": "/home/ubuntu/work/smart-legal-researcher-archive/indices/collector/pending-case-review.ndjson",
+      "records": 1175,
+      "errors": []
+    }
+  ],
+  "errors": [],
+  "record_count": 1366,
+  "duplicate_ids": 0,
+  "duplicate_hashes": 0,
+  "computed_content_hash_duplicates": 14,
+  "document_types": {
+    "حكم قضائي": 1366
+  },
+  "valid": true
+}

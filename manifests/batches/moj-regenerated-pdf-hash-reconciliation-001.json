@@ -6,10 +6,7 @@
   "document_identity_changed": false,
   "source_page_boundaries_changed": false,
   "new_hashes_unique": true,
-  "database_reconciliation_required": false,
-  "database_reconciliation_performed": true,
-  "database_hashes_matched": 1366,
-  "database_hash_mismatches": 0,
+  "database_reconciliation_required": true,
   "chunks": 14,
   "max_chunk_bytes": 45979
 }

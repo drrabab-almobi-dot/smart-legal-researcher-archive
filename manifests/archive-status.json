@@ -2,7 +2,7 @@
   "schema_version": "2.0",
   "repository": "drrabab-almobi-dot/smart-legal-researcher-archive",
   "branch": "collector-import",
-  "as_of": "2026-09-06T12:32:48+03:00",
+  "as_of": "2026-09-06T14:43:10+03:00",
   "scope": "active_collection_and_review_only_platform_migration",
   "safety": {
     "raw_modified": false,
@@ -25,9 +25,9 @@
   },
   "repository_inventory": {
     "archive_remote_branches": 5,
-    "source_register_rows": 38,
+    "source_register_rows": 37,
     "collector_pending_source_rows": 20,
-    "canonical_pdf_originals_present": 22,
+    "canonical_pdf_originals_present": 21,
     "standalone_document_pdfs_present": 1419,
     "telegram_preview_html_snapshots": 67,
     "telegram_pending_attachment_metadata": 1085
@@ -102,6 +102,15 @@
     "database_import_eligible": 0,
     "legal_search_eligible": 0
   },
+  "source_reconciliation": {
+    "checked_at": "2026-09-06T14:43:10+03:00",
+    "declared_source_rows": 57,
+    "stored_checksum_match": 21,
+    "declared_original_not_physically_present": 35,
+    "same_name_checksum_mismatch": 1,
+    "index_referenced_not_declared": 0,
+    "action": "Preserve all exceptions as review evidence; do not replace or infer originals."
+  },
   "monitoring": {
     "requested": true,
     "schedule_created": true,
@@ -118,19 +127,28 @@
     "automatic_publication": false
   },
   "validation": {
+    "latest_integrity_check": "2026-09-06T14:43:10+03:00",
     "target_schema_validation": "passed",
     "ndjson_errors": 0,
     "standalone_file_hash_errors": 0,
     "orphan_document_files": 0,
     "page_range_mismatches": 0,
     "regenerated_pdf_hashes_reconciled": 1366,
-    "database_hash_mismatches_after_reconciliation": 0
+    "current_manifest_hash_refresh": {
+      "document_files": 1366,
+      "manifest_hashes_match_current_pdfs": true,
+      "document_identity_changed": false,
+      "source_page_boundaries_changed": false,
+      "database_reconciliation_required": true,
+      "database_reconciliation_applied": false
+    },
+    "historical_database_hash_mismatches_after_prior_reconciliation": 0
   },
   "blocking_or_manual_actions": [
-    "Choose the recurring monitoring frequency.",
     "Provide authorised Telegram Web access or a Telegram export containing original binary files.",
     "Recover the five declared source originals holding 3700 quarantined records.",
     "Review 1175 metadata-incomplete judgments and 96 pending duplicate candidates.",
-    "Obtain signed/original circular documents before enabling any circular for search or download."
+    "Obtain signed/original circular documents before enabling any circular for search or download.",
+    "Authorize a separate database change if the 1366 regenerated PDF hashes must also be reconciled in the review-only database."
   ]
 }
