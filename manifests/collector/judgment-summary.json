@@ -1,7 +1,14 @@
 {
-  "source_pdfs": 20,
-  "judgments": 1224,
-  "exact_duplicates": 0,
+  "source_pdfs_examined": 20,
+  "judgment_case_pdfs": 1366,
+  "verified_case_records_ready_for_review": 191,
+  "exact_duplicate_cases_excluded": 0,
+  "reference_collision_records_pending_review": 4,
+  "records_pending_metadata_review": 1175,
+  "sources_needing_boundary_review": 0,
   "failed_sources": 0,
-  "review_sources": 3
+  "index_path": "indices/collector/case-register.ndjson",
+  "pending_review_path": "indices/collector/pending-case-review.ndjson",
+  "pdf_directory": "extracted/collector-judgments-pdf",
+  "platform_import_modified": false
 }

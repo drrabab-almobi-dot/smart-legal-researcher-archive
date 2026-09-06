@@ -1,0 +1,33 @@
+{
+  "status": "passed",
+  "scope": "private_collector_only",
+  "platform_import_modified": false,
+  "verified_case_records_ready_for_review": 191,
+  "case_records_pending_review": 1175,
+  "case_pdfs": 1366,
+  "case_pdf_source_counts": {
+    "moj-judgments-1434-volume-1.pdf": 37,
+    "moj-judgments-1434-volume-11.pdf": 39,
+    "moj-judgments-1434-volume-13.pdf": 33,
+    "moj-judgments-1434-volume-2.pdf": 37,
+    "moj-judgments-1434-volume-5.pdf": 61,
+    "moj-judgments-1435-volume-1.pdf": 89,
+    "moj-judgments-1435-volume-10.pdf": 99,
+    "moj-judgments-1435-volume-11.pdf": 112,
+    "moj-judgments-1435-volume-12.pdf": 115,
+    "moj-judgments-1435-volume-13.pdf": 129,
+    "moj-judgments-1435-volume-2.pdf": 90,
+    "moj-judgments-1435-volume-3.pdf": 74,
+    "moj-judgments-1435-volume-4.pdf": 82,
+    "moj-judgments-1435-volume-5.pdf": 69,
+    "moj-judgments-1435-volume-6.pdf": 57,
+    "moj-judgments-1435-volume-7.pdf": 65,
+    "moj-judgments-1435-volume-8.pdf": 84,
+    "moj-judgments-1435-volume-9.pdf": 94
+  },
+  "pending_telegram_metadata_rows": 1061,
+  "telegram_records_admitted_to_search": 0,
+  "duplicate_ids": 0,
+  "duplicate_text_checksums": 0,
+  "errors": []
+}
