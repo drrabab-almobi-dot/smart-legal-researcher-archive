@@ -1,0 +1,52 @@
+{
+  "schema_version": "1.0",
+  "checked_at": "2026-09-06T13:48:38+03:00",
+  "repository": "drrabab-almobi-dot/smart-legal-researcher-archive",
+  "branch": "collector-import",
+  "run_type": "incremental_daily_monitor",
+  "source_scan": {
+    "telegram_channel": "robiai33",
+    "previous_attachment_metadata_rows": 1085,
+    "current_attachment_metadata_rows": 1085,
+    "new_attachment_metadata_rows": 0,
+    "previous_max_post_id": 1335,
+    "current_max_post_id": 1335,
+    "snapshot_pages_preserved": 67,
+    "pages_fetched_this_run": 1,
+    "stopped_reason": "reached_existing_inventory_boundary",
+    "binary_originals_downloaded": 0,
+    "records_admitted_to_legal_search": 0
+  },
+  "archive_validation": {
+    "collector_status": "passed",
+    "target_status": "passed",
+    "case_pdfs": 1366,
+    "verified_case_records_ready_for_review": 191,
+    "case_records_pending_review": 1175,
+    "pending_telegram_metadata_rows": 1085,
+    "duplicate_ids": 0,
+    "duplicate_text_checksums": 0,
+    "standalone_document_file_hash_errors": 0,
+    "page_range_mismatches": 0,
+    "platform_import_modified": false,
+    "public_search_eligible_records": 0,
+    "public_downloads_enabled": false
+  },
+  "exceptions": {
+    "confirmed_case_duplicates": 0,
+    "pending_case_reference_collisions": 4,
+    "historical_pending_duplicate_reviews": 48,
+    "skipped_case_boundaries_without_sufficient_subject": 24,
+    "missing_original_sources": 5,
+    "quarantined_records_missing_original": 3700,
+    "telegram_binary_download_blocker": "Public Telegram preview provides attachment metadata but no authorized binary download URL.",
+    "official_source_recovery": {
+      "sources_checked": 5,
+      "exact_hash_matches": 0,
+      "official_pages_found_without_download": 3,
+      "candidate_hash_mismatches": 2,
+      "accepted_originals": 0
+    }
+  },
+  "result": "no_new_sources_or_documents; no synthetic archive changes; only the run audit was recorded"
+}
