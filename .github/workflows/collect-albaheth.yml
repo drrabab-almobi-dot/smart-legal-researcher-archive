@@ -11,6 +11,11 @@ on:
         description: End judgment ID
         required: true
         default: '20000'
+  push:
+    branches:
+      - collector-import
+    paths:
+      - '.github/triggers/albaheth-run.txt'
 
 permissions:
   contents: write
@@ -23,6 +28,9 @@ jobs:
   collect:
     runs-on: ubuntu-latest
     timeout-minutes: 350
+    env:
+      START_ID: ${{ github.event.inputs.start || '1' }}
+      END_ID: ${{ github.event.inputs.end || '20000' }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -33,7 +41,7 @@ jobs:
           python-version: '3.12'
       - run: pip install requests beautifulsoup4 lxml
       - name: Collect public judgments
-        run: python scripts/collect_albaheth.py --start '${{ inputs.start }}' --end '${{ inputs.end }}' --delay 0.45
+        run: python scripts/collect_albaheth.py --start "$START_ID" --end "$END_ID" --delay 0.45
       - name: Commit archive batch safely
         run: |
           set -euo pipefail
@@ -41,7 +49,7 @@ jobs:
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add archive-sources/albaheth manifests/albaheth
           if git diff --cached --quiet; then exit 0; fi
-          git commit -m "collector: archive albaheth judgments ${{ inputs.start }}-${{ inputs.end }}"
+          git commit -m "collector: archive albaheth judgments ${START_ID}-${END_ID}"
           for attempt in 1 2 3 4; do
             git pull --rebase origin collector-import && git push origin collector-import && exit 0
             sleep $((attempt * 8))
