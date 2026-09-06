@@ -1,0 +1,96 @@
+{
+  "schema_version": "1.0",
+  "scope": "telegram_public_link_private_intake",
+  "telegram_channel": "robiai33",
+  "telegram_post_id": 1302,
+  "telegram_post_url": "https://t.me/robiai33/1302",
+  "linked_public_url": "https://1drv.ms/f/c/987dd35a60362521/IgDYccb6-z8bQbbBPyiFWFIDAccdvrtduwoZA0WOC48ofHo?e=Z84Va1",
+  "acquired_at": "2026-09-06T17:24:55+03:00",
+  "linked_files": [
+    {
+      "filename": "السوابق_نص_كامل.jsonl",
+      "bytes": 30383548,
+      "sha256": "c2e3726b12fd0f25d5c1d701b652630e34f8a04838e2f7c793a54c091cf1b260",
+      "mime_hint": "jsonl"
+    },
+    {
+      "filename": "تقرير_المعالجة.csv",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "mime_hint": "csv"
+    },
+    {
+      "filename": "فهرس_السوابق_القضائية.xlsx",
+      "bytes": 67581,
+      "sha256": "023e8dd649aa3e4ea645d2629d64a47c0425f43bf5daabb9f4b4f30fbb102674",
+      "mime_hint": "xlsx"
+    },
+    {
+      "filename": "محرك_السوابق.html",
+      "bytes": 31939894,
+      "sha256": "252157d027b63a226b959d0321b9961cfec22604516990a3aaa38b4bb712cab0",
+      "mime_hint": "html"
+    },
+    {
+      "filename": "مواصفة_محرك_السوابق.md",
+      "bytes": 8534,
+      "sha256": "d0a2f2a15d594cfbb11e9a57e7af7f55ed52406093f34cfbfb9120aa30ff94ae",
+      "mime_hint": "md"
+    }
+  ],
+  "nonempty_linked_files": 4,
+  "empty_linked_files": [
+    "تقرير_المعالجة.csv"
+  ],
+  "jsonl_records": 1213,
+  "unique_text_review_records": 906,
+  "jsonl_unique_source_filenames": 42,
+  "jsonl_source_filenames_matching_telegram_inventory": 38,
+  "jsonl_source_records_matching_telegram_inventory": 1093,
+  "extraction_patterns": {
+    "B": 1199,
+    "C — يحتاج نمطاً جديداً": 14
+  },
+  "field_completeness": {
+    "رقم القضية": 1008,
+    "تاريخ القضية (هـ)": 882,
+    "محكمة الدرجة الأولى": 939,
+    "نتيجة الاستئناف": 922
+  },
+  "xlsx": {
+    "sheets": [
+      {
+        "name": "فهرس السوابق",
+        "rows": 1214,
+        "columns": 11
+      },
+      {
+        "name": "تقرير الملفات",
+        "rows": 53,
+        "columns": 4
+      }
+    ],
+    "first_sheet_header": [
+      "#",
+      "الملف",
+      "نمط الاستخراج",
+      "الموضوع",
+      "رقم القضية",
+      "تاريخ القضية (هـ)",
+      "محكمة الدرجة الأولى",
+      "محكمة الاستئناف",
+      "نتيجة الاستئناف",
+      "مستوى الحجية",
+      "حالة السريان"
+    ]
+  },
+  "exact_text_duplicate_candidates": 307,
+  "reference_collision_candidates": 406,
+  "final_legal_records_added": 0,
+  "standalone_legal_pdfs_added": 0,
+  "search_eligible_records_added": 0,
+  "public_downloads_enabled": false,
+  "platform_database_modified": false,
+  "classification": "derived_research_outputs_and_provisional_precedent_leads",
+  "next_step": "acquire each named source PDF through an authorized Telegram export or official source, then verify SHA-256, type, metadata, and page boundaries"
+}

@@ -10,7 +10,7 @@
   },
   "index_referenced_source_names": 46,
   "index_referenced_not_declared": [],
-  "physical_source_file_names": 119,
+  "physical_source_file_names": 124,
   "physical_not_declared": [
     "README.md",
     "manifest.json",
@@ -85,7 +85,12 @@
     "unique-links-part-001.jsonl",
     "unique-links-part-002.jsonl",
     "unique-links-part-003.jsonl",
-    "unique-links-part-004.jsonl"
+    "unique-links-part-004.jsonl",
+    "السوابق_نص_كامل.jsonl",
+    "تقرير_المعالجة.csv",
+    "فهرس_السوابق_القضائية.xlsx",
+    "محرك_السوابق.html",
+    "مواصفة_محرك_السوابق.md"
   ],
   "rows": [
     {

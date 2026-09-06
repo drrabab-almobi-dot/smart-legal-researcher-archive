@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "/home/ubuntu/smart-legal-researcher-archive/indices/collector/pending-telegram-linked-precedents.ndjson",
+      "records": 906,
+      "errors": []
+    }
+  ],
+  "errors": [],
+  "record_count": 906,
+  "duplicate_ids": 0,
+  "duplicate_hashes": 0,
+  "computed_content_hash_duplicates": 0,
+  "document_types": {
+    "precedent_candidate": 906
+  },
+  "valid": true
+}

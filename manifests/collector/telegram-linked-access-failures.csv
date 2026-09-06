@@ -1,0 +1,2 @@
+attempted_at,source_url,source_type,status,reason,next_step
+2026-09-06T17:06:37+03:00,https://web.telegram.org/k/#@robiai33,Telegram Web through My Browser,blocked,"three browser attempts timed out after 25 seconds; no authenticated Telegram Web session or binary download URL was available","authorized Telegram Desktop export or a working authenticated Telegram Web session is required for channel attachment binaries"

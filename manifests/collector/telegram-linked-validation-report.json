@@ -1,0 +1,22 @@
+{
+  "status": "passed",
+  "errors": [],
+  "preserved_file_rows": 5,
+  "nonempty_preserved_files": 4,
+  "empty_preserved_files": [
+    "تقرير_المعالجة.csv"
+  ],
+  "raw_source_records": 1213,
+  "pending_unique_text_review_records": 906,
+  "unique_ids": 906,
+  "records_missing_required_fields": 0,
+  "bad_text_hashes": 0,
+  "policy_errors": 0,
+  "exact_text_duplicate_candidates": 307,
+  "reference_collision_candidates": 406,
+  "final_legal_records_added": 0,
+  "standalone_legal_pdfs_added": 0,
+  "search_eligible_records_added": 0,
+  "public_downloads_enabled": false,
+  "platform_database_modified": false
+}

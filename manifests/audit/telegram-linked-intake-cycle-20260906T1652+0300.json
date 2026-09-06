@@ -1,0 +1,79 @@
+{
+  "schema_version": "1.0",
+  "cycle_id": "telegram-linked-intake-20260906T1652+0300",
+  "branch": "collector-import",
+  "channel": "robiai33",
+  "channel_preview_url": "https://t.me/s/robiai33",
+  "linked_post": {
+    "post_id": 1302,
+    "post_url": "https://t.me/robiai33/1302",
+    "posted_at": "2026-08-28T22:15:24+00:00",
+    "linked_public_url": "https://1drv.ms/f/c/987dd35a60362521/IgDYccb6-z8bQbbBPyiFWFIDAccdvrtduwoZA0WOC48ofHo?e=Z84Va1"
+  },
+  "channel_inventory": {
+    "attachment_metadata_rows": 1085,
+    "attachment_binaries_downloaded_from_telegram": 0,
+    "reason": "public preview exposed metadata but no binary URLs; Telegram Web through My Browser timed out three times"
+  },
+  "linked_acquisition": {
+    "files_preserved": 5,
+    "nonempty_files": 4,
+    "empty_files": [
+      "تقرير_المعالجة.csv"
+    ],
+    "total_bytes": 62399557,
+    "preserved_path": "originals/telegram-linked/robiai33/post-1302-onedrive",
+    "file_register": "manifests/collector/telegram-linked-file-register.csv"
+  },
+  "derived_precedent_output": {
+    "raw_jsonl_records": 1213,
+    "excel_index_records": 1213,
+    "unique_text_review_records": 906,
+    "exact_text_duplicate_candidates": 307,
+    "reference_collision_candidates": 406,
+    "unique_source_filenames": 42,
+    "source_filenames_matching_telegram_inventory": 38,
+    "raw_records_matching_telegram_inventory": 1093,
+    "verified_page_ranges": 0,
+    "official_original_pdfs": 0
+  },
+  "final_legal_type_counts": {
+    "judgment": 0,
+    "deed": 0,
+    "circular": 0,
+    "decision": 0,
+    "judicial_principle": 0,
+    "precedent": 0,
+    "judicial_blog_or_index": 0
+  },
+  "provisional_counts": {
+    "precedent_candidate_unique_texts": 906,
+    "derived_indexes": 1,
+    "derived_search_engines": 1,
+    "methodology_documents": 1,
+    "empty_processing_reports": 1
+  },
+  "policy_gates": {
+    "search_eligible_records_added": 0,
+    "public_downloads_enabled": false,
+    "platform_imports_performed": 0,
+    "rababa_legal_ai_database_modified": false,
+    "main_branch_modified": false
+  },
+  "validation": {
+    "telegram_linked_validator": "passed",
+    "collector_validator": "passed",
+    "target_schema_validator": "passed",
+    "source_reconciliation": "passed_with_preexisting_declared_source_gaps",
+    "legal_archive_collector_ndjson_audit": "passed",
+    "git_diff_check": "passed",
+    "validation_report": "manifests/collector/telegram-linked-validation-report.json",
+    "ndjson_audit": "manifests/audit/telegram-linked-full-ndjson-audit-20260906T1719+0300.json"
+  },
+  "manual_actions": [
+    "Export the relevant @robiai33 attachment binaries through an authorized Telegram Desktop or functioning authenticated Telegram Web session.",
+    "Acquire the 42 named source PDFs, verify official provenance, SHA-256, legal type, metadata, and page boundaries before standalone PDF creation.",
+    "Ask the OneDrive owner to re-upload تقرير_المعالجة.csv if it was intended to contain data; two downloads produced a zero-byte file.",
+    "Review four source filename variants that did not match the Telegram inventory exactly."
+  ]
+}

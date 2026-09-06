@@ -6,3 +6,5 @@
 *.jpg filter=lfs diff=lfs merge=lfs -text
 *.jpeg filter=lfs diff=lfs merge=lfs -text
 originals/telegram-preview/** -text
+originals/telegram-linked/**/*.jsonl filter=lfs diff=lfs merge=lfs -text
+originals/telegram-linked/**/*.html filter=lfs diff=lfs merge=lfs -text
