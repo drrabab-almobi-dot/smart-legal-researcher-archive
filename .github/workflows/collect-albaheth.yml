@@ -1,0 +1,49 @@
+name: Collect Albaheth judgments
+
+on:
+  workflow_dispatch:
+    inputs:
+      start:
+        description: Start judgment ID
+        required: true
+        default: '1'
+      end:
+        description: End judgment ID
+        required: true
+        default: '20000'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: albaheth-collector
+  cancel-in-progress: false
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: collector-import
+          fetch-depth: 1
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install requests beautifulsoup4 lxml
+      - name: Collect public judgments
+        run: python scripts/collect_albaheth.py --start '${{ inputs.start }}' --end '${{ inputs.end }}' --delay 0.45
+      - name: Commit archive batch safely
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add archive-sources/albaheth manifests/albaheth
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "collector: archive albaheth judgments ${{ inputs.start }}-${{ inputs.end }}"
+          for attempt in 1 2 3 4; do
+            git pull --rebase origin collector-import && git push origin collector-import && exit 0
+            sleep $((attempt * 8))
+          done
+          exit 1
