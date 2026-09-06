@@ -1,0 +1,92 @@
+{
+  "schema_version": "1.0",
+  "checked_at": "2026-09-06T12:32:48+03:00",
+  "branch": "collector-import",
+  "archive_validation": {
+    "status": "passed",
+    "target_documents": 1758,
+    "documents_by_type": {
+      "judgment": 1366,
+      "circular": 339,
+      "decision": 36,
+      "principle": 17,
+      "precedent": 0,
+      "deed": 0
+    },
+    "documents_by_status": {
+      "review": 1746,
+      "duplicate": 12
+    },
+    "standalone_document_files": 1419,
+    "file_hash_errors": 0,
+    "duplicate_ids": 0,
+    "duplicate_text_checksums": 0,
+    "search_eligible_records": 0,
+    "public_downloads_enabled": 0
+  },
+  "quarantine": {
+    "missing_original_records": 3700,
+    "by_type": {
+      "judgment": 13,
+      "precedent": 1364,
+      "principle": 2323
+    },
+    "missing_original_sources": 5
+  },
+  "telegram_monitoring": {
+    "channel": "robiai33",
+    "baseline_attachment_metadata_rows": 1061,
+    "current_attachment_metadata_rows": 1085,
+    "new_attachment_metadata_rows": 24,
+    "new_post_id_range": [1312, 1335],
+    "new_by_provisional_type": {
+      "unclassified_legal_material": 12,
+      "precedent_candidate": 4,
+      "decision_candidate": 1,
+      "blog_or_index": 2,
+      "regulation_or_law_candidate": 2,
+      "circular_candidate": 3
+    },
+    "original_binaries_downloaded": 0,
+    "official_sources_verified": 0,
+    "records_admitted_to_search": 0,
+    "snapshot_pages_preserved_for_this_increment": 2,
+    "inventory_stop_reason": "reached_existing_inventory_boundary"
+  },
+  "automatic_monitoring": {
+    "status": "active",
+    "frequency": "daily",
+    "interval_seconds": 86400,
+    "timezone": "Etc/GMT-3",
+    "first_scheduled_run_expected_after": "2026-09-07T10:14:08+03:00",
+    "automatic_platform_database_write": false,
+    "automatic_publication": false
+  },
+  "researcher_interface": {
+    "url": "https://smart-legal-researcher.s3t3-9306.chatgpt.site/",
+    "page_http_status": 200,
+    "page_time_to_first_byte_seconds": 9.752373,
+    "page_total_download_seconds": 10.963673,
+    "headless_navigation_duration_seconds": 11.8389,
+    "embedded_search_exact_match_test": "passed",
+    "known_archive_document_number_33252287": "not_returned",
+    "known_archive_circular_number_12/73/T": "not_returned",
+    "archive_query_api_status": 401,
+    "archive_summary_api": {
+      "files": 0,
+      "documents": 0,
+      "total": 0
+    },
+    "archive_widget_counts": {
+      "saved_files": 0,
+      "indexed_files": 0,
+      "official_files": 0
+    },
+    "conclusion": "partially_responsive_but_not_connected_to_the_current_private_archive"
+  },
+  "domain_recommendation": {
+    "recommended_subdomain": "researcher.rabablegal.com",
+    "connect_now": false,
+    "reason": "A custom domain stabilizes the address but does not preserve documents. Connect it after archive authentication, counters, and the search data source are corrected."
+  }
+}

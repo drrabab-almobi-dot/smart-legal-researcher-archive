@@ -2,7 +2,7 @@
   "schema_version": "2.0",
   "repository": "drrabab-almobi-dot/smart-legal-researcher-archive",
   "branch": "collector-import",
-  "as_of": "2026-09-06T10:02:00+03:00",
+  "as_of": "2026-09-06T12:32:48+03:00",
   "scope": "active_collection_and_review_only_platform_migration",
   "safety": {
     "raw_modified": false,
@@ -29,8 +29,8 @@
     "collector_pending_source_rows": 20,
     "canonical_pdf_originals_present": 22,
     "standalone_document_pdfs_present": 1419,
-    "telegram_preview_html_snapshots": 65,
-    "telegram_pending_attachment_metadata": 1061
+    "telegram_preview_html_snapshots": 67,
+    "telegram_pending_attachment_metadata": 1085
   },
   "target_database": {
     "project": "rabab-legal-ai-prod",
@@ -110,6 +110,10 @@
     "interval_seconds": 86400,
     "timezone": "Etc/GMT-3",
     "first_run_expected_after": "2026-09-07T10:14:08+03:00",
+    "latest_manual_check": "2026-09-06T12:32:48+03:00",
+    "new_attachment_metadata_rows_detected": 24,
+    "new_original_binaries_downloaded": 0,
+    "latest_check_validation": "passed",
     "automatic_platform_database_write": false,
     "automatic_publication": false
   },

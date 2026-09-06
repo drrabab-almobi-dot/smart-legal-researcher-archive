@@ -13,6 +13,7 @@ import csv
 import hashlib
 import json
 import re
+import subprocess
 import time
 from dataclasses import dataclass
 from html import unescape
@@ -69,23 +70,47 @@ def sha256_bytes(value: bytes) -> str:
 
 def classification(filename: str) -> str:
     filename = filename.lower()
-    if "فهرس" in filename or "index" in filename:
+    if "فهرس" in filename or "مدونة" in filename or "index" in filename:
         return "فهرس/مدونة مرجعية غير مستقلة"
     if "تعميم" in filename:
         return "تعميم مرشح غير متحقق"
+    if "سابقة" in filename or "سوابق" in filename:
+        return "سابقة قضائية مرشحة غير متحققة"
+    if "مبدأ" in filename or "مبادئ" in filename or "مبادي" in filename:
+        return "مبدأ قضائي مرشح غير متحقق"
     if "قرار" in filename:
         return "قرار مرشح غير متحقق"
     if "صك" in filename:
         return "صك مرشح غير متحقق"
+    if "لائحة" in filename or "لائحة" in filename or "نظام" in filename:
+        return "لائحة/نظام مرشح غير متحقق"
     if "حكم" in filename or "قضائ" in filename:
-        return "حكم/مبدأ مرشح غير متحقق"
+        return "حكم قضائي مرشح غير متحقق"
     return "مادة قانونية غير مصنفة وغير متحققة"
 
 
 def fetch(url: str) -> bytes:
     request = Request(url, headers=HEADERS)
-    with urlopen(request, timeout=60) as response:
-        return response.read()
+    errors: list[str] = []
+    for attempt in range(1, 4):
+        try:
+            with urlopen(request, timeout=60) as response:
+                return response.read()
+        except Exception as exc:
+            errors.append(f"urllib attempt {attempt}: {type(exc).__name__}: {exc}")
+            time.sleep(attempt)
+    result = subprocess.run(
+        [
+            "curl", "--fail", "--silent", "--show-error", "--location",
+            "--connect-timeout", "20", "--max-time", "60",
+            "--user-agent", HEADERS["User-Agent"], url,
+        ],
+        capture_output=True,
+    )
+    if result.returncode == 0:
+        return result.stdout
+    errors.append(f"curl: {result.stderr.decode('utf-8', errors='replace').strip()}")
+    raise RuntimeError(f"Unable to fetch {url}: {'; '.join(errors)}")
 
 
 def parse(raw: str) -> list[Attachment]:
@@ -136,31 +161,77 @@ def main() -> None:
     PENDING.parent.mkdir(parents=True, exist_ok=True)
 
     all_attachments: dict[tuple[int, str], Attachment] = {}
+    if POST_REGISTER.exists():
+        with POST_REGISTER.open(encoding="utf-8") as handle:
+            for row in csv.DictReader(handle):
+                attachment = Attachment(
+                    post_id=int(row["post_id"]),
+                    post_url=row["post_url"],
+                    filename=row["filename_as_published"],
+                    display_size=row["display_size"],
+                    posted_at=row["posted_at"],
+                    forwarded_from_name=row["forwarded_from_name"],
+                    forwarded_from_url=row["forwarded_from_url"],
+                )
+                all_attachments[(attachment.post_id, attachment.filename)] = attachment
+    existing_max_post_id = max((item.post_id for item in all_attachments.values()), default=None)
+    summary_path = MANIFEST_DIR / "telegram-inventory-summary.json"
     snapshots: list[dict[str, object]] = []
+    if summary_path.exists():
+        try:
+            previous_report = json.loads(summary_path.read_text(encoding="utf-8"))
+            snapshots = list(previous_report.get("snapshots", []))
+        except (json.JSONDecodeError, OSError, TypeError):
+            snapshots = []
+    known_snapshot_hashes = {
+        snapshot.get("sha256") for snapshot in snapshots if snapshot.get("sha256")
+    }
+    existing_snapshots: dict[str, Path] = {}
+    for existing_path in sorted(RAW_DIR.glob("*.html")):
+        existing_snapshots.setdefault(sha256_bytes(existing_path.read_bytes()), existing_path)
     before: int | None = None
     seen_minimums: set[int] = set()
     stopped_reason = "max_pages_reached"
+    pages_fetched_this_run = 0
 
     for page_no in range(1, args.max_pages + 1):
         query = "" if before is None else "?" + urlencode({"before": before})
         url = BASE_URL + query
         raw_bytes = fetch(url)
+        pages_fetched_this_run += 1
         raw_text = raw_bytes.decode("utf-8", errors="replace")
-        filename = f"page-{page_no:04d}" + ("-latest" if before is None else f"-before-{before}") + ".html"
-        snapshot_path = RAW_DIR / filename
-        snapshot_path.write_bytes(raw_bytes)
+        raw_sha256 = sha256_bytes(raw_bytes)
         parsed = parse(raw_text)
         post_ids = message_ids(raw_text)
-        snapshots.append({
-            "url": url,
-            "file": snapshot_path.relative_to(ROOT).as_posix(),
-            "bytes": len(raw_bytes),
-            "sha256": sha256_bytes(raw_bytes),
-            "attachment_count": len(parsed),
-            "post_ids": post_ids,
-        })
         for attachment in parsed:
             all_attachments[(attachment.post_id, attachment.filename)] = attachment
+        contains_new_post = existing_max_post_id is None or any(
+            post_id > existing_max_post_id for post_id in post_ids
+        )
+        if existing_max_post_id is not None and post_ids and not contains_new_post:
+            stopped_reason = "reached_existing_inventory_boundary"
+            break
+        filename = f"page-{page_no:04d}" + ("-latest" if before is None else f"-before-{before}") + ".html"
+        snapshot_path = RAW_DIR / filename
+        if raw_sha256 in existing_snapshots:
+            snapshot_path = existing_snapshots[raw_sha256]
+        elif snapshot_path.exists() and sha256_bytes(snapshot_path.read_bytes()) != raw_sha256:
+            snapshot_path = RAW_DIR / f"snapshot-{raw_sha256}.html"
+            snapshot_path.write_bytes(raw_bytes)
+            existing_snapshots[raw_sha256] = snapshot_path
+        else:
+            snapshot_path.write_bytes(raw_bytes)
+            existing_snapshots[raw_sha256] = snapshot_path
+        if raw_sha256 not in known_snapshot_hashes:
+            snapshots.append({
+                "url": url,
+                "file": snapshot_path.relative_to(ROOT).as_posix(),
+                "bytes": len(raw_bytes),
+                "sha256": raw_sha256,
+                "attachment_count": len(parsed),
+                "post_ids": post_ids,
+            })
+            known_snapshot_hashes.add(raw_sha256)
         if not post_ids:
             stopped_reason = "no_document_posts_returned"
             break
@@ -220,6 +291,8 @@ def main() -> None:
         "channel": CHANNEL,
         "channel_preview_url": BASE_URL,
         "fetched_preview_pages": len(snapshots),
+        "pages_fetched_this_run": pages_fetched_this_run,
+        "snapshot_pages_preserved": len(snapshots),
         "attachment_metadata_rows": len(ordered),
         "snapshots": snapshots,
         "stopped_reason": stopped_reason,
@@ -227,7 +300,7 @@ def main() -> None:
         "records_admitted_to_legal_search_index": 0,
         "next_step": "authorised Telegram binary download followed by SHA-256, file integrity, type, reference, and official-source verification",
     }
-    (MANIFEST_DIR / "telegram-inventory-summary.json").write_text(
+    summary_path.write_text(
         json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
     )
     print(json.dumps(report, ensure_ascii=False, indent=2))
