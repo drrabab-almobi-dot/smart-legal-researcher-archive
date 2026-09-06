@@ -100,8 +100,14 @@
   },
   "monitoring": {
     "requested": true,
-    "schedule_created": false,
-    "pending_decision": "once_daily_vs_twice_daily_vs_persistent_low_latency"
+    "schedule_created": true,
+    "status": "active",
+    "frequency": "daily",
+    "interval_seconds": 86400,
+    "timezone": "Etc/GMT-3",
+    "first_run_expected_after": "2026-09-07T10:14:08+03:00",
+    "automatic_platform_database_write": false,
+    "automatic_publication": false
   },
   "validation": {
     "target_schema_validation": "passed",
