@@ -95,6 +95,10 @@
       "principle": 2323
     },
     "missing_declared_original_files": 5,
+    "official_source_recovery_checks": 5,
+    "exact_sha256_matches": 0,
+    "official_pages_without_download": 3,
+    "official_candidate_hash_mismatches": 2,
     "database_import_eligible": 0,
     "legal_search_eligible": 0
   },

@@ -1,0 +1,89 @@
+{
+  "schema_version": "1.0",
+  "checked_at": "2026-09-06",
+  "policy": "official_sources_only_and_exact_sha256_required",
+  "summary": {
+    "sources_checked": 5,
+    "exact_hash_matches": 0,
+    "official_page_found_no_download": 3,
+    "official_candidate_hash_mismatch": 2,
+    "accepted_originals": 0,
+    "quarantine_released_records": 0
+  },
+  "sources": [
+    {
+      "filename": "bog-administrative-precedents-1402-1436.pdf",
+      "status": "official_page_found_no_download",
+      "issuing_authority": "ديوان المظالم السعودي",
+      "expected_sha256": "ee004d2aa18ea1fe026a0ba3fd63b47dcec4190cca0216308c69eba5fc007b4a",
+      "expected_bytes": 5146695,
+      "expected_pages": 368,
+      "official_page_url": "https://www.bog.gov.sa/knowledge-center/JudicialBlogs/A1402-1436/Pages/default.aspx",
+      "evidence_urls": [
+        "https://www.bog.gov.sa/knowledge-center/JudicialBlogs/A1402-1436/Pages/default.aspx",
+        "https://www.spa.gov.sa/2072644",
+        "https://my.gov.sa/ar/services/25394",
+        "https://www.bog.gov.sa/CaseLaw/Pages/SearchCaseLaw.aspx"
+      ],
+      "finding": "The exact official publication title is confirmed, but the official service exposes browsing/search rather than a downloadable complete PDF. The official announcement reports 1336 precedents, while the repository index contains 1317 records; the difference remains under review."
+    },
+    {
+      "filename": "commercial-contract-precedents.pdf",
+      "status": "official_page_found_no_download",
+      "issuing_authority": "الجمعية الفقهية السعودية",
+      "expected_sha256": "52097af8c245c3680792e410f1f50d18a3076ea116a3160e461b142da3c04c32",
+      "expected_bytes": 17679455,
+      "expected_pages": 633,
+      "official_page_url": "https://alfiqhia.org.sa/researches/page/1038",
+      "direct_download_url": "https://alfiqhia.org.sa/researches/page/1038?download=1",
+      "evidence_urls": [
+        "https://alfiqhia.org.sa/researches/page/1038",
+        "https://alfiqhia.org.sa/news/page/867"
+      ],
+      "finding": "The official publication is confirmed. The announced printed length is 634 pages, while the source register states 633 pages. The exposed download parameter returned HTML rather than a PDF, so no candidate hash was accepted."
+    },
+    {
+      "filename": "higher-judiciary-principles-1391-1437.pdf",
+      "status": "official_page_found_no_download",
+      "issuing_authority": "وزارة العدل السعودية",
+      "expected_sha256": "4b392bee12a15c620c0b6db184229d5271f6cb2ffeb7306a4a05d93b4fc41a7a",
+      "expected_bytes": 13557831,
+      "expected_pages": 648,
+      "official_page_url": "https://www.spa.gov.sa/w691068",
+      "evidence_urls": [
+        "https://www.spa.gov.sa/w691068",
+        "https://www.spa.gov.sa/1768698",
+        "https://www.moj.gov.sa/ar/Ministry/Departments/ResearchCenter/Pages/Documents.aspx"
+      ],
+      "finding": "Official announcements confirm the 1391-1437 collection and 2323 principles, but no official downloadable PDF candidate was located."
+    },
+    {
+      "filename": "ip-judgments-1446.pdf",
+      "status": "official_candidate_hash_mismatch",
+      "issuing_authority": "الهيئة السعودية للملكية الفكرية",
+      "expected_sha256": "82e80f464ccea3a427eea760db4b69608fa724f65142d33a5b545f966c23b6bb",
+      "expected_bytes": 526199,
+      "expected_pages": 18,
+      "official_page_url": "https://www.saip.gov.sa/ar/media-center/media-library/media-center/1956",
+      "candidate_url": "https://externalportal-backend-production.saip.gov.sa/sites/default/files/2026-04/%D9%82%D8%B1%D8%A7%D8%B1%D8%A7%D8%AA%20%D9%84%D8%AC%D9%86%D8%A9%20%D8%A7%D9%84%D9%86%D8%B8%D8%B1%20%D9%81%D9%8A%20%D8%AF%D8%B9%D8%A7%D9%88%D9%89%20%D8%A8%D8%B1%D8%A7%D8%A1%D8%A7%D8%AA%20%D8%A7%D9%84%D8%A7%D8%AE%D8%AA%D8%B1%D8%A7%D8%B9%20-%202026%D9%85_0.pdf",
+      "candidate_sha256": "3275189cf4b229f2e1d9a6ebe65710a65f72c16b0ac7ee05679d54dbb890b68a",
+      "candidate_bytes": 8168115,
+      "candidate_pages": 92,
+      "finding": "The first-party SAIP PDF is a different patent-disputes publication. It was rejected and did not replace the missing 18-page source."
+    },
+    {
+      "filename": "uncitral-arbitration-precedents-2024.pdf",
+      "status": "official_candidate_hash_mismatch",
+      "issuing_authority": "لجنة الأمم المتحدة للقانون التجاري الدولي",
+      "expected_sha256": "c42fd20e730a04021815021e0c0df0646e318ef5f346c85d0c0acb17463ff002",
+      "expected_bytes": 642869,
+      "expected_pages": 9,
+      "official_page_url": "https://documents.un.org/symbol-explorer?s=A/CN.9/SER.C/ABSTRACTS/231",
+      "candidate_url": "https://documents.un.org/doc/undoc/gen/v24/005/92/pdf/v2400592.pdf",
+      "candidate_sha256": "a71667d7565b0e85f49c3a618e52b64d88e775a4eeb6b76d65a003656d5f208f",
+      "candidate_bytes": 317842,
+      "candidate_pages": 9,
+      "finding": "The official January 2024 CLOUT abstracts PDF has the same page count but a different size and SHA-256. Official 2024 issues 232-236 were also checked; none matched, so no replacement was accepted."
+    }
+  ]
+}
