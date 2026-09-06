@@ -1,0 +1,44 @@
+{
+  "valid": true,
+  "errors": [],
+  "target_documents": 1758,
+  "documents_by_type": {
+    "circular": 339,
+    "decision": 36,
+    "judgment": 1366,
+    "principle": 17
+  },
+  "documents_by_status": {
+    "duplicate": 12,
+    "review": 1746
+  },
+  "document_files": 1419,
+  "document_file_hash_errors": 0,
+  "quarantined_missing_original_records": 3700,
+  "quarantined_by_type": {
+    "judgment": 13,
+    "precedent": 1364,
+    "principle": 2323
+  },
+  "missing_original_sources": 5,
+  "batch_summary": {
+    "saip": {
+      "documents": 53,
+      "document_files": 53
+    },
+    "moj_verified": {
+      "documents": 191,
+      "document_files": 191
+    },
+    "moj_pending": {
+      "documents": 1175,
+      "document_files": 1175
+    },
+    "moj_circulars": {
+      "documents": 339,
+      "document_files": 0
+    }
+  },
+  "legal_search_eligible": 0,
+  "public_downloads_enabled": 0
+}

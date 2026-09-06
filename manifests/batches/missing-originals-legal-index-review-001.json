@@ -1,0 +1,16 @@
+{
+  "schema_version": "1.0",
+  "batch_id": "missing-originals-legal-index-review-001",
+  "batch_status": "review",
+  "records": 3700,
+  "records_by_type": {
+    "judgment": 13,
+    "precedent": 1364,
+    "principle": 2323
+  },
+  "missing_declared_originals": 5,
+  "database_import_eligible": 0,
+  "legal_search_eligible": 0,
+  "standalone_document_files": 0,
+  "notes": "Quarantined until each declared original is recovered and its registered SHA-256 is verified."
+}

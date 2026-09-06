@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0",
+  "batch_id": "moj-regenerated-pdf-hash-reconciliation-001",
+  "reason": "concurrent_collector_workflow_regenerated_derived_pdfs",
+  "document_file_records": 1366,
+  "document_identity_changed": false,
+  "source_page_boundaries_changed": false,
+  "new_hashes_unique": true,
+  "database_reconciliation_required": false,
+  "database_reconciliation_performed": true,
+  "database_hashes_matched": 1366,
+  "database_hash_mismatches": 0,
+  "chunks": 14,
+  "max_chunk_bytes": 45979
+}

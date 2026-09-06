@@ -1,0 +1,21 @@
+{
+  "schema_version": "1.0",
+  "batch_id": "moj-circular-metadata-review-001",
+  "batch_status": "review",
+  "platform_import_performed": true,
+  "platform_import_mode": "review_only",
+  "platform_imported_records": 339,
+  "source_file_count": 1,
+  "metadata_records": 339,
+  "documents_by_type": {
+    "circular": 339
+  },
+  "exact_duplicates": 12,
+  "duplicate_candidates": 51,
+  "original_document_files": 0,
+  "standalone_document_files": 0,
+  "originals_missing": 339,
+  "legal_search_eligible": 0,
+  "public_downloads_enabled": false,
+  "failed_count": 0
+}

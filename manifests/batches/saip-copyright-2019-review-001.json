@@ -1,0 +1,23 @@
+{
+  "schema_version": "1.0",
+  "batch_id": "saip-copyright-2019-review-001",
+  "batch_status": "review",
+  "platform_import_performed": true,
+  "platform_import_mode": "review_only",
+  "platform_imported_records": 53,
+  "public_downloads_enabled": false,
+  "source_file_sha256": "a3a7f0680679198eaf58f7cc4a626aae60dd1d904dfbd2b4d3e2b846028088f2",
+  "source_file_count": 1,
+  "documents_detected": 53,
+  "documents_by_type": {
+    "decision": 36,
+    "principle": 17
+  },
+  "standalone_document_files": 53,
+  "duplicate_candidates": 53,
+  "review_count": 53,
+  "legal_search_eligible": 0,
+  "failed_count": 0,
+  "boundary_adjustments": 1,
+  "notes": "Generated from recorded source page ranges. Held for source and duplicate reconciliation."
+}

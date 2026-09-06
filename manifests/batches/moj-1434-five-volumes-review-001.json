@@ -1,0 +1,26 @@
+{
+  "schema_version": "1.0",
+  "batch_id": "moj-1434-five-volumes-review-001",
+  "batch_status": "review",
+  "platform_import_performed": true,
+  "platform_import_mode": "review_only",
+  "platform_imported_records": 191,
+  "source_file_count": 5,
+  "documents_detected": 191,
+  "documents_by_type": {
+    "judgment": 191
+  },
+  "documents_by_source_file": {
+    "moj-judgments-1434-volume-1.pdf": 34,
+    "moj-judgments-1434-volume-11.pdf": 36,
+    "moj-judgments-1434-volume-13.pdf": 33,
+    "moj-judgments-1434-volume-2.pdf": 34,
+    "moj-judgments-1434-volume-5.pdf": 54
+  },
+  "standalone_document_files": 191,
+  "field_review_records": 191,
+  "legal_search_eligible": 0,
+  "public_downloads_enabled": false,
+  "failed_count": 0,
+  "notes": "Questionable court/circuit values were not propagated; all rows remain review-only."
+}

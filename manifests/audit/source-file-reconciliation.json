@@ -1,0 +1,792 @@
+{
+  "schema_version": "1.0",
+  "scope": "private_archive_pre_migration_audit",
+  "declared_source_rows": 57,
+  "declared_source_names": 56,
+  "reconciliation_counts": {
+    "declared_original_not_physically_present": 35,
+    "same_name_checksum_mismatch": 1,
+    "stored_checksum_match": 21
+  },
+  "index_referenced_source_names": 46,
+  "index_referenced_not_declared": [],
+  "physical_source_file_names": 93,
+  "physical_not_declared": [
+    "README.md",
+    "manifest.json",
+    "page-0001-latest.html",
+    "page-0002-before-1292.html",
+    "page-0003-before-1272.html",
+    "page-0004-before-1251.html",
+    "page-0005-before-1229.html",
+    "page-0006-before-1208.html",
+    "page-0007-before-1188.html",
+    "page-0008-before-1168.html",
+    "page-0009-before-1148.html",
+    "page-0010-before-1128.html",
+    "page-0011-before-1108.html",
+    "page-0012-before-1086.html",
+    "page-0013-before-1066.html",
+    "page-0014-before-1041.html",
+    "page-0015-before-1021.html",
+    "page-0016-before-1001.html",
+    "page-0017-before-981.html",
+    "page-0018-before-954.html",
+    "page-0019-before-934.html",
+    "page-0020-before-914.html",
+    "page-0021-before-893.html",
+    "page-0022-before-873.html",
+    "page-0023-before-853.html",
+    "page-0024-before-833.html",
+    "page-0025-before-811.html",
+    "page-0026-before-791.html",
+    "page-0027-before-771.html",
+    "page-0028-before-751.html",
+    "page-0029-before-731.html",
+    "page-0030-before-711.html",
+    "page-0031-before-691.html",
+    "page-0032-before-671.html",
+    "page-0033-before-650.html",
+    "page-0034-before-629.html",
+    "page-0035-before-601.html",
+    "page-0036-before-581.html",
+    "page-0037-before-561.html",
+    "page-0038-before-541.html",
+    "page-0039-before-521.html",
+    "page-0040-before-501.html",
+    "page-0041-before-481.html",
+    "page-0042-before-461.html",
+    "page-0043-before-441.html",
+    "page-0044-before-421.html",
+    "page-0045-before-401.html",
+    "page-0046-before-381.html",
+    "page-0047-before-361.html",
+    "page-0048-before-341.html",
+    "page-0049-before-321.html",
+    "page-0050-before-301.html",
+    "page-0051-before-281.html",
+    "page-0052-before-261.html",
+    "page-0053-before-241.html",
+    "page-0054-before-216.html",
+    "page-0055-before-196.html",
+    "page-0056-before-176.html",
+    "page-0057-before-156.html",
+    "page-0058-before-130.html",
+    "page-0059-before-110.html",
+    "page-0060-before-90.html",
+    "page-0061-before-70.html",
+    "page-0062-before-50.html",
+    "page-0063-before-30.html",
+    "page-0064-before-10.html",
+    "page-0065-before-1.html",
+    "unique-links-part-000.jsonl",
+    "unique-links-part-001.jsonl",
+    "unique-links-part-002.jsonl",
+    "unique-links-part-003.jsonl",
+    "unique-links-part-004.jsonl"
+  ],
+  "rows": [
+    {
+      "registry": "source-register",
+      "source_file": "banking-finance-principles.pdf",
+      "declared_sha256": "db834730c09f311d005e52cc2bc327807288f1632b0ca0ee62a707e5dcc4e459",
+      "declared_bytes": 1863518,
+      "document_type": "مدونة مبادئ",
+      "declared_status": "مرجع مبادئ",
+      "reconciliation_status": "declared_original_not_physically_present",
+      "physical_candidates": []
+    },
+    {
+      "registry": "source-register",
+      "source_file": "bog-administrative-precedents-1402-1436.pdf",
+      "declared_sha256": "ee004d2aa18ea1fe026a0ba3fd63b47dcec4190cca0216308c69eba5fc007b4a",
+      "declared_bytes": 5146695,
+      "document_type": "مدونة سوابق",
+      "declared_status": "1317 سابقة مفهرسة؛ 19 قيد مراجعة الحدود",
+      "reconciliation_status": "declared_original_not_physically_present",
+      "physical_candidates": []
+    },
+    {
+      "registry": "source-register",
+      "source_file": "commercial-contract-precedents.pdf",
+      "declared_sha256": "52097af8c245c3680792e410f1f50d18a3076ea116a3160e461b142da3c04c32",
+      "declared_bytes": 17679455,
+      "document_type": "مدونة سوابق",
+      "declared_status": "47 سابقة مفصولة",
+      "reconciliation_status": "declared_original_not_physically_present",
+      "physical_candidates": []
+    },
+    {
+      "registry": "source-register",
+      "source_file": "higher-judiciary-principles-1391-1437-runtime.pdf",
+      "declared_sha256": "56d90ae1e6cddc8e03ef1abb45a114bd13a99f8ed0f1f0eb154659121695dfe3",
+      "declared_bytes": 17002527,
+      "document_type": "مدونة مبادئ",
+      "declared_status": "نسخة تشغيلية مشتقة لا تُعد مصدرًا مستقلاً",
+      "reconciliation_status": "declared_original_not_physically_present",
+      "physical_candidates": []
+    },
+    {
+      "registry": "source-register",
+      "source_file": "higher-judiciary-principles-1391-1437.pdf",
+      "declared_sha256": "4b392bee12a15c620c0b6db184229d5271f6cb2ffeb7306a4a05d93b4fc41a7a",
+      "declared_bytes": 13557831,
+      "document_type": "مدونة مبادئ",
+      "declared_status": "المصدر القانوني المعتمد",
+      "reconciliation_status": "declared_original_not_physically_present",
+      "physical_candidates": []
+    },
+    {
+      "registry": "source-register",
+      "source_file": "ip-judgments-1446.pdf",
+      "declared_sha256": "82e80f464ccea3a427eea760db4b69608fa724f65142d33a5b545f966c23b6bb",
+      "declared_bytes": 526199,
+      "document_type": "مدونة أحكام",
+      "declared_status": "7 أحكام مفصولة",
+      "reconciliation_status": "declared_original_not_physically_present",
+      "physical_candidates": []
+    },
+    {
+      "registry": "source-register",
+      "source_file": "ip-precedents.pdf",
+      "declared_sha256": "9f35dbca0f20c3e21e62d40afefe523bda6d942fb2d2e420577fa211e205c8c4",
+      "declared_bytes": 2766408,
+      "document_type": "مدونة سوابق/روابط",
+      "declared_status": "مرجع لا يُحتسب كحكم كامل إلا بعد التحقق",
+      "reconciliation_status": "declared_original_not_physically_present",
+      "physical_candidates": []
+    },
+    {
+      "registry": "source-register",
+      "source_file": "judicial-precedents-compilation.pdf",
+      "declared_sha256": "f106c814a438d4b37da57696a19d5ea40701648ddf76108f67b0d112435f3304",
+      "declared_bytes": 1373237,
+      "document_type": "مدونة سوابق/روابط",
+      "declared_status": "مرجع لا يُحتسب كحكم كامل إلا بعد التحقق",
+      "reconciliation_status": "declared_original_not_physically_present",
+      "physical_candidates": []
+    },
+    {
+      "registry": "source-register",
+      "source_file": "judicial-precedents-study.pdf",
+      "declared_sha256": "de11954726c15dec323d249db1a898254cd03b359ca49ce2f8ad699ec1745fe4",
+      "declared_bytes": 415237,
+      "document_type": "مدونة سوابق/روابط",
+      "declared_status": "مرجع لا يُحتسب كحكم كامل إلا بعد التحقق",
+      "reconciliation_status": "declared_original_not_physically_present",
+      "physical_candidates": []
+    },
+    {
+      "registry": "source-register",
+      "source_file": "moj-judgments-1434-volume-10.pdf",
+      "declared_sha256": "17172099759e4ae4a6305358e6d4d5bbec12444976069e1628e22ecb672ea010",
+      "declared_bytes": 3781511,
+      "document_type": "مدونة أحكام",
+      "declared_status": "مصدر قضايا وزارة العدل",
+      "reconciliation_status": "declared_original_not_physically_present",
+      "physical_candidates": []
+    },
+    {
+      "registry": "source-register",
+      "source_file": "moj-judgments-1434-volume-12.pdf",
+      "declared_sha256": "7fbbefdb8b810d9daac796f824690c44b591184def9ac255751a20224fa7afc8",
+      "declared_bytes": 4104368,
+      "document_type": "مدونة أحكام",
+      "declared_status": "مصدر قضايا وزارة العدل",
+      "reconciliation_status": "declared_original_not_physically_present",
+      "physical_candidates": []
+    },
+    {
+      "registry": "source-register",
+      "source_file": "moj-judgments-1434-volume-14.pdf",
+      "declared_sha256": "0faac966c633e1dad8ee3f8223fa401525eafdf75d2803e8d35e6c072becc830",
+      "declared_bytes": 4476366,
+      "document_type": "مدونة أحكام",
+      "declared_status": "مصدر قضايا وزارة العدل",
+      "reconciliation_status": "declared_original_not_physically_present",
+      "physical_candidates": []
+    },
+    {
+      "registry": "source-register",
+      "source_file": "moj-judgments-1434-volume-15.pdf",
+      "declared_sha256": "3e70236bdf469ad1869f69fe165b936b4af1b67d6540fa32c467ff95360207e8",
+      "declared_bytes": 4853226,
+      "document_type": "مدونة أحكام",
+      "declared_status": "مصدر قضايا وزارة العدل",
+      "reconciliation_status": "declared_original_not_physically_present",
+      "physical_candidates": []
+    },
+    {
+      "registry": "source-register",
+      "source_file": "moj-judgments-1434-volume-16.pdf",
+      "declared_sha256": "fbdf36deb24184bcd1453d4528d8e766d8800c753b8f21cfc3f22d9a916a242f",
+      "declared_bytes": 4673339,
+      "document_type": "مدونة أحكام",
+      "declared_status": "مصدر قضايا وزارة العدل",
+      "reconciliation_status": "declared_original_not_physically_present",
+      "physical_candidates": []
+    },
+    {
+      "registry": "source-register",
+      "source_file": "moj-judgments-1434-volume-17.pdf",
+      "declared_sha256": "0fd12ae23184b837d4064d9481aed000ccba83493f30c15f7c271684d9768d3d",
+      "declared_bytes": 3563724,
+      "document_type": "مدونة أحكام",
+      "declared_status": "مصدر قضايا وزارة العدل",
+      "reconciliation_status": "declared_original_not_physically_present",
+      "physical_candidates": []
+    },
+    {
+      "registry": "source-register",
+      "source_file": "moj-judgments-1434-volume-18.pdf",
+      "declared_sha256": "78873a7fe67123a392d1d8ed904a3d8a9a83abfe3e85f1b0d16961538d28f9da",
+      "declared_bytes": 3123094,
+      "document_type": "مدونة أحكام",
+      "declared_status": "مصدر قضايا وزارة العدل",
+      "reconciliation_status": "declared_original_not_physically_present",
+      "physical_candidates": []
+    },
+    {
+      "registry": "source-register",
+      "source_file": "moj-judgments-1434-volume-19.pdf",
+      "declared_sha256": "3b89f883e82d7873ba50f322388b29458eafbeb7548b6b06d6e5f32ce06c196e",
+      "declared_bytes": 2478577,
+      "document_type": "مدونة أحكام",
+      "declared_status": "مصدر قضايا وزارة العدل",
+      "reconciliation_status": "declared_original_not_physically_present",
+      "physical_candidates": []
+    },
+    {
+      "registry": "source-register",
+      "source_file": "moj-judgments-1434-volume-20.pdf",
+      "declared_sha256": "da777c85ad04c163536bc394d58196b0cd50748a8bfa960b0ac0ce725ed69659",
+      "declared_bytes": 2478112,
+      "document_type": "مدونة أحكام",
+      "declared_status": "مصدر قضايا وزارة العدل",
+      "reconciliation_status": "declared_original_not_physically_present",
+      "physical_candidates": []
+    },
+    {
+      "registry": "source-register",
+      "source_file": "moj-judgments-1434-volume-21.pdf",
+      "declared_sha256": "e583fce1668437c0845f2ce9c364757a6d048a0c1681c6fb2ec4cf870f8ae57d",
+      "declared_bytes": 2449134,
+      "document_type": "مدونة أحكام",
+      "declared_status": "مصدر قضايا وزارة العدل",
+      "reconciliation_status": "declared_original_not_physically_present",
+      "physical_candidates": []
+    },
+    {
+      "registry": "source-register",
+      "source_file": "moj-judgments-1434-volume-22.pdf",
+      "declared_sha256": "af23fd28ca115b52ffa13a98c2df44844943922b31cedde362a78702f8b9c133",
+      "declared_bytes": 3538771,
+      "document_type": "مدونة أحكام",
+      "declared_status": "مصدر قضايا وزارة العدل",
+      "reconciliation_status": "declared_original_not_physically_present",
+      "physical_candidates": []
+    },
+    {
+      "registry": "source-register",
+      "source_file": "moj-judgments-1434-volume-23.pdf",
+      "declared_sha256": "442bb453ae6df7ee553646855b1610c79bd7b97d72b72cb641762bc7da3dfa23",
+      "declared_bytes": 4057284,
+      "document_type": "مدونة أحكام",
+      "declared_status": "مصدر قضايا وزارة العدل",
+      "reconciliation_status": "declared_original_not_physically_present",
+      "physical_candidates": []
+    },
+    {
+      "registry": "source-register",
+      "source_file": "moj-judgments-1434-volume-24.pdf",
+      "declared_sha256": "9d0aa148f65f5c5468d29fb23ed346b56cdc0ad9e763d2404badbf750b51a03a",
+      "declared_bytes": 8366296,
+      "document_type": "مدونة أحكام",
+      "declared_status": "مصدر قضايا وزارة العدل",
+      "reconciliation_status": "declared_original_not_physically_present",
+      "physical_candidates": []
+    },
+    {
+      "registry": "source-register",
+      "source_file": "moj-judgments-1434-volume-25.pdf",
+      "declared_sha256": "f4e975329bbf9e33d2851c84b1de5273b52b9dc1c4fc9eda6d08f93f0b25aa9b",
+      "declared_bytes": 4701062,
+      "document_type": "مدونة أحكام",
+      "declared_status": "مصدر قضايا وزارة العدل",
+      "reconciliation_status": "declared_original_not_physically_present",
+      "physical_candidates": []
+    },
+    {
+      "registry": "source-register",
+      "source_file": "moj-judgments-1434-volume-26.pdf",
+      "declared_sha256": "b487906703f851e559d5d43a99eda6797f6b59d93f1b5d193e3f96e0bd45c27d",
+      "declared_bytes": 2868672,
+      "document_type": "مدونة أحكام",
+      "declared_status": "مصدر قضايا وزارة العدل",
+      "reconciliation_status": "declared_original_not_physically_present",
+      "physical_candidates": []
+    },
+    {
+      "registry": "source-register",
+      "source_file": "moj-judgments-1434-volume-27.pdf",
+      "declared_sha256": "432edec85c03e7879aec9a85cb09a8882ff47ee73e3462d17845190c68475efe",
+      "declared_bytes": 4269148,
+      "document_type": "مدونة أحكام",
+      "declared_status": "مصدر قضايا وزارة العدل",
+      "reconciliation_status": "declared_original_not_physically_present",
+      "physical_candidates": []
+    },
+    {
+      "registry": "source-register",
+      "source_file": "moj-judgments-1434-volume-28.pdf",
+      "declared_sha256": "427cfcd78c7d5368b2fbb4d9a63e685744daa9fd3ba2a58c586ded4a03e53de9",
+      "declared_bytes": 4354201,
+      "document_type": "مدونة أحكام",
+      "declared_status": "مصدر قضايا وزارة العدل",
+      "reconciliation_status": "declared_original_not_physically_present",
+      "physical_candidates": []
+    },
+    {
+      "registry": "source-register",
+      "source_file": "moj-judgments-1434-volume-29.pdf",
+      "declared_sha256": "d6c1ce473472e7a4f15ed4d2f204476ac0269cf340f7e4e895864fd0a5957465",
+      "declared_bytes": 6816854,
+      "document_type": "فهرس مدونة",
+      "declared_status": "مرجعي فقط",
+      "reconciliation_status": "same_name_checksum_mismatch",
+      "physical_candidates": [
+        {
+          "path": "archive-sources/moj/1434/moj-judgments-1434-volume-29.pdf",
+          "bytes": 29140843,
+          "sha256": "7eb12d57dc2b2a7bd3d9ea0bac795494cc1b9c7fc7cded4a8ba8344d873ade8c"
+        }
+      ]
+    },
+    {
+      "registry": "source-register",
+      "source_file": "moj-judgments-1434-volume-3.pdf",
+      "declared_sha256": "9c54034ce7d443535fdf40305b5ae8f64a1adb54cd89ff928d7040b006bb7fef",
+      "declared_bytes": 5898258,
+      "document_type": "مدونة أحكام",
+      "declared_status": "مصدر قضايا وزارة العدل",
+      "reconciliation_status": "declared_original_not_physically_present",
+      "physical_candidates": []
+    },
+    {
+      "registry": "source-register",
+      "source_file": "moj-judgments-1434-volume-30.pdf",
+      "declared_sha256": "b61c94d5a3ac33d818c94a40b7744b666efee46d3cf62d31b87125745276724a",
+      "declared_bytes": 1622433,
+      "document_type": "فهرس مدونة",
+      "declared_status": "مرجعي فقط",
+      "reconciliation_status": "declared_original_not_physically_present",
+      "physical_candidates": []
+    },
+    {
+      "registry": "source-register",
+      "source_file": "moj-judgments-1434-volume-4.pdf",
+      "declared_sha256": "47d4c5054697335c8926799bd75ca40e51c5ddb31286a024defb7310e90e713e",
+      "declared_bytes": 4858612,
+      "document_type": "مدونة أحكام",
+      "declared_status": "مصدر قضايا وزارة العدل",
+      "reconciliation_status": "declared_original_not_physically_present",
+      "physical_candidates": []
+    },
+    {
+      "registry": "source-register",
+      "source_file": "moj-judgments-1434-volume-6.pdf",
+      "declared_sha256": "d8164d23575435d9de8ae23e628410450521627312e060d519a1d069c0675e11",
+      "declared_bytes": 4364841,
+      "document_type": "مدونة أحكام",
+      "declared_status": "مصدر قضايا وزارة العدل",
+      "reconciliation_status": "declared_original_not_physically_present",
+      "physical_candidates": []
+    },
+    {
+      "registry": "source-register",
+      "source_file": "moj-judgments-1434-volume-7.pdf",
+      "declared_sha256": "f5f2ad3c10d624ba478a766336b07bf999780bbca7c373f94c22b15ddcaea611",
+      "declared_bytes": 2681939,
+      "document_type": "مدونة أحكام",
+      "declared_status": "مصدر قضايا وزارة العدل",
+      "reconciliation_status": "declared_original_not_physically_present",
+      "physical_candidates": []
+    },
+    {
+      "registry": "source-register",
+      "source_file": "moj-judgments-1434-volume-8.pdf",
+      "declared_sha256": "d868ebfe6fc973b4adfc66f247af5f505cca6891fa73560b410c21049cfdcd2b",
+      "declared_bytes": 3518655,
+      "document_type": "مدونة أحكام",
+      "declared_status": "مصدر قضايا وزارة العدل",
+      "reconciliation_status": "declared_original_not_physically_present",
+      "physical_candidates": []
+    },
+    {
+      "registry": "source-register",
+      "source_file": "moj-judgments-1434-volume-9.pdf",
+      "declared_sha256": "a509db3eac4c6e5043bd1e587775ecc12c01e281056b276cdd6bca3275c8a9c1",
+      "declared_bytes": 3696508,
+      "document_type": "مدونة أحكام",
+      "declared_status": "مصدر قضايا وزارة العدل",
+      "reconciliation_status": "declared_original_not_physically_present",
+      "physical_candidates": []
+    },
+    {
+      "registry": "source-register",
+      "source_file": "nafa-judicial-library-1445.pdf",
+      "declared_sha256": "4a18af64080e904511edaa705b3beb8b47d9c83d77baaf2b4df8da337136c523",
+      "declared_bytes": 2963659,
+      "document_type": "مرجع قانوني",
+      "declared_status": "بانتظار التصنيف التفصيلي",
+      "reconciliation_status": "declared_original_not_physically_present",
+      "physical_candidates": []
+    },
+    {
+      "registry": "source-register",
+      "source_file": "uncitral-arbitration-precedents-2024.pdf",
+      "declared_sha256": "c42fd20e730a04021815021e0c0df0646e318ef5f346c85d0c0acb17463ff002",
+      "declared_bytes": 642869,
+      "document_type": "ملخصات أحكام دولية",
+      "declared_status": "6 سجلات مفصولة",
+      "reconciliation_status": "declared_original_not_physically_present",
+      "physical_candidates": []
+    },
+    {
+      "registry": "source-register",
+      "source_file": "saip-copyright-precedents-2019.pdf",
+      "declared_sha256": "a3a7f0680679198eaf58f7cc4a626aae60dd1d904dfbd2b4d3e2b846028088f2",
+      "declared_bytes": 2022788,
+      "document_type": "مدونة سوابق قضائية",
+      "declared_status": "أصل تاريخي محفوظ من main؛ الفهرس الموروث و53 سجلاً تحتاج مطابقة المرجع والمحتوى قبل الاعتماد",
+      "reconciliation_status": "stored_checksum_match",
+      "physical_candidates": [
+        {
+          "path": "archive-sources/saip/2019/saip-copyright-precedents-2019.pdf",
+          "bytes": 2022788,
+          "sha256": "a3a7f0680679198eaf58f7cc4a626aae60dd1d904dfbd2b4d3e2b846028088f2"
+        }
+      ]
+    },
+    {
+      "registry": "collector/pending-source-register",
+      "source_file": "moj-judgments-1434-volume-1.pdf",
+      "declared_sha256": "736d47fcf34bb9a81ce8d0fe6927bd90ea599e987556432dbf4305ec5dd79879",
+      "declared_bytes": 5322782,
+      "document_type": "مدونة أحكام",
+      "declared_status": "تم الفصل؛ 34 سجلاً استوفى حقول فهرس البحث، والبقية في مراجعة مستقلة",
+      "reconciliation_status": "stored_checksum_match",
+      "physical_candidates": [
+        {
+          "path": "archive-sources/moj/1434/moj-judgments-1434-volume-1.pdf",
+          "bytes": 5322782,
+          "sha256": "736d47fcf34bb9a81ce8d0fe6927bd90ea599e987556432dbf4305ec5dd79879"
+        }
+      ]
+    },
+    {
+      "registry": "collector/pending-source-register",
+      "source_file": "moj-judgments-1434-volume-2.pdf",
+      "declared_sha256": "bc54bb17b24305dd02bdac024626902f2eabaf468633627239138acdf76f562c",
+      "declared_bytes": 2884693,
+      "document_type": "مدونة أحكام",
+      "declared_status": "تم الفصل؛ 34 سجلاً استوفى حقول فهرس البحث، والبقية في مراجعة مستقلة",
+      "reconciliation_status": "stored_checksum_match",
+      "physical_candidates": [
+        {
+          "path": "archive-sources/moj/1434/moj-judgments-1434-volume-2.pdf",
+          "bytes": 2884693,
+          "sha256": "bc54bb17b24305dd02bdac024626902f2eabaf468633627239138acdf76f562c"
+        }
+      ]
+    },
+    {
+      "registry": "collector/pending-source-register",
+      "source_file": "moj-judgments-1434-volume-5.pdf",
+      "declared_sha256": "4a4134d95b2eb2bd58721fba4287e1940f0768fda51741fdb5eb9e445db4e7c6",
+      "declared_bytes": 3988656,
+      "document_type": "مدونة أحكام",
+      "declared_status": "تم الفصل؛ 54 سجلاً استوفى حقول فهرس البحث، والبقية في مراجعة مستقلة",
+      "reconciliation_status": "stored_checksum_match",
+      "physical_candidates": [
+        {
+          "path": "archive-sources/moj/1434/moj-judgments-1434-volume-5.pdf",
+          "bytes": 3988656,
+          "sha256": "4a4134d95b2eb2bd58721fba4287e1940f0768fda51741fdb5eb9e445db4e7c6"
+        }
+      ]
+    },
+    {
+      "registry": "collector/pending-source-register",
+      "source_file": "moj-judgments-1434-volume-11.pdf",
+      "declared_sha256": "664f06d81539e5eab63ca5c678ac288114f094a0cc7f8b44c91d08c7d1a516f9",
+      "declared_bytes": 4662269,
+      "document_type": "مدونة أحكام",
+      "declared_status": "تم الفصل؛ 36 سجلاً استوفى حقول فهرس البحث، والبقية في مراجعة مستقلة",
+      "reconciliation_status": "stored_checksum_match",
+      "physical_candidates": [
+        {
+          "path": "archive-sources/moj/1434/moj-judgments-1434-volume-11.pdf",
+          "bytes": 4662269,
+          "sha256": "664f06d81539e5eab63ca5c678ac288114f094a0cc7f8b44c91d08c7d1a516f9"
+        }
+      ]
+    },
+    {
+      "registry": "collector/pending-source-register",
+      "source_file": "moj-judgments-1434-volume-13.pdf",
+      "declared_sha256": "a225aedc196e92dcc16ae4a11bc0525e678a2a2ff7abebea2ee6b07f9c96371f",
+      "declared_bytes": 2894539,
+      "document_type": "مدونة أحكام",
+      "declared_status": "تم الفصل؛ 33 سجلاً استوفى حقول فهرس البحث، والبقية في مراجعة مستقلة",
+      "reconciliation_status": "stored_checksum_match",
+      "physical_candidates": [
+        {
+          "path": "archive-sources/moj/1434/moj-judgments-1434-volume-13.pdf",
+          "bytes": 2894539,
+          "sha256": "a225aedc196e92dcc16ae4a11bc0525e678a2a2ff7abebea2ee6b07f9c96371f"
+        }
+      ]
+    },
+    {
+      "registry": "collector/pending-source-register",
+      "source_file": "moj-judgments-1434-volume-29.pdf",
+      "declared_sha256": "7eb12d57dc2b2a7bd3d9ea0bac795494cc1b9c7fc7cded4a8ba8344d873ade8c",
+      "declared_bytes": 29140843,
+      "document_type": "فهرس مدونة",
+      "declared_status": "مرجعي فقط؛ ليس مصدراً لحكم مستقل",
+      "reconciliation_status": "stored_checksum_match",
+      "physical_candidates": [
+        {
+          "path": "archive-sources/moj/1434/moj-judgments-1434-volume-29.pdf",
+          "bytes": 29140843,
+          "sha256": "7eb12d57dc2b2a7bd3d9ea0bac795494cc1b9c7fc7cded4a8ba8344d873ade8c"
+        }
+      ]
+    },
+    {
+      "registry": "collector/pending-source-register",
+      "source_file": "moj-judgments-1435-volume-1.pdf",
+      "declared_sha256": "d44dfc501f1d75c8645ecf94e085a7bb0cf407f68a3ccbf7862f7dec115137bf",
+      "declared_bytes": 12957138,
+      "document_type": "مدونة أحكام",
+      "declared_status": "تم الفصل إلى PDF؛ لا سجل قابل للبحث قبل استكمال الحقول الإلزامية",
+      "reconciliation_status": "stored_checksum_match",
+      "physical_candidates": [
+        {
+          "path": "archive-sources/moj/1435/moj-judgments-1435-volume-1.pdf",
+          "bytes": 12957138,
+          "sha256": "d44dfc501f1d75c8645ecf94e085a7bb0cf407f68a3ccbf7862f7dec115137bf"
+        }
+      ]
+    },
+    {
+      "registry": "collector/pending-source-register",
+      "source_file": "moj-judgments-1435-volume-2.pdf",
+      "declared_sha256": "f279f188cad83c6cab8d207be5c7536be794707999cbd4ec3a440b0c90c91e7a",
+      "declared_bytes": 8704396,
+      "document_type": "مدونة أحكام",
+      "declared_status": "تم الفصل إلى PDF؛ لا سجل قابل للبحث قبل استكمال الحقول الإلزامية",
+      "reconciliation_status": "stored_checksum_match",
+      "physical_candidates": [
+        {
+          "path": "archive-sources/moj/1435/moj-judgments-1435-volume-2.pdf",
+          "bytes": 8704396,
+          "sha256": "f279f188cad83c6cab8d207be5c7536be794707999cbd4ec3a440b0c90c91e7a"
+        }
+      ]
+    },
+    {
+      "registry": "collector/pending-source-register",
+      "source_file": "moj-judgments-1435-volume-3.pdf",
+      "declared_sha256": "de9dbcbde6334c0b670ae71a4c435e78e1e3075183ab17823abdaf267122cf96",
+      "declared_bytes": 8054861,
+      "document_type": "مدونة أحكام",
+      "declared_status": "تم الفصل إلى PDF؛ لا سجل قابل للبحث قبل استكمال الحقول الإلزامية",
+      "reconciliation_status": "stored_checksum_match",
+      "physical_candidates": [
+        {
+          "path": "archive-sources/moj/1435/moj-judgments-1435-volume-3.pdf",
+          "bytes": 8054861,
+          "sha256": "de9dbcbde6334c0b670ae71a4c435e78e1e3075183ab17823abdaf267122cf96"
+        }
+      ]
+    },
+    {
+      "registry": "collector/pending-source-register",
+      "source_file": "moj-judgments-1435-volume-4.pdf",
+      "declared_sha256": "973bbad83de5f7004d47e9bcb66aea7efc985ec12901968d73e3510cf36b93ee",
+      "declared_bytes": 8543591,
+      "document_type": "مدونة أحكام",
+      "declared_status": "تم الفصل إلى PDF؛ لا سجل قابل للبحث قبل استكمال الحقول الإلزامية",
+      "reconciliation_status": "stored_checksum_match",
+      "physical_candidates": [
+        {
+          "path": "archive-sources/moj/1435/moj-judgments-1435-volume-4.pdf",
+          "bytes": 8543591,
+          "sha256": "973bbad83de5f7004d47e9bcb66aea7efc985ec12901968d73e3510cf36b93ee"
+        }
+      ]
+    },
+    {
+      "registry": "collector/pending-source-register",
+      "source_file": "moj-judgments-1435-volume-5.pdf",
+      "declared_sha256": "977bb12cf044997731c16dd70374482dee814b59a081e50ef11a8b0ce85b39b5",
+      "declared_bytes": 7446483,
+      "document_type": "مدونة أحكام",
+      "declared_status": "تم الفصل إلى PDF؛ لا سجل قابل للبحث قبل استكمال الحقول الإلزامية",
+      "reconciliation_status": "stored_checksum_match",
+      "physical_candidates": [
+        {
+          "path": "archive-sources/moj/1435/moj-judgments-1435-volume-5.pdf",
+          "bytes": 7446483,
+          "sha256": "977bb12cf044997731c16dd70374482dee814b59a081e50ef11a8b0ce85b39b5"
+        }
+      ]
+    },
+    {
+      "registry": "collector/pending-source-register",
+      "source_file": "moj-judgments-1435-volume-6.pdf",
+      "declared_sha256": "a821a27d9080b61228e7258fe6c9f846dcc662bf02eae622f6f02b3ab9d0a0e4",
+      "declared_bytes": 7324563,
+      "document_type": "مدونة أحكام",
+      "declared_status": "تم الفصل إلى PDF؛ لا سجل قابل للبحث قبل استكمال الحقول الإلزامية",
+      "reconciliation_status": "stored_checksum_match",
+      "physical_candidates": [
+        {
+          "path": "archive-sources/moj/1435/moj-judgments-1435-volume-6.pdf",
+          "bytes": 7324563,
+          "sha256": "a821a27d9080b61228e7258fe6c9f846dcc662bf02eae622f6f02b3ab9d0a0e4"
+        }
+      ]
+    },
+    {
+      "registry": "collector/pending-source-register",
+      "source_file": "moj-judgments-1435-volume-7.pdf",
+      "declared_sha256": "3adbce6afc6b1cb5f9a9ddc18f3c3431835f2bc3701d7da5aa2e295f1526046b",
+      "declared_bytes": 7479291,
+      "document_type": "مدونة أحكام",
+      "declared_status": "تم الفصل إلى PDF؛ لا سجل قابل للبحث قبل استكمال الحقول الإلزامية",
+      "reconciliation_status": "stored_checksum_match",
+      "physical_candidates": [
+        {
+          "path": "archive-sources/moj/1435/moj-judgments-1435-volume-7.pdf",
+          "bytes": 7479291,
+          "sha256": "3adbce6afc6b1cb5f9a9ddc18f3c3431835f2bc3701d7da5aa2e295f1526046b"
+        }
+      ]
+    },
+    {
+      "registry": "collector/pending-source-register",
+      "source_file": "moj-judgments-1435-volume-8.pdf",
+      "declared_sha256": "097abb7cd92931ad27d9e0a902a3f45bee357aebcfa416f972240682ade500cb",
+      "declared_bytes": 8503998,
+      "document_type": "مدونة أحكام",
+      "declared_status": "تم الفصل إلى PDF؛ لا سجل قابل للبحث قبل استكمال الحقول الإلزامية",
+      "reconciliation_status": "stored_checksum_match",
+      "physical_candidates": [
+        {
+          "path": "archive-sources/moj/1435/moj-judgments-1435-volume-8.pdf",
+          "bytes": 8503998,
+          "sha256": "097abb7cd92931ad27d9e0a902a3f45bee357aebcfa416f972240682ade500cb"
+        }
+      ]
+    },
+    {
+      "registry": "collector/pending-source-register",
+      "source_file": "moj-judgments-1435-volume-9.pdf",
+      "declared_sha256": "47558539b3e76bb677fc71e8e3748c597cbe9caf169d5eb4d82f91e84929d822",
+      "declared_bytes": 9115611,
+      "document_type": "مدونة أحكام",
+      "declared_status": "تم الفصل إلى PDF؛ لا سجل قابل للبحث قبل استكمال الحقول الإلزامية",
+      "reconciliation_status": "stored_checksum_match",
+      "physical_candidates": [
+        {
+          "path": "archive-sources/moj/1435/moj-judgments-1435-volume-9.pdf",
+          "bytes": 9115611,
+          "sha256": "47558539b3e76bb677fc71e8e3748c597cbe9caf169d5eb4d82f91e84929d822"
+        }
+      ]
+    },
+    {
+      "registry": "collector/pending-source-register",
+      "source_file": "moj-judgments-1435-volume-10.pdf",
+      "declared_sha256": "7d6e7ede15d5b51adf7afab9d7547c85cc365670951cccab92bab1fc55013077",
+      "declared_bytes": 9576314,
+      "document_type": "مدونة أحكام",
+      "declared_status": "تم الفصل إلى PDF؛ لا سجل قابل للبحث قبل استكمال الحقول الإلزامية",
+      "reconciliation_status": "stored_checksum_match",
+      "physical_candidates": [
+        {
+          "path": "archive-sources/moj/1435/moj-judgments-1435-volume-10.pdf",
+          "bytes": 9576314,
+          "sha256": "7d6e7ede15d5b51adf7afab9d7547c85cc365670951cccab92bab1fc55013077"
+        }
+      ]
+    },
+    {
+      "registry": "collector/pending-source-register",
+      "source_file": "moj-judgments-1435-volume-11.pdf",
+      "declared_sha256": "d278d4cdffc2b84137db2ca7ff26765bd0d3beb2650f52cd28edad89080bd3c4",
+      "declared_bytes": 10639850,
+      "document_type": "مدونة أحكام",
+      "declared_status": "تم الفصل إلى PDF؛ لا سجل قابل للبحث قبل استكمال الحقول الإلزامية",
+      "reconciliation_status": "stored_checksum_match",
+      "physical_candidates": [
+        {
+          "path": "archive-sources/moj/1435/moj-judgments-1435-volume-11.pdf",
+          "bytes": 10639850,
+          "sha256": "d278d4cdffc2b84137db2ca7ff26765bd0d3beb2650f52cd28edad89080bd3c4"
+        }
+      ]
+    },
+    {
+      "registry": "collector/pending-source-register",
+      "source_file": "moj-judgments-1435-volume-12.pdf",
+      "declared_sha256": "1818d073ee2db499a73dbfa814ffd2d7ac809490a1a41e91cd01dd7b0b095edb",
+      "declared_bytes": 10451495,
+      "document_type": "مدونة أحكام",
+      "declared_status": "تم الفصل إلى PDF؛ لا سجل قابل للبحث قبل استكمال الحقول الإلزامية",
+      "reconciliation_status": "stored_checksum_match",
+      "physical_candidates": [
+        {
+          "path": "archive-sources/moj/1435/moj-judgments-1435-volume-12.pdf",
+          "bytes": 10451495,
+          "sha256": "1818d073ee2db499a73dbfa814ffd2d7ac809490a1a41e91cd01dd7b0b095edb"
+        }
+      ]
+    },
+    {
+      "registry": "collector/pending-source-register",
+      "source_file": "moj-judgments-1435-volume-13.pdf",
+      "declared_sha256": "7ca16fb42e311f8a31c49df44df80cd019b4b243e8b20a4bae75fca334298c20",
+      "declared_bytes": 11072928,
+      "document_type": "مدونة أحكام",
+      "declared_status": "تم الفصل إلى PDF؛ لا سجل قابل للبحث قبل استكمال الحقول الإلزامية",
+      "reconciliation_status": "stored_checksum_match",
+      "physical_candidates": [
+        {
+          "path": "archive-sources/moj/1435/moj-judgments-1435-volume-13.pdf",
+          "bytes": 11072928,
+          "sha256": "7ca16fb42e311f8a31c49df44df80cd019b4b243e8b20a4bae75fca334298c20"
+        }
+      ]
+    },
+    {
+      "registry": "collector/pending-source-register",
+      "source_file": "moj-judgments-1435-volume-14.pdf",
+      "declared_sha256": "e5c9cffa22c8c911fe74c432261bd0dac0ed03d7059df2ba29433079212540b8",
+      "declared_bytes": 5387663,
+      "document_type": "فهرس مدونة",
+      "declared_status": "مرجعي فقط؛ ليس مصدراً لحكم مستقل",
+      "reconciliation_status": "stored_checksum_match",
+      "physical_candidates": [
+        {
+          "path": "archive-sources/moj/1435/moj-judgments-1435-volume-14.pdf",
+          "bytes": 5387663,
+          "sha256": "e5c9cffa22c8c911fe74c432261bd0dac0ed03d7059df2ba29433079212540b8"
+        }
+      ]
+    }
+  ]
+}

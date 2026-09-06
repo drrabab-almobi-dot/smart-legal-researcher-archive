@@ -1,0 +1,38 @@
+{
+  "schema_version": "1.0",
+  "batch_id": "moj-remaining-judgments-pending-review-001",
+  "batch_status": "review",
+  "platform_import_performed": true,
+  "platform_import_mode": "review_only",
+  "platform_imported_records": 1175,
+  "source_file_count": 17,
+  "documents_detected": 1175,
+  "documents_by_type": {
+    "judgment": 1175
+  },
+  "documents_by_source_file": {
+    "moj-judgments-1434-volume-1.pdf": 3,
+    "moj-judgments-1434-volume-11.pdf": 3,
+    "moj-judgments-1434-volume-2.pdf": 3,
+    "moj-judgments-1434-volume-5.pdf": 7,
+    "moj-judgments-1435-volume-1.pdf": 89,
+    "moj-judgments-1435-volume-10.pdf": 99,
+    "moj-judgments-1435-volume-11.pdf": 112,
+    "moj-judgments-1435-volume-12.pdf": 115,
+    "moj-judgments-1435-volume-13.pdf": 129,
+    "moj-judgments-1435-volume-2.pdf": 90,
+    "moj-judgments-1435-volume-3.pdf": 74,
+    "moj-judgments-1435-volume-4.pdf": 82,
+    "moj-judgments-1435-volume-5.pdf": 69,
+    "moj-judgments-1435-volume-6.pdf": 57,
+    "moj-judgments-1435-volume-7.pdf": 65,
+    "moj-judgments-1435-volume-8.pdf": 84,
+    "moj-judgments-1435-volume-9.pdf": 94
+  },
+  "standalone_document_files": 1175,
+  "field_review_records": 1175,
+  "duplicate_candidates": 4,
+  "legal_search_eligible": 0,
+  "public_downloads_enabled": false,
+  "failed_count": 0
+}

@@ -1,0 +1,134 @@
+{
+  "schema_version": "1.0",
+  "repository": "drrabab-almobi-dot/smart-legal-researcher-archive",
+  "branch": "collector-import",
+  "scope": "private_archive_pre_migration_audit",
+  "generated_at": "2026-09-06T08:45:00+03:00",
+  "rules": {
+    "raw_is_immutable": true,
+    "platform_import_performed": false,
+    "public_exposure_performed": false,
+    "duplicate_policy": "sha256 first; then reference and content comparison; uncertain cases remain in review"
+  },
+  "sources": [
+    {
+      "id": "moj-judgments-1434-1435",
+      "name_ar": "مجموعات أحكام وزارة العدل السعودية",
+      "acquisition_source": "وزارة العدل السعودية",
+      "originating_authority": "وزارة العدل السعودية",
+      "official_url_pattern": "https://www.moj.gov.sa/ar-sa/ministry/versions/Documents/backupFiles3/AhkamGroup_{year}/{volume}.pdf",
+      "declared_source_rows": 50,
+      "declared_unique_filenames": 49,
+      "physically_preserved_originals": 20,
+      "verified_checksum_matches": 20,
+      "same_name_checksum_mismatches": 1,
+      "declared_originals_not_physically_present": 29,
+      "processed_case_pdfs": 1366,
+      "search_review_ready_records": 191,
+      "pending_review_records": 1175,
+      "status": "active_private_collection_with_reconciliation_gap",
+      "notes_ar": "الأجزاء 29 لعام 1434هـ و14 لعام 1435هـ فهارس مرجعية فقط. لا يعد أي منهما حكماً مستقلاً."
+    },
+    {
+      "id": "moj-circular-portal",
+      "name_ar": "بوابة تعاميم وزارة العدل",
+      "acquisition_source": "وزارة العدل السعودية",
+      "originating_authority": "وزارة العدل السعودية",
+      "official_url": "https://portaleservices.moj.gov.sa/TameemPortal/",
+      "diagnostic_html_pages": 130,
+      "binary_originals_preserved": 0,
+      "confirmed_circulars_in_legacy_archive": 6,
+      "status": "metadata_and_html_diagnostics_only",
+      "notes_ar": "لا يظهر في السجلات المفحوصة مرفق PDF رسمي قابل للتنزيل."
+    },
+    {
+      "id": "board-of-grievances",
+      "name_ar": "ديوان المظالم",
+      "acquisition_source": "ديوان المظالم",
+      "originating_authority": "ديوان المظالم",
+      "official_url": "https://www.bog.gov.sa/knowledge-center/JudicialBlogs/Pages/default.aspx",
+      "indexed_administrative_precedents": 1317,
+      "indexed_judicial_principles_from_separate_source": 2323,
+      "physical_original_status": "declared_but_not_physically_present_in_current_branch",
+      "status": "awaiting_official_binary_retrieval",
+      "notes_ar": "فشل تنزيل الأصل مباشرة من بيئة التجميع، ولا يعتمد الفهرس وحده كبديل عن الأصل."
+    },
+    {
+      "id": "saip-copyright-2019",
+      "name_ar": "المبادئ والسوابق في حقوق المؤلف 2019",
+      "acquisition_source": "رابط Google Drive مسجل في فهرس المشروع",
+      "originating_authority": "الهيئة السعودية للملكية الفكرية",
+      "source_url": "https://drive.google.com/file/d/1IZnOJGv-OXgwYQFXD9tCar8bcLLjprun/view",
+      "legacy_branch_records": 53,
+      "current_nafa_index_records": 53,
+      "physical_original_status": "preserved_on_collector_import_as_legacy_original",
+      "status": "preserved_requires_reference_and_checksum_reconciliation",
+      "notes_ar": "المعرّفات في نسختي الفهرس مختلفة؛ لا تدمج السجلات بالمعرف فقط."
+    },
+    {
+      "id": "intellectual-property-1446",
+      "name_ar": "أحكام الملكية الفكرية 1446",
+      "acquisition_source": "سجل مصدر المشروع",
+      "originating_authority": "غير محسوم في السجل الحالي",
+      "indexed_judgments": 7,
+      "physical_original_status": "declared_but_not_physically_present_in_current_branch",
+      "status": "awaiting_original_recovery"
+    },
+    {
+      "id": "nafa-judicial-library-1445",
+      "name_ar": "مكتبة نفع القضائية 1445",
+      "acquisition_source": "مكتبة نفع وروابط المصدر المسجلة",
+      "originating_authority": "متعدد؛ يحقق لكل وثيقة على حدة",
+      "source_urls_registered": 804,
+      "unique_documents_indexed": 1964,
+      "duplicate_entries_recorded": 577,
+      "download_failures_recorded": 6,
+      "status": "existing_collection_requires_incremental_review",
+      "notes_ar": "يبقى مصدر الحصول منفصلاً عن الجهة الأصلية المصدرة."
+    },
+    {
+      "id": "telegram-robiai33",
+      "name_ar": "قناة الأرشفة محاميتك على Telegram",
+      "acquisition_source": "Telegram",
+      "originating_authority": "غير متحقق لكل ملف؛ لا تفترض الجهة الرسمية",
+      "channel_url": "https://t.me/robiai33",
+      "post_attachment_metadata_rows": 1061,
+      "unique_published_filename_values": 717,
+      "duplicate_filename_values_pending_binary_check": 125,
+      "preserved_public_preview_snapshots": 65,
+      "binary_originals_downloaded": 0,
+      "legal_search_eligible_records": 0,
+      "status": "pending_authorized_binary_download",
+      "notes_ar": "يلزم تنزيل مصرح به ثم SHA-256 وفحص النوع والمصدر الرسمي قبل الفهرسة."
+    },
+    {
+      "id": "onedrive-legacy",
+      "name_ar": "مجلد OneDrive القديم",
+      "acquisition_source": "OneDrive",
+      "originating_authority": "غير معروف حتى الجرد",
+      "connector_status": "not_configured_in_current_session",
+      "status": "not_audited",
+      "notes_ar": "لم يعثر الجرد في المستودع أو إعدادات الجلسة على رابط أو اتصال OneDrive."
+    },
+    {
+      "id": "user-supplied-files",
+      "name_ar": "ملفات مالكة المشروع",
+      "acquisition_source": "مالكة المشروع",
+      "originating_authority": "يحدد لكل ملف",
+      "files_found_in_audited_archive": 0,
+      "status": "awaiting_delivery_or_location"
+    },
+    {
+      "id": "legacy-platform-and-backups",
+      "name_ar": "الفهارس والنسخ الاحتياطية التشغيلية القديمة",
+      "acquisition_source": "المستودع التشغيلي والفروع القديمة",
+      "originating_authority": "مشروع RABAB LEGAL AI",
+      "platform_repository": "drrabab-almobi-dot/rabab-legal-ai",
+      "transfer_archive_parts": 91,
+      "transfer_archive_bytes": 472978018,
+      "backup_sql_found_in_audited_locations": false,
+      "status": "metadata_and_code_inventory_complete; backup_not_found",
+      "notes_ar": "عثر على حزم مصدر وتشغيل، لا على backup.sql أو تفريغ قاعدة بيانات."
+    }
+  ]
+}

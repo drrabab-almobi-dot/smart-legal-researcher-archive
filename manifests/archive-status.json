@@ -1,0 +1,122 @@
+{
+  "schema_version": "2.0",
+  "repository": "drrabab-almobi-dot/smart-legal-researcher-archive",
+  "branch": "collector-import",
+  "as_of": "2026-09-06T10:02:00+03:00",
+  "scope": "active_collection_and_review_only_platform_migration",
+  "safety": {
+    "raw_modified": false,
+    "database_modified": true,
+    "platform_import_performed": true,
+    "platform_import_mode": "review_only",
+    "public_content_published": false,
+    "public_downloads_enabled": false,
+    "legal_search_eligible_records": 0,
+    "branches_deleted": false,
+    "backup_created_during_audit": true
+  },
+  "pre_migration_backup": {
+    "schema": "backup_pre_legal_archive_20260906_0900",
+    "snapshotted_public_tables": 43,
+    "source_rows": 14682,
+    "snapshot_rows": 14682,
+    "row_count_verification": "passed",
+    "external_pg_dump_available": false
+  },
+  "repository_inventory": {
+    "archive_remote_branches": 5,
+    "source_register_rows": 38,
+    "collector_pending_source_rows": 20,
+    "canonical_pdf_originals_present": 22,
+    "standalone_document_pdfs_present": 1419,
+    "telegram_preview_html_snapshots": 65,
+    "telegram_pending_attachment_metadata": 1061
+  },
+  "target_database": {
+    "project": "rabab-legal-ai-prod",
+    "project_ref": "psumrktqizfepbpddktb",
+    "schema_migrations_applied": [
+      "pre_legal_archive_snapshot_20260906_0900",
+      "add_independent_legal_document_archive_schema",
+      "add_missing_legal_archive_fk_indexes"
+    ],
+    "sources": 3,
+    "source_files": 20,
+    "legal_documents": 1758,
+    "document_files": 1419,
+    "archive_batches": 64,
+    "duplicate_candidates": 108,
+    "confirmed_duplicates": 12,
+    "pending_duplicate_review": 96,
+    "records_by_type": {
+      "judgment": 1366,
+      "circular": 339,
+      "decision": 36,
+      "principle": 17,
+      "precedent": 0
+    },
+    "records_by_status": {
+      "review": 1746,
+      "duplicate": 12,
+      "active": 0
+    },
+    "rls_enabled": true,
+    "client_policies_created": false,
+    "anon_authenticated_grants_revoked": true
+  },
+  "legacy_platform_tables_unchanged": {
+    "knowledge_documents": 404,
+    "knowledge_chunks": 13186,
+    "legal_codices": 2,
+    "legal_cases": 3,
+    "moj_circulars": 339
+  },
+  "collector_batch_reconciliation": {
+    "ministry_case_boundaries_detected": 1390,
+    "case_pdfs_created": 1366,
+    "skipped_due_to_missing_subject": 24,
+    "manual_field_review_records": 1366,
+    "metadata_incomplete_pending_records": 1171,
+    "reference_collision_pending_records": 4,
+    "validation": "passed"
+  },
+  "circular_reconciliation": {
+    "legacy_metadata_rows": 339,
+    "signed_original_files_available": 0,
+    "review_records": 327,
+    "exact_duplicate_records": 12,
+    "same_number_date_review_candidates": 39
+  },
+  "missing_originals_quarantine": {
+    "records": 3700,
+    "records_by_type": {
+      "judgment": 13,
+      "precedent": 1364,
+      "principle": 2323
+    },
+    "missing_declared_original_files": 5,
+    "database_import_eligible": 0,
+    "legal_search_eligible": 0
+  },
+  "monitoring": {
+    "requested": true,
+    "schedule_created": false,
+    "pending_decision": "once_daily_vs_twice_daily_vs_persistent_low_latency"
+  },
+  "validation": {
+    "target_schema_validation": "passed",
+    "ndjson_errors": 0,
+    "standalone_file_hash_errors": 0,
+    "orphan_document_files": 0,
+    "page_range_mismatches": 0,
+    "regenerated_pdf_hashes_reconciled": 1366,
+    "database_hash_mismatches_after_reconciliation": 0
+  },
+  "blocking_or_manual_actions": [
+    "Choose the recurring monitoring frequency.",
+    "Provide authorised Telegram Web access or a Telegram export containing original binary files.",
+    "Recover the five declared source originals holding 3700 quarantined records.",
+    "Review 1175 metadata-incomplete judgments and 96 pending duplicate candidates.",
+    "Obtain signed/original circular documents before enabling any circular for search or download."
+  ]
+}
