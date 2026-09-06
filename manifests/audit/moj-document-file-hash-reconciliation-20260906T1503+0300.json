@@ -1,0 +1,14 @@
+{
+  "schema_version": "1.0",
+  "scope": "private_archive_target_metadata_reconciliation",
+  "target_document_files": 1366,
+  "records_reconciled": 1366,
+  "document_identity_changed": false,
+  "source_linkage_changed": false,
+  "source_page_boundaries_changed": false,
+  "file_size_changed": false,
+  "download_policy_changed": false,
+  "binary_files_changed": false,
+  "database_modified": false,
+  "audit_file": "manifests/audit/moj-document-file-hash-reconciliation-20260906T1503+0300.ndjson"
+}

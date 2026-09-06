@@ -1,0 +1,144 @@
+{
+  "schema_version": "1.0",
+  "cycle_id": "private-collector-cycle-20260906T1437+0300",
+  "repository": "drrabab-almobi-dot/smart-legal-researcher-archive",
+  "branch": "collector-import",
+  "started_at": "2026-09-06T14:37:57+03:00",
+  "completed_at": "2026-09-06T15:10:00+03:00",
+  "scope": "private_legal_archive_collection_and_reconciliation",
+  "rules": {
+    "main_modified": false,
+    "platform_database_modified": false,
+    "legal_search_enabled": false,
+    "public_downloads_enabled": false,
+    "telegram_treated_as_final_legal_source": false,
+    "originals_modified": false,
+    "deduplication_order": [
+      "sha256",
+      "reference",
+      "normalized_content"
+    ]
+  },
+  "sources_checked": {
+    "telegram_robiai33": {
+      "preview_url": "https://t.me/s/robiai33",
+      "highest_post_id": 1335,
+      "attachment_metadata_rows": 1085,
+      "new_attachment_metadata_rows": 0,
+      "binary_files_downloaded": 0,
+      "result": "reached_existing_inventory_boundary"
+    },
+    "moj_judgment_pdfs": {
+      "official_urls_checked": 44,
+      "already_present_checksum_matches": 19,
+      "new_originals_acquired": 24,
+      "same_name_checksum_mismatches": 1,
+      "failed_downloads": 0,
+      "acquisition_audit": "manifests/audit/moj-official-source-check-20260906T1450+0300.csv"
+    },
+    "moj_circular_portal": {
+      "url": "https://portaleservices.moj.gov.sa/TameemPortal/",
+      "current_ids": 339,
+      "archived_ids": 339,
+      "new_ids": 0,
+      "missing_ids": 0,
+      "binary_pdf_attachments_confirmed": 0
+    },
+    "board_of_grievances": {
+      "official_pages_checked": 4,
+      "textual_page_extraction_succeeded": 3,
+      "direct_html_or_binary_requests_succeeded": 0,
+      "failure": "SSL_ERROR_SYSCALL; sandbox browser ERR_CONNECTION_CLOSED",
+      "audit": "manifests/audit/bog-official-source-check-20260906T1453+0300.csv"
+    },
+    "other_registered_sources": {
+      "saip_page_checked": "https://www.saip.gov.sa/ar/media-center/media-library/media-center/1956",
+      "uncitral_page_checked": "https://documents.un.org/symbol-explorer?s=A/CN.9/SER.C/ABSTRACTS/231",
+      "saudi_fiqh_association_page_checked": "https://alfiqhia.org.sa/researches/page/1038",
+      "new_verified_originals": 0
+    }
+  },
+  "new_originals": {
+    "count": 24,
+    "bytes": 94778131,
+    "issuing_authority": "وزارة العدل السعودية",
+    "types": {
+      "judgment_codex": 23,
+      "bibliographic_index": 1
+    }
+  },
+  "new_private_records_and_files": {
+    "records": 981,
+    "standalone_pdf_files": 981,
+    "standalone_pdf_bytes": 558335720,
+    "by_type": {
+      "judgment": 981,
+      "deed": 0,
+      "circular": 0,
+      "decision": 0,
+      "principle": 0,
+      "precedent": 0,
+      "codex_or_index_record": 0
+    },
+    "reference_only_source_files": 1,
+    "review_only": true
+  },
+  "duplicates_and_review": {
+    "confirmed_exact_duplicates": 0,
+    "reference_collision_rows": 7,
+    "normalized_title_collision_groups": 14,
+    "normalized_title_duplicate_records_beyond_first": 15,
+    "normalized_title_exact_text_duplicate_groups": 0,
+    "same_name_source_checksum_mismatch": {
+      "source_file": "moj-judgments-1434-volume-29.pdf",
+      "declared_sha256": "d6c1ce473472e7a4f15ed4d2f204476ac0269cf340f7e4e895864fd0a5957465",
+      "preserved_sha256": "7eb12d57dc2b2a7bd3d9ea0bac795494cc1b9c7fc7cded4a8ba8344d873ade8c",
+      "decision": "preserve_both_declarations_and_require_manual_review"
+    },
+    "telegram_duplicate_filename_values_pending_binary_check": 125
+  },
+  "remaining_declared_originals_not_physically_present": [
+    "banking-finance-principles.pdf",
+    "bog-administrative-precedents-1402-1436.pdf",
+    "commercial-contract-precedents.pdf",
+    "higher-judiciary-principles-1391-1437-runtime.pdf",
+    "higher-judiciary-principles-1391-1437.pdf",
+    "ip-judgments-1446.pdf",
+    "ip-precedents.pdf",
+    "judicial-precedents-compilation.pdf",
+    "judicial-precedents-study.pdf",
+    "nafa-judicial-library-1445.pdf",
+    "uncitral-arbitration-precedents-2024.pdf"
+  ],
+  "validation": {
+    "collector_archive": "passed",
+    "target_schema": "passed",
+    "recovered_batch": "passed",
+    "skill_ndjson_audit": "passed",
+    "ndjson_syntax": "passed_nonempty_files_and_empty_stream_files_accepted",
+    "collector_record_ids": 2347,
+    "duplicate_record_ids": 0,
+    "duplicate_explicit_text_hashes": 0,
+    "recovered_duplicate_file_hashes": 0,
+    "recovered_duplicate_text_hashes": 0,
+    "target_document_files": 1419,
+    "target_document_file_hash_errors": 0,
+    "source_reconciliation": {
+      "stored_checksum_match_rows": 45,
+      "same_name_checksum_mismatch_rows": 1,
+      "declared_missing_rows": 11
+    },
+    "target_metadata_hashes_reconciled": 1366,
+    "target_binary_files_changed": false,
+    "target_identity_or_page_boundaries_changed": false
+  },
+  "manual_intervention_required": [
+    "Review seven reference-collision rows before any merge or promotion.",
+    "Review fourteen normalized-title collision groups; title equality alone is not a duplicate decision.",
+    "Resolve the two declared checksums for moj-judgments-1434-volume-29.pdf without deleting either provenance record.",
+    "Use an authorized Telegram session to download binaries, then repeat SHA-256 and official-source verification.",
+    "Retrieve Board of Grievances binaries through an environment that can complete TLS/HTTP access.",
+    "Recover or locate the eleven remaining declared originals and reconcile their checksums.",
+    "Manually verify metadata for all 981 recovered judgment records before any search eligibility change."
+  ]
+}

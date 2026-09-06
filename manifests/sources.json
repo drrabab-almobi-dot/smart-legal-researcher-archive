@@ -3,7 +3,7 @@
   "repository": "drrabab-almobi-dot/smart-legal-researcher-archive",
   "branch": "collector-import",
   "scope": "private_archive_pre_migration_audit",
-  "generated_at": "2026-09-06T08:45:00+03:00",
+  "generated_at": "2026-09-06T15:04:00+03:00",
   "rules": {
     "raw_is_immutable": true,
     "platform_import_performed": false,
@@ -19,15 +19,15 @@
       "official_url_pattern": "https://www.moj.gov.sa/ar-sa/ministry/versions/Documents/backupFiles3/AhkamGroup_{year}/{volume}.pdf",
       "declared_source_rows": 50,
       "declared_unique_filenames": 49,
-      "physically_preserved_originals": 20,
-      "verified_checksum_matches": 20,
+      "physically_preserved_originals": 44,
+      "verified_checksum_matches": 44,
       "same_name_checksum_mismatches": 1,
-      "declared_originals_not_physically_present": 29,
-      "processed_case_pdfs": 1366,
+      "declared_originals_not_physically_present": 0,
+      "processed_case_pdfs": 2347,
       "search_review_ready_records": 191,
-      "pending_review_records": 1175,
-      "status": "active_private_collection_with_reconciliation_gap",
-      "notes_ar": "الأجزاء 29 لعام 1434هـ و14 لعام 1435هـ فهارس مرجعية فقط. لا يعد أي منهما حكماً مستقلاً."
+      "pending_review_records": 2156,
+      "status": "active_private_collection_with_one_checksum_collision",
+      "notes_ar": "استُردت 24 مدونة/جزءاً رسمياً كانت معلنة وغير موجودة، وفُصلت 981 حالة وفق حدود الصفحات القائمة إلى ملفات خاصة للمراجعة. لم يُستبدل الجزء 29 لعام 1434هـ بسبب اختلاف البصمة، ولم تُحوّل الأجزاء المرجعية إلى أحكام."
     },
     {
       "id": "moj-circular-portal",
@@ -38,8 +38,11 @@
       "diagnostic_html_pages": 130,
       "binary_originals_preserved": 0,
       "confirmed_circulars_in_legacy_archive": 6,
-      "status": "metadata_and_html_diagnostics_only",
-      "notes_ar": "لا يظهر في السجلات المفحوصة مرفق PDF رسمي قابل للتنزيل."
+      "status": "metadata_and_html_diagnostics_only_no_new_ids",
+      "notes_ar": "لا يظهر في السجلات المفحوصة مرفق PDF رسمي قابل للتنزيل.",
+      "current_portal_record_ids": 339,
+      "new_portal_record_ids_this_run": 0,
+      "last_checked_at": "2026-09-06T14:52:54+03:00"
     },
     {
       "id": "board-of-grievances",
@@ -51,7 +54,9 @@
       "indexed_judicial_principles_from_separate_source": 2323,
       "physical_original_status": "declared_but_not_physically_present_in_current_branch",
       "status": "awaiting_official_binary_retrieval",
-      "notes_ar": "فشل تنزيل الأصل مباشرة من بيئة التجميع، ولا يعتمد الفهرس وحده كبديل عن الأصل."
+      "notes_ar": "فشل تنزيل الأصل مباشرة من بيئة التجميع، ولا يعتمد الفهرس وحده كبديل عن الأصل.",
+      "last_checked_at": "2026-09-06T14:54:34+03:00",
+      "last_check_result": "official_pages_textually_confirmed; direct binary retrieval failed with TLS connection closure"
     },
     {
       "id": "saip-copyright-2019",
@@ -92,14 +97,17 @@
       "acquisition_source": "Telegram",
       "originating_authority": "غير متحقق لكل ملف؛ لا تفترض الجهة الرسمية",
       "channel_url": "https://t.me/robiai33",
-      "post_attachment_metadata_rows": 1061,
+      "post_attachment_metadata_rows": 1085,
       "unique_published_filename_values": 717,
       "duplicate_filename_values_pending_binary_check": 125,
-      "preserved_public_preview_snapshots": 65,
+      "preserved_public_preview_snapshots": 67,
       "binary_originals_downloaded": 0,
       "legal_search_eligible_records": 0,
       "status": "pending_authorized_binary_download",
-      "notes_ar": "يلزم تنزيل مصرح به ثم SHA-256 وفحص النوع والمصدر الرسمي قبل الفهرسة."
+      "notes_ar": "يلزم تنزيل مصرح به ثم SHA-256 وفحص النوع والمصدر الرسمي قبل الفهرسة.",
+      "highest_observed_post_id": 1335,
+      "new_attachment_metadata_rows_this_run": 0,
+      "last_checked_at": "2026-09-06T14:43:33+03:00"
     },
     {
       "id": "onedrive-legacy",

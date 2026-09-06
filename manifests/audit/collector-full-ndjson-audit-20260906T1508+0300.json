@@ -1,0 +1,28 @@
+{
+  "files": [
+    {
+      "path": "/home/ubuntu/smart-legal-researcher-archive/indices/collector/case-register.ndjson",
+      "records": 191,
+      "errors": []
+    },
+    {
+      "path": "/home/ubuntu/smart-legal-researcher-archive/indices/collector/pending-case-review.ndjson",
+      "records": 1175,
+      "errors": []
+    },
+    {
+      "path": "/home/ubuntu/smart-legal-researcher-archive/indices/collector/recovered-case-review.ndjson",
+      "records": 981,
+      "errors": []
+    }
+  ],
+  "errors": [],
+  "record_count": 2347,
+  "duplicate_ids": 0,
+  "duplicate_hashes": 0,
+  "computed_content_hash_duplicates": 15,
+  "document_types": {
+    "حكم قضائي": 2347
+  },
+  "valid": true
+}

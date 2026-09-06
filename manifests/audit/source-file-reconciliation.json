@@ -4,13 +4,13 @@
   "declared_source_rows": 57,
   "declared_source_names": 56,
   "reconciliation_counts": {
-    "declared_original_not_physically_present": 35,
+    "declared_original_not_physically_present": 11,
     "same_name_checksum_mismatch": 1,
-    "stored_checksum_match": 21
+    "stored_checksum_match": 45
   },
   "index_referenced_source_names": 46,
   "index_referenced_not_declared": [],
-  "physical_source_file_names": 95,
+  "physical_source_file_names": 119,
   "physical_not_declared": [
     "README.md",
     "manifest.json",
@@ -185,8 +185,14 @@
       "declared_bytes": 3781511,
       "document_type": "مدونة أحكام",
       "declared_status": "مصدر قضايا وزارة العدل",
-      "reconciliation_status": "declared_original_not_physically_present",
-      "physical_candidates": []
+      "reconciliation_status": "stored_checksum_match",
+      "physical_candidates": [
+        {
+          "path": "archive-sources/moj/1434/moj-judgments-1434-volume-10.pdf",
+          "bytes": 3781511,
+          "sha256": "17172099759e4ae4a6305358e6d4d5bbec12444976069e1628e22ecb672ea010"
+        }
+      ]
     },
     {
       "registry": "source-register",
@@ -195,8 +201,14 @@
       "declared_bytes": 4104368,
       "document_type": "مدونة أحكام",
       "declared_status": "مصدر قضايا وزارة العدل",
-      "reconciliation_status": "declared_original_not_physically_present",
-      "physical_candidates": []
+      "reconciliation_status": "stored_checksum_match",
+      "physical_candidates": [
+        {
+          "path": "archive-sources/moj/1434/moj-judgments-1434-volume-12.pdf",
+          "bytes": 4104368,
+          "sha256": "7fbbefdb8b810d9daac796f824690c44b591184def9ac255751a20224fa7afc8"
+        }
+      ]
     },
     {
       "registry": "source-register",
@@ -205,8 +217,14 @@
       "declared_bytes": 4476366,
       "document_type": "مدونة أحكام",
       "declared_status": "مصدر قضايا وزارة العدل",
-      "reconciliation_status": "declared_original_not_physically_present",
-      "physical_candidates": []
+      "reconciliation_status": "stored_checksum_match",
+      "physical_candidates": [
+        {
+          "path": "archive-sources/moj/1434/moj-judgments-1434-volume-14.pdf",
+          "bytes": 4476366,
+          "sha256": "0faac966c633e1dad8ee3f8223fa401525eafdf75d2803e8d35e6c072becc830"
+        }
+      ]
     },
     {
       "registry": "source-register",
@@ -215,8 +233,14 @@
       "declared_bytes": 4853226,
       "document_type": "مدونة أحكام",
       "declared_status": "مصدر قضايا وزارة العدل",
-      "reconciliation_status": "declared_original_not_physically_present",
-      "physical_candidates": []
+      "reconciliation_status": "stored_checksum_match",
+      "physical_candidates": [
+        {
+          "path": "archive-sources/moj/1434/moj-judgments-1434-volume-15.pdf",
+          "bytes": 4853226,
+          "sha256": "3e70236bdf469ad1869f69fe165b936b4af1b67d6540fa32c467ff95360207e8"
+        }
+      ]
     },
     {
       "registry": "source-register",
@@ -225,8 +249,14 @@
       "declared_bytes": 4673339,
       "document_type": "مدونة أحكام",
       "declared_status": "مصدر قضايا وزارة العدل",
-      "reconciliation_status": "declared_original_not_physically_present",
-      "physical_candidates": []
+      "reconciliation_status": "stored_checksum_match",
+      "physical_candidates": [
+        {
+          "path": "archive-sources/moj/1434/moj-judgments-1434-volume-16.pdf",
+          "bytes": 4673339,
+          "sha256": "fbdf36deb24184bcd1453d4528d8e766d8800c753b8f21cfc3f22d9a916a242f"
+        }
+      ]
     },
     {
       "registry": "source-register",
@@ -235,8 +265,14 @@
       "declared_bytes": 3563724,
       "document_type": "مدونة أحكام",
       "declared_status": "مصدر قضايا وزارة العدل",
-      "reconciliation_status": "declared_original_not_physically_present",
-      "physical_candidates": []
+      "reconciliation_status": "stored_checksum_match",
+      "physical_candidates": [
+        {
+          "path": "archive-sources/moj/1434/moj-judgments-1434-volume-17.pdf",
+          "bytes": 3563724,
+          "sha256": "0fd12ae23184b837d4064d9481aed000ccba83493f30c15f7c271684d9768d3d"
+        }
+      ]
     },
     {
       "registry": "source-register",
@@ -245,8 +281,14 @@
       "declared_bytes": 3123094,
       "document_type": "مدونة أحكام",
       "declared_status": "مصدر قضايا وزارة العدل",
-      "reconciliation_status": "declared_original_not_physically_present",
-      "physical_candidates": []
+      "reconciliation_status": "stored_checksum_match",
+      "physical_candidates": [
+        {
+          "path": "archive-sources/moj/1434/moj-judgments-1434-volume-18.pdf",
+          "bytes": 3123094,
+          "sha256": "78873a7fe67123a392d1d8ed904a3d8a9a83abfe3e85f1b0d16961538d28f9da"
+        }
+      ]
     },
     {
       "registry": "source-register",
@@ -255,8 +297,14 @@
       "declared_bytes": 2478577,
       "document_type": "مدونة أحكام",
       "declared_status": "مصدر قضايا وزارة العدل",
-      "reconciliation_status": "declared_original_not_physically_present",
-      "physical_candidates": []
+      "reconciliation_status": "stored_checksum_match",
+      "physical_candidates": [
+        {
+          "path": "archive-sources/moj/1434/moj-judgments-1434-volume-19.pdf",
+          "bytes": 2478577,
+          "sha256": "3b89f883e82d7873ba50f322388b29458eafbeb7548b6b06d6e5f32ce06c196e"
+        }
+      ]
     },
     {
       "registry": "source-register",
@@ -265,8 +313,14 @@
       "declared_bytes": 2478112,
       "document_type": "مدونة أحكام",
       "declared_status": "مصدر قضايا وزارة العدل",
-      "reconciliation_status": "declared_original_not_physically_present",
-      "physical_candidates": []
+      "reconciliation_status": "stored_checksum_match",
+      "physical_candidates": [
+        {
+          "path": "archive-sources/moj/1434/moj-judgments-1434-volume-20.pdf",
+          "bytes": 2478112,
+          "sha256": "da777c85ad04c163536bc394d58196b0cd50748a8bfa960b0ac0ce725ed69659"
+        }
+      ]
     },
     {
       "registry": "source-register",
@@ -275,8 +329,14 @@
       "declared_bytes": 2449134,
       "document_type": "مدونة أحكام",
       "declared_status": "مصدر قضايا وزارة العدل",
-      "reconciliation_status": "declared_original_not_physically_present",
-      "physical_candidates": []
+      "reconciliation_status": "stored_checksum_match",
+      "physical_candidates": [
+        {
+          "path": "archive-sources/moj/1434/moj-judgments-1434-volume-21.pdf",
+          "bytes": 2449134,
+          "sha256": "e583fce1668437c0845f2ce9c364757a6d048a0c1681c6fb2ec4cf870f8ae57d"
+        }
+      ]
     },
     {
       "registry": "source-register",
@@ -285,8 +345,14 @@
       "declared_bytes": 3538771,
       "document_type": "مدونة أحكام",
       "declared_status": "مصدر قضايا وزارة العدل",
-      "reconciliation_status": "declared_original_not_physically_present",
-      "physical_candidates": []
+      "reconciliation_status": "stored_checksum_match",
+      "physical_candidates": [
+        {
+          "path": "archive-sources/moj/1434/moj-judgments-1434-volume-22.pdf",
+          "bytes": 3538771,
+          "sha256": "af23fd28ca115b52ffa13a98c2df44844943922b31cedde362a78702f8b9c133"
+        }
+      ]
     },
     {
       "registry": "source-register",
@@ -295,8 +361,14 @@
       "declared_bytes": 4057284,
       "document_type": "مدونة أحكام",
       "declared_status": "مصدر قضايا وزارة العدل",
-      "reconciliation_status": "declared_original_not_physically_present",
-      "physical_candidates": []
+      "reconciliation_status": "stored_checksum_match",
+      "physical_candidates": [
+        {
+          "path": "archive-sources/moj/1434/moj-judgments-1434-volume-23.pdf",
+          "bytes": 4057284,
+          "sha256": "442bb453ae6df7ee553646855b1610c79bd7b97d72b72cb641762bc7da3dfa23"
+        }
+      ]
     },
     {
       "registry": "source-register",
@@ -305,8 +377,14 @@
       "declared_bytes": 8366296,
       "document_type": "مدونة أحكام",
       "declared_status": "مصدر قضايا وزارة العدل",
-      "reconciliation_status": "declared_original_not_physically_present",
-      "physical_candidates": []
+      "reconciliation_status": "stored_checksum_match",
+      "physical_candidates": [
+        {
+          "path": "archive-sources/moj/1434/moj-judgments-1434-volume-24.pdf",
+          "bytes": 8366296,
+          "sha256": "9d0aa148f65f5c5468d29fb23ed346b56cdc0ad9e763d2404badbf750b51a03a"
+        }
+      ]
     },
     {
       "registry": "source-register",
@@ -315,8 +393,14 @@
       "declared_bytes": 4701062,
       "document_type": "مدونة أحكام",
       "declared_status": "مصدر قضايا وزارة العدل",
-      "reconciliation_status": "declared_original_not_physically_present",
-      "physical_candidates": []
+      "reconciliation_status": "stored_checksum_match",
+      "physical_candidates": [
+        {
+          "path": "archive-sources/moj/1434/moj-judgments-1434-volume-25.pdf",
+          "bytes": 4701062,
+          "sha256": "f4e975329bbf9e33d2851c84b1de5273b52b9dc1c4fc9eda6d08f93f0b25aa9b"
+        }
+      ]
     },
     {
       "registry": "source-register",
@@ -325,8 +409,14 @@
       "declared_bytes": 2868672,
       "document_type": "مدونة أحكام",
       "declared_status": "مصدر قضايا وزارة العدل",
-      "reconciliation_status": "declared_original_not_physically_present",
-      "physical_candidates": []
+      "reconciliation_status": "stored_checksum_match",
+      "physical_candidates": [
+        {
+          "path": "archive-sources/moj/1434/moj-judgments-1434-volume-26.pdf",
+          "bytes": 2868672,
+          "sha256": "b487906703f851e559d5d43a99eda6797f6b59d93f1b5d193e3f96e0bd45c27d"
+        }
+      ]
     },
     {
       "registry": "source-register",
@@ -335,8 +425,14 @@
       "declared_bytes": 4269148,
       "document_type": "مدونة أحكام",
       "declared_status": "مصدر قضايا وزارة العدل",
-      "reconciliation_status": "declared_original_not_physically_present",
-      "physical_candidates": []
+      "reconciliation_status": "stored_checksum_match",
+      "physical_candidates": [
+        {
+          "path": "archive-sources/moj/1434/moj-judgments-1434-volume-27.pdf",
+          "bytes": 4269148,
+          "sha256": "432edec85c03e7879aec9a85cb09a8882ff47ee73e3462d17845190c68475efe"
+        }
+      ]
     },
     {
       "registry": "source-register",
@@ -345,8 +441,14 @@
       "declared_bytes": 4354201,
       "document_type": "مدونة أحكام",
       "declared_status": "مصدر قضايا وزارة العدل",
-      "reconciliation_status": "declared_original_not_physically_present",
-      "physical_candidates": []
+      "reconciliation_status": "stored_checksum_match",
+      "physical_candidates": [
+        {
+          "path": "archive-sources/moj/1434/moj-judgments-1434-volume-28.pdf",
+          "bytes": 4354201,
+          "sha256": "427cfcd78c7d5368b2fbb4d9a63e685744daa9fd3ba2a58c586ded4a03e53de9"
+        }
+      ]
     },
     {
       "registry": "source-register",
@@ -371,8 +473,14 @@
       "declared_bytes": 5898258,
       "document_type": "مدونة أحكام",
       "declared_status": "مصدر قضايا وزارة العدل",
-      "reconciliation_status": "declared_original_not_physically_present",
-      "physical_candidates": []
+      "reconciliation_status": "stored_checksum_match",
+      "physical_candidates": [
+        {
+          "path": "archive-sources/moj/1434/moj-judgments-1434-volume-3.pdf",
+          "bytes": 5898258,
+          "sha256": "9c54034ce7d443535fdf40305b5ae8f64a1adb54cd89ff928d7040b006bb7fef"
+        }
+      ]
     },
     {
       "registry": "source-register",
@@ -381,8 +489,14 @@
       "declared_bytes": 1622433,
       "document_type": "فهرس مدونة",
       "declared_status": "مرجعي فقط",
-      "reconciliation_status": "declared_original_not_physically_present",
-      "physical_candidates": []
+      "reconciliation_status": "stored_checksum_match",
+      "physical_candidates": [
+        {
+          "path": "archive-sources/moj/1434/moj-judgments-1434-volume-30.pdf",
+          "bytes": 1622433,
+          "sha256": "b61c94d5a3ac33d818c94a40b7744b666efee46d3cf62d31b87125745276724a"
+        }
+      ]
     },
     {
       "registry": "source-register",
@@ -391,8 +505,14 @@
       "declared_bytes": 4858612,
       "document_type": "مدونة أحكام",
       "declared_status": "مصدر قضايا وزارة العدل",
-      "reconciliation_status": "declared_original_not_physically_present",
-      "physical_candidates": []
+      "reconciliation_status": "stored_checksum_match",
+      "physical_candidates": [
+        {
+          "path": "archive-sources/moj/1434/moj-judgments-1434-volume-4.pdf",
+          "bytes": 4858612,
+          "sha256": "47d4c5054697335c8926799bd75ca40e51c5ddb31286a024defb7310e90e713e"
+        }
+      ]
     },
     {
       "registry": "source-register",
@@ -401,8 +521,14 @@
       "declared_bytes": 4364841,
       "document_type": "مدونة أحكام",
       "declared_status": "مصدر قضايا وزارة العدل",
-      "reconciliation_status": "declared_original_not_physically_present",
-      "physical_candidates": []
+      "reconciliation_status": "stored_checksum_match",
+      "physical_candidates": [
+        {
+          "path": "archive-sources/moj/1434/moj-judgments-1434-volume-6.pdf",
+          "bytes": 4364841,
+          "sha256": "d8164d23575435d9de8ae23e628410450521627312e060d519a1d069c0675e11"
+        }
+      ]
     },
     {
       "registry": "source-register",
@@ -411,8 +537,14 @@
       "declared_bytes": 2681939,
       "document_type": "مدونة أحكام",
       "declared_status": "مصدر قضايا وزارة العدل",
-      "reconciliation_status": "declared_original_not_physically_present",
-      "physical_candidates": []
+      "reconciliation_status": "stored_checksum_match",
+      "physical_candidates": [
+        {
+          "path": "archive-sources/moj/1434/moj-judgments-1434-volume-7.pdf",
+          "bytes": 2681939,
+          "sha256": "f5f2ad3c10d624ba478a766336b07bf999780bbca7c373f94c22b15ddcaea611"
+        }
+      ]
     },
     {
       "registry": "source-register",
@@ -421,8 +553,14 @@
       "declared_bytes": 3518655,
       "document_type": "مدونة أحكام",
       "declared_status": "مصدر قضايا وزارة العدل",
-      "reconciliation_status": "declared_original_not_physically_present",
-      "physical_candidates": []
+      "reconciliation_status": "stored_checksum_match",
+      "physical_candidates": [
+        {
+          "path": "archive-sources/moj/1434/moj-judgments-1434-volume-8.pdf",
+          "bytes": 3518655,
+          "sha256": "d868ebfe6fc973b4adfc66f247af5f505cca6891fa73560b410c21049cfdcd2b"
+        }
+      ]
     },
     {
       "registry": "source-register",
@@ -431,8 +569,14 @@
       "declared_bytes": 3696508,
       "document_type": "مدونة أحكام",
       "declared_status": "مصدر قضايا وزارة العدل",
-      "reconciliation_status": "declared_original_not_physically_present",
-      "physical_candidates": []
+      "reconciliation_status": "stored_checksum_match",
+      "physical_candidates": [
+        {
+          "path": "archive-sources/moj/1434/moj-judgments-1434-volume-9.pdf",
+          "bytes": 3696508,
+          "sha256": "a509db3eac4c6e5043bd1e587775ecc12c01e281056b276cdd6bca3275c8a9c1"
+        }
+      ]
     },
     {
       "registry": "source-register",

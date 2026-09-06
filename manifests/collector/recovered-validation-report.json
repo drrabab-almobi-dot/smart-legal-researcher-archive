@@ -1,0 +1,19 @@
+{
+  "status": "passed",
+  "errors": [],
+  "acquired_original_files": 24,
+  "review_records": 981,
+  "records_by_type": {
+    "حكم قضائي": 981
+  },
+  "standalone_pdf_files": 981,
+  "exact_duplicate_candidates": 0,
+  "reference_collision_rows": 7,
+  "duplicate_ids": 0,
+  "duplicate_file_hashes": 0,
+  "duplicate_text_hashes": 0,
+  "reference_only_codices": 1,
+  "legal_search_eligible": 0,
+  "public_downloads_enabled": 0,
+  "platform_database_modified": false
+}
