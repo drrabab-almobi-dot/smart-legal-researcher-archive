@@ -260,7 +260,11 @@ def make_record(row: dict[str, str], source: Path, source_sha: str, start: int, 
 def process(apply: bool) -> dict[str, Any]:
     register = read_rows(REGISTER)
     existing = read_ndjson(RECORDS)
+    prior_duplicates = read_rows(DUPLICATES)
+    prior_processing = read_rows(PROCESSING)
     existing_by_source = {(item.get("sourceChecksum"), item.get("archive", {}).get("originalStartPage")) for item in existing}
+    existing_source_sha = {str(item.get("sourceChecksum") or "") for item in existing}
+    already_logged_posts = {str(item.get("post_id") or "") for item in prior_processing}
     hashes = all_existing_text_hashes()
     # The current private review index is excluded from all_existing_text_hashes to
     # prevent self-collisions during one scan. Add its known values here so a later
@@ -279,11 +283,17 @@ def process(apply: bool) -> dict[str, Any]:
     for row in register:
         source = ROOT / row["storage_path"]
         if not source.is_file():
+            if row["post_id"] in already_logged_posts:
+                continue
             processing_rows.append([row["post_id"], row["original_filename"], "failed", "source_path_missing", "0", "0"])
             continue
         source_sha = sha_file(source)
         if source_sha != row["sha256"]:
+            if row["post_id"] in already_logged_posts:
+                continue
             processing_rows.append([row["post_id"], row["original_filename"], "failed", "source_sha256_mismatch", "0", "0"])
+            continue
+        if source_sha in existing_source_sha:
             continue
         is_pdf = source.suffix.lower() == ".pdf" and source.read_bytes()[:4] == b"%PDF"
         is_image = source.suffix.lower() in {".jpg", ".jpeg", ".png", ".tif", ".tiff", ".webp"}
@@ -292,15 +302,21 @@ def process(apply: bool) -> dict[str, Any]:
             try:
                 texts = pdf_page_texts(source)
             except Exception as exc:
+                if row["post_id"] in already_logged_posts:
+                    continue
                 processing_rows.append([row["post_id"], row["original_filename"], "failed", str(exc), "0", "0"])
                 continue
         elif is_image:
             try:
                 texts = [image_text(source)]
             except Exception as exc:
+                if row["post_id"] in already_logged_posts:
+                    continue
                 processing_rows.append([row["post_id"], row["original_filename"], "pending_ocr_runtime_or_quality_review", str(exc), "0", "0"])
                 continue
         else:
+            if row["post_id"] in already_logged_posts:
+                continue
             processing_rows.append([row["post_id"], row["original_filename"], "pending_document_conversion_review", "original_preserved; automated page boundaries are unavailable for this format", "0", "0"])
             continue
         starts: list[tuple[int, str, str | None, str | None, str | None]] = []
@@ -323,26 +339,35 @@ def process(apply: bool) -> dict[str, Any]:
             record = make_record(row, source, source_sha, start, end, texts, kind, reference, date, court, sequence, duplicate_of, is_pdf)
             records.append(record)
             existing_by_source.add((source_sha, start))
+            existing_source_sha.add(source_sha)
             hashes[text_sha].add(record["id"])
             type_counts[kind] += 1
             created += 1
             created_for_file += 1
             if duplicate_of:
                 duplicate_rows.append([record["id"], row["post_id"], row["original_filename"], str(start), str(end), text_sha, ";".join(duplicate_of), "exact_normalized_text", "retain_original_and_review_record_not_searchable"])
-        status = "processed_private_review" if created_for_file else "already_processed"
-        processing_rows.append([row["post_id"], row["original_filename"], status, "all_outputs_private_review_only", str(len(starts)), str(created_for_file)])
+        if created_for_file or row["post_id"] not in already_logged_posts:
+            status = "processed_private_review" if created_for_file else "already_processed"
+            processing_rows.append([row["post_id"], row["original_filename"], status, "all_outputs_private_review_only", str(len(starts)), str(created_for_file)])
 
     summary = {
         "schema_version": "1.0", "scope": "authorized_telegram_deposit_private_review_only", "processed_at": now(),
         "originals_registered": len(register), "pdf_originals_processed": processable, "new_review_records": created,
+        "records_in_private_review": len(records), "new_processing_events": len(processing_rows),
         "records_by_type": dict(sorted(type_counts.items())), "exact_duplicate_records": len(duplicate_rows),
         "search_eligible_records": 0, "public_downloads_enabled": False, "platform_database_modified": False,
         "next_step": "Verify official source, issuer, legal type, title, reference, and page boundaries before any search activation.",
     }
-    if apply:
+    if apply and (created or processing_rows or duplicate_rows):
         write_ndjson(RECORDS, records)
-        write_csv(DUPLICATES, ["record_id", "post_id", "original_filename", "start_page", "end_page", "text_sha256", "related_record_ids", "match_method", "disposition"], duplicate_rows)
-        write_csv(PROCESSING, ["post_id", "original_filename", "status", "notes", "detected_document_boundaries", "new_review_records"], processing_rows)
+        write_csv(DUPLICATES, ["record_id", "post_id", "original_filename", "start_page", "end_page", "text_sha256", "related_record_ids", "match_method", "disposition"], [
+            [item.get(key, "") for key in ("record_id", "post_id", "original_filename", "start_page", "end_page", "text_sha256", "related_record_ids", "match_method", "disposition")]
+            for item in prior_duplicates
+        ] + duplicate_rows)
+        write_csv(PROCESSING, ["post_id", "original_filename", "status", "notes", "detected_document_boundaries", "new_review_records"], [
+            [item.get(key, "") for key in ("post_id", "original_filename", "status", "notes", "detected_document_boundaries", "new_review_records")]
+            for item in prior_processing
+        ] + processing_rows)
         SUMMARY.write_text(json.dumps(summary, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     return summary
 

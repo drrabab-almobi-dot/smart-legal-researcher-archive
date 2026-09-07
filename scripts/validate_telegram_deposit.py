@@ -14,6 +14,7 @@ ROOT = Path(__file__).resolve().parents[1]
 REGISTER = ROOT / "manifests" / "collector" / "telegram-deposit-file-register.csv"
 RECORDS = ROOT / "indices" / "collector" / "pending-telegram-deposit-documents.ndjson"
 DUPLICATES = ROOT / "manifests" / "collector" / "telegram-deposit-duplicates.csv"
+BINARY_DUPLICATES = ROOT / "manifests" / "collector" / "telegram-deposit-binary-duplicates.csv"
 PROCESSING = ROOT / "manifests" / "collector" / "telegram-deposit-processing-log.csv"
 SUMMARY = ROOT / "manifests" / "collector" / "telegram-deposit-summary.json"
 REPORT = ROOT / "manifests" / "collector" / "telegram-deposit-validation-report.json"
@@ -63,6 +64,7 @@ def main() -> int:
     rows = csv_rows(REGISTER, errors)
     records = ndjson_rows(RECORDS, errors)
     duplicates = csv_rows(DUPLICATES, errors)
+    binary_duplicates = csv_rows(BINARY_DUPLICATES, errors)
     processing = csv_rows(PROCESSING, errors)
     summary: dict[str, Any] = {}
     if SUMMARY.exists():
@@ -73,6 +75,11 @@ def main() -> int:
     elif rows or records:
         errors.append(f"missing:{SUMMARY.relative_to(ROOT)}")
 
+    duplicate_pairs = {
+        (str(row.get("duplicate_post_id") or ""), str(row.get("duplicate_sha256") or ""))
+        for row in binary_duplicates
+    }
+    rows_by_post_sha = {(str(row.get("post_id") or ""), str(row.get("sha256") or "")): row for row in rows}
     known_sha: dict[str, str] = {}
     for row in rows:
         required = ("post_id", "post_url", "original_filename", "storage_path", "bytes", "sha256", "access_status", "binary_status", "official_source_status", "search_eligibility")
@@ -90,12 +97,30 @@ def main() -> int:
         if actual != row["sha256"]:
             errors.append(f"original_sha256_mismatch:{row['storage_path']}")
         if row["sha256"] in known_sha and known_sha[row["sha256"]] != row["storage_path"]:
-            errors.append(f"unrecorded_duplicate_original_sha256:{row['sha256']}")
+            if (str(row.get("post_id") or ""), row["sha256"]) not in duplicate_pairs:
+                errors.append(f"unrecorded_duplicate_original_sha256:{row['sha256']}")
         known_sha[row["sha256"]] = row["storage_path"]
         if row["search_eligibility"] != "not_eligible":
             errors.append(f"file_search_eligibility_violation:{row['storage_path']}")
         if row["official_source_status"] != "unverified":
             errors.append(f"file_official_status_violation:{row['storage_path']}")
+
+    for row in binary_duplicates:
+        required = (
+            "duplicate_post_id", "duplicate_storage_path", "duplicate_sha256", "canonical_post_id",
+            "canonical_storage_path", "detection_method", "disposition", "recorded_at",
+        )
+        missing = [key for key in required if not row.get(key)]
+        if missing:
+            errors.append(f"binary_duplicate_missing_fields:{row.get('duplicate_post_id', '?')}:{','.join(missing)}")
+            continue
+        duplicate = rows_by_post_sha.get((row["duplicate_post_id"], row["duplicate_sha256"]))
+        canonical = rows_by_post_sha.get((row["canonical_post_id"], row["duplicate_sha256"]))
+        if not duplicate or not canonical:
+            errors.append(f"binary_duplicate_register_link_invalid:{row['duplicate_post_id']}")
+            continue
+        if duplicate.get("storage_path") != row["duplicate_storage_path"] or canonical.get("storage_path") != row["canonical_storage_path"]:
+            errors.append(f"binary_duplicate_storage_link_invalid:{row['duplicate_post_id']}")
 
     ids = [str(row.get("id") or "") for row in records]
     text_hashes = [str(row.get("textChecksum") or "") for row in records]
@@ -151,7 +176,7 @@ def main() -> int:
         "derived_private_pdfs": sum(1 for row in records if row.get("file")),
         "records_by_type": dict(sorted(Counter(str(row.get("documentTypeCode") or "unclassified_review") for row in records).items())),
         "duplicate_ids": len(duplicate_ids), "duplicate_text_checksums": len(duplicate_texts),
-        "duplicate_review_rows": len(duplicates), "processing_rows": len(processing),
+        "duplicate_review_rows": len(duplicates), "binary_duplicate_review_rows": len(binary_duplicates), "processing_rows": len(processing),
         "search_eligible_records": 0, "public_downloads_enabled": False, "platform_database_modified": False,
         "errors": errors,
     }

@@ -29,6 +29,7 @@ ORIGINALS_ROOT = ROOT / "originals" / "telegram-deposit"
 MANIFEST_DIR = ROOT / "manifests" / "collector"
 REGISTER = MANIFEST_DIR / "telegram-deposit-file-register.csv"
 FAILURES = MANIFEST_DIR / "telegram-deposit-failures.csv"
+BINARY_DUPLICATES = MANIFEST_DIR / "telegram-deposit-binary-duplicates.csv"
 STATE_DEFAULT = ROOT / "work" / "telegram-deposit" / "state.json"
 SESSION_DEFAULT = ROOT / "work" / "telegram-deposit" / "telegram-account.session"
 
@@ -41,6 +42,10 @@ REGISTER_HEADER = [
     "binary_status", "official_source_status", "search_eligibility", "notes",
 ]
 FAILURE_HEADER = ["attempted_at", "telegram_channel", "post_id", "post_url", "status", "reason", "next_step"]
+BINARY_DUPLICATE_HEADER = [
+    "duplicate_post_id", "duplicate_storage_path", "duplicate_sha256", "canonical_post_id",
+    "canonical_storage_path", "detection_method", "disposition", "recorded_at",
+]
 
 
 def utc_now() -> str:
@@ -199,7 +204,7 @@ async def bootstrap(channel: str, session: Path, state_path: Path, apply: bool) 
         await client.disconnect()
 
 
-async def pull(channel: str, session: Path, state_path: Path, limit: int | None, apply: bool, from_post_id: int | None) -> dict[str, Any]:
+async def pull(channel: str, session: Path, state_path: Path, limit: int | None, apply: bool, from_post_id: int | None, max_file_bytes: int) -> dict[str, Any]:
     TelegramClient, _ = telethon()
     api_id, api_hash, _ = api_settings()
     state_exists = state_path.exists()
@@ -213,8 +218,12 @@ async def pull(channel: str, session: Path, state_path: Path, limit: int | None,
         state["last_scanned_post_id"] = from_post_id
     prior_rows = read_csv(REGISTER)
     failures = read_csv(FAILURES)
+    binary_duplicates = read_csv(BINARY_DUPLICATES)
     recorded = {(row.get("post_id"), row.get("sha256")) for row in prior_rows}
-    seen_posts = {int(row["post_id"]) for row in prior_rows if row.get("post_id", "").isdigit()}
+    prior_by_sha = {row["sha256"]: row for row in prior_rows if row.get("sha256")}
+    recorded_duplicate_keys = {
+        (row.get("duplicate_post_id"), row.get("duplicate_sha256")) for row in binary_duplicates
+    }
     client = TelegramClient(str(session), api_id, api_hash)
     await client.connect()
     if not await client.is_user_authorized():
@@ -223,6 +232,7 @@ async def pull(channel: str, session: Path, state_path: Path, limit: int | None,
 
     acquired: list[dict[str, str]] = []
     new_failures: list[dict[str, str]] = []
+    new_binary_duplicates: list[dict[str, str]] = []
     failed_ids: set[int] = set(state["failed_post_ids"])
     latest_seen = int(state["last_scanned_post_id"])
     try:
@@ -248,6 +258,11 @@ async def pull(channel: str, session: Path, state_path: Path, limit: int | None,
             posted_at_text = posted_at.isoformat() if posted_at else ""
             temp_root = Path(tempfile.mkdtemp(prefix="telegram-deposit-", dir=ROOT / "work"))
             try:
+                declared_size = int(getattr(getattr(message, "file", None), "size", 0) or 0)
+                if max_file_bytes > 0 and declared_size > max_file_bytes:
+                    raise ValueError(
+                        f"attachment_exceeds_configured_limit:{declared_size}>{max_file_bytes}"
+                    )
                 downloaded = await client.download_media(message, file=str(temp_root))
                 if not downloaded:
                     raise RuntimeError("Telegram did not return an attachment binary")
@@ -273,7 +288,22 @@ async def pull(channel: str, session: Path, state_path: Path, limit: int | None,
                         "official_source_status": "unverified", "search_eligibility": "not_eligible",
                         "notes": "Telegram deposit binary preserved; official provenance, type, reference, and boundaries require review",
                     })
+                    canonical = prior_by_sha.get(file_sha)
+                    duplicate_key = (str(post_id), file_sha)
+                    if canonical and duplicate_key not in recorded_duplicate_keys:
+                        new_binary_duplicates.append({
+                            "duplicate_post_id": str(post_id),
+                            "duplicate_storage_path": stored_path,
+                            "duplicate_sha256": file_sha,
+                            "canonical_post_id": canonical.get("post_id", ""),
+                            "canonical_storage_path": canonical.get("storage_path", ""),
+                            "detection_method": "sha256_exact_binary_match",
+                            "disposition": "retain_each_received_original_and_route_duplicate_link_to_review",
+                            "recorded_at": utc_now(),
+                        })
+                        recorded_duplicate_keys.add(duplicate_key)
                     recorded.add((str(post_id), file_sha))
+                    prior_by_sha[file_sha] = acquired[-1]
                 failed_ids.discard(post_id)
             except Exception as exc:
                 failed_ids.add(post_id)
@@ -288,14 +318,17 @@ async def pull(channel: str, session: Path, state_path: Path, limit: int | None,
         await client.disconnect()
 
     if apply:
-        all_rows = prior_rows + acquired
-        write_csv(REGISTER, REGISTER_HEADER, all_rows)
-        write_csv(FAILURES, FAILURE_HEADER, failures + new_failures)
+        if acquired:
+            write_csv(REGISTER, REGISTER_HEADER, prior_rows + acquired)
+        if new_failures:
+            write_csv(FAILURES, FAILURE_HEADER, failures + new_failures)
+        if new_binary_duplicates:
+            write_csv(BINARY_DUPLICATES, BINARY_DUPLICATE_HEADER, binary_duplicates + new_binary_duplicates)
         write_state(state_path, {"last_scanned_post_id": latest_seen, "failed_post_ids": sorted(failed_ids)})
     return {
         "status": "completed" if not new_failures else "completed_with_failures",
         "channel": channel.lstrip("@"), "new_binaries_preserved": len(acquired),
-        "new_failures": len(new_failures), "last_scanned_post_id": latest_seen,
+        "new_failures": len(new_failures), "new_exact_binary_duplicates": len(new_binary_duplicates), "last_scanned_post_id": latest_seen,
         "pending_retry_post_ids": sorted(failed_ids), "applied": apply,
         "public_search_enabled": False, "platform_database_modified": False,
     }
@@ -308,6 +341,11 @@ def main() -> None:
     parser.add_argument("--state", type=Path, default=STATE_DEFAULT)
     parser.add_argument("--limit", type=int, default=None, help="Maximum newly scanned messages; omit for all messages after cursor")
     parser.add_argument("--from-post-id", type=int, help="Explicit lower bound for a bounded historical import; never guessed")
+    parser.add_argument(
+        "--max-file-bytes", type=int,
+        default=int(os.environ.get("TELEGRAM_MAX_FILE_BYTES", "262144000")),
+        help="Hard ceiling per attachment; oversize files are logged for manual archival, never partially downloaded.",
+    )
     parser.add_argument("--bootstrap-latest", action="store_true", help="Set cursor to the latest post without downloading history")
     parser.add_argument("--authorize", action="store_true", help="One-time interactive account authorization")
     parser.add_argument("--apply", action="store_true", help="Write preserved originals, registers, and cursor")
@@ -318,7 +356,7 @@ def main() -> None:
     if args.bootstrap_latest:
         result = asyncio.run(bootstrap(args.channel, args.session, args.state, args.apply))
     else:
-        result = asyncio.run(pull(args.channel, args.session, args.state, args.limit, args.apply, args.from_post_id))
+        result = asyncio.run(pull(args.channel, args.session, args.state, args.limit, args.apply, args.from_post_id, args.max_file_bytes))
     print(json.dumps(result, ensure_ascii=False, indent=2))
 
 
