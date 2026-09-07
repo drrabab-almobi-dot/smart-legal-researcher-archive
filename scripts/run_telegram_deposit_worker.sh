@@ -197,6 +197,7 @@ source "$ENV_FILE"
 : "${TELEGRAM_API_HASH:?missing TELEGRAM_API_HASH}"
 : "${TELEGRAM_PHONE:?missing TELEGRAM_PHONE}"
 : "${TELEGRAM_CHANNEL:=robiai33}"
+: "${TELEGRAM_INITIAL_FROM_POST_ID:=}"
 : "${ARCHIVE_WORKER_PUSH:=$PUSH_ENABLED}"
 PUSH_ENABLED="$ARCHIVE_WORKER_PUSH"
 
@@ -243,6 +244,30 @@ PULL_RESULT="$CYCLE_DIR/pull.json"
 PROCESS_RESULT="$CYCLE_DIR/process.json"
 VALIDATE_RESULT="$CYCLE_DIR/telegram-validation.json"
 COLLECTOR_RESULT="$CYCLE_DIR/collector-validation.json"
+if [[ ! -s "$PRIVATE_DIR/state.json" ]]; then
+  if [[ -n "$TELEGRAM_INITIAL_FROM_POST_ID" ]]; then
+    # A historical collection boundary must be intentionally configured as an
+    # exact post number. The normal first-run mode never guesses this boundary.
+    run_json "telegram_pull_initial_boundary" "$PULL_RESULT" python3 scripts/pull_telegram_deposit.py \
+      --apply --channel "$TELEGRAM_CHANNEL" \
+      --session "$PRIVATE_DIR/telegram-account.session" \
+      --state "$PRIVATE_DIR/state.json" \
+      --from-post-id "$TELEGRAM_INITIAL_FROM_POST_ID" \
+      --limit "$MAX_POSTS" --max-file-bytes "$MAX_FILE_BYTES" --max-total-bytes "$MAX_NEW_BYTES"
+  else
+    # Start autonomous intake from the latest authorized post. This protects
+    # historic channel content from an unapproved bulk import while requiring
+    # no manual bootstrap after authorization.
+    run_json "telegram_cursor_bootstrap" "$PULL_RESULT" python3 scripts/pull_telegram_deposit.py \
+      --bootstrap-latest --apply --channel "$TELEGRAM_CHANNEL" \
+      --session "$PRIVATE_DIR/telegram-account.session" \
+      --state "$PRIVATE_DIR/state.json"
+    PHASE="initializing_cursor"
+    write_status "succeeded" "cursor_bootstrapped_at_latest_post_no_historical_collection" || true
+    log "succeeded:cursor_bootstrapped_at_latest_post"
+    exit 0
+  fi
+fi
 run_json "telegram_pull" "$PULL_RESULT" python3 scripts/pull_telegram_deposit.py \
   --apply --channel "$TELEGRAM_CHANNEL" \
   --session "$PRIVATE_DIR/telegram-account.session" \
