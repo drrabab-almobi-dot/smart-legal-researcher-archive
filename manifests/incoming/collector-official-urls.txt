@@ -1,0 +1,3 @@
+# Authorized official-source queue for the incremental collector.
+# One URL per line. Add only official source URLs that we are authorized to archive.
+# Third-party bulk scraping targets such as albaheth.app must not be added here.
