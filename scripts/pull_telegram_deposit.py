@@ -321,11 +321,23 @@ async def pull(channel: str, session: Path, state_path: Path, limit: int | None,
                     prior_by_sha[file_sha] = acquired[-1]
                 failed_ids.discard(post_id)
             except Exception as exc:
-                failed_ids.add(post_id)
+                reason = f"{type(exc).__name__}: {exc}"[:1000]
+                too_large = "attachment_exceeds_configured_limit" in str(exc)
+                if too_large:
+                    # This is a durable policy limit, not a transient connection
+                    # failure. Advance the cursor and retain an explicit manual
+                    # archival task rather than retrying the same oversize binary
+                    # forever on every scheduled cycle.
+                    failed_ids.discard(post_id)
+                    status = "manual_archival_required"
+                    next_step = "retrieve this attachment through an approved large-file procedure; preserve its original bytes and provenance"
+                else:
+                    failed_ids.add(post_id)
+                    status = "download_failed"
+                    next_step = "retry with the same authorized account session; do not substitute another source binary"
                 new_failures.append({
                     "attempted_at": utc_now(), "telegram_channel": channel.lstrip("@"), "post_id": str(post_id),
-                    "post_url": post_url, "status": "download_failed", "reason": f"{type(exc).__name__}: {exc}"[:1000],
-                    "next_step": "retry with the same authorized account session; do not substitute another source binary",
+                    "post_url": post_url, "status": status, "reason": reason, "next_step": next_step,
                 })
             finally:
                 shutil.rmtree(temp_root, ignore_errors=True)
