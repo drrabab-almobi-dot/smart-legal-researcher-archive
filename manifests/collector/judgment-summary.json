@@ -1,10 +1,10 @@
 {
   "source_pdfs_examined": 44,
   "judgment_case_pdfs": 2370,
-  "verified_case_records_ready_for_review": 1055,
+  "verified_case_records_ready_for_review": 1137,
   "exact_duplicate_cases_excluded": 0,
   "reference_collision_records_pending_review": 24,
-  "records_pending_metadata_review": 1315,
+  "records_pending_metadata_review": 1233,
   "sources_needing_boundary_review": 1,
   "failed_sources": 0,
   "index_path": "indices/collector/case-register.ndjson",

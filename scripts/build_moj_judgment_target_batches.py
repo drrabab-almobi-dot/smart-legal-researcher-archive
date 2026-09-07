@@ -109,14 +109,34 @@ def write_ndjson(path: Path, records: list[dict[str, object]]) -> None:
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--replace", action="store_true")
+    parser.add_argument(
+        "--all-verified",
+        action="store_true",
+        help="Build a review-only batch from every verified collector judgment. This never imports or activates search.",
+    )
     args = parser.parse_args()
     if args.replace:
         shutil.rmtree(OUTPUT, ignore_errors=True)
 
-    raw = [json.loads(line) for line in INPUT.read_text(encoding="utf-8").splitlines() if line.strip()]
-    if len(raw) != EXPECTED_RECORDS:
-        raise SystemExit(f"Expected {EXPECTED_RECORDS} collector records, found {len(raw)}")
-    unexpected = sorted({item["sourceFile"] for item in raw} - ALLOWED_SOURCE_FILES)
+    all_records = [json.loads(line) for line in INPUT.read_text(encoding="utf-8").splitlines() if line.strip()]
+    if args.all_verified:
+        raw = all_records
+        batch_id = "moj-all-verified-judgments-review-002"
+        batch_manifest = BATCH_DIR / "moj-all-verified-judgments-review-002.json"
+        expected_sources = {item["sourceFile"] for item in raw}
+    else:
+        raw = [item for item in all_records if item["sourceFile"] in ALLOWED_SOURCE_FILES]
+        batch_id = "moj-1434-five-volumes-review-001"
+        batch_manifest = BATCH_DIR / "moj-1434-five-volumes-review-001.json"
+        expected_sources = ALLOWED_SOURCE_FILES
+        if len(raw) != EXPECTED_RECORDS:
+            raise SystemExit(
+                f"Expected {EXPECTED_RECORDS} records in the five-volume review batch, found {len(raw)}. "
+                "Use --all-verified to create an expanded review-only batch explicitly."
+            )
+    if not raw:
+        raise SystemExit("No verified collector records available")
+    unexpected = sorted({item["sourceFile"] for item in raw} - expected_sources)
     if unexpected:
         raise SystemExit(f"Unexpected collector sources: {unexpected}")
 
@@ -135,7 +155,7 @@ def main() -> None:
     source_files: list[dict[str, object]] = []
     source_file_ids: dict[str, str] = {}
     source_sha_by_name: dict[str, str] = {}
-    for filename in sorted(ALLOWED_SOURCE_FILES):
+    for filename in sorted(expected_sources):
         path = source_path(filename)
         digest = sha256_file(path)
         represented = {item["sourceChecksum"] for item in raw if item["sourceFile"] == filename}
@@ -271,7 +291,7 @@ def main() -> None:
     by_source = Counter(item["sourceFile"] for item in raw)
     summary = {
         "schema_version": "1.0",
-        "batch_id": "moj-1434-five-volumes-review-001",
+        "batch_id": batch_id,
         "batch_status": "review",
         "source_file_count": len(source_files),
         "documents_detected": len(documents),
@@ -284,7 +304,7 @@ def main() -> None:
         "failed_count": 0,
         "notes": "Questionable court/circuit values were not propagated; all rows remain review-only.",
     }
-    (BATCH_DIR / "moj-1434-five-volumes-review-001.json").write_text(
+    batch_manifest.write_text(
         json.dumps(summary, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
     )
     print(json.dumps(summary, ensure_ascii=False, indent=2))

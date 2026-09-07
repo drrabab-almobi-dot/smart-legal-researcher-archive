@@ -81,6 +81,12 @@ def normalise(value: str) -> str:
     value = unicodedata.normalize("NFKC", value or "").translate(DIGITS)
     value = BIDI.sub("", value)
     value = DIACRITICS.sub("", value).replace("ـ", "")
+    # The Ministry's legacy InDesign PDFs sometimes extract a small, consistent
+    # set of Arabic visual-order spellings.  These substitutions only normalize
+    # the extracted text used for metadata detection; neither the official
+    # source PDF nor its derived page span is changed.
+    value = value.replace("احملكمة", "المحكمة").replace("احملاكم", "المحاكم")
+    value = value.replace("املحكمة", "المحكمة").replace("االستئناف", "الاستئناف")
     return re.sub(r"\s+", " ", value).strip()
 
 
@@ -179,6 +185,43 @@ def field_line(text: str, keyword: str, limit: int = 180) -> str | None:
     return None
 
 
+def court_from_span(text: str) -> str | None:
+    """Return only an evidenced court name, never a narrative sentence.
+
+    The published judgment can name the originating court after its header.
+    It is therefore read from the complete confirmed page range, while appeal
+    certification phrases are deliberately excluded as a court value.
+    """
+    cleaned = normalise(text)
+    court_markers = (
+        "المحكمة العامة", "المحكمة الجزائية", "المحكمة التجارية",
+        "المحكمة العمالية", "المحكمة الإدارية", "محكمة التنفيذ",
+        "محكمة الاستئناف",
+    )
+    for marker in court_markers:
+        start = cleaned.find(marker)
+        while start >= 0:
+            context_start = max(0, start - 90)
+            context = cleaned[context_start:start + len(marker) + 120]
+            # A confirmation or authentication notice is not evidence of the
+            # court that issued the judgment itself.
+            if marker == "محكمة الاستئناف" and any(
+                phrase in context for phrase in ("قرار التصديق", "صدق الحكم", "مصادقة")
+            ):
+                start = cleaned.find(marker, start + len(marker))
+                continue
+            tail = cleaned[start:start + 140]
+            tail = re.split(
+                r"(?:الحمد\s+لل?ه|وبناء|اء\s+على|وبعد|والصادر|والمقيد|للنظر|ما\s+ورد|من\s+فضيلة|الدعوى|المقدمة|رقم|تاريخ|في يوم|افتتحت|فقد|حيث|،|؛|\.)",
+                tail,
+                maxsplit=1,
+            )[0].strip(" :-،؛")
+            if tail.startswith(marker) and len(tail) >= len(marker):
+                return tail[:120]
+            start = cleaned.find(marker, start + len(marker))
+    return None
+
+
 def metadata_for_first_page(text: str) -> dict[str, str | None]:
     cleaned = normalise(text)
     return {
@@ -186,7 +229,7 @@ def metadata_for_first_page(text: str) -> dict[str, str | None]:
         "judgmentNumber": first_match(JUDGMENT_PATTERNS, cleaned),
         "lawsuitNumber": first_match(LAWSUIT_PATTERNS, cleaned),
         "decisionDate": first_match(DATE_PATTERNS, cleaned),
-        "court": field_line(text, "محكمة"),
+        "court": court_from_span(text) or field_line(text, "محكمة"),
         "circuit": field_line(text, "الدائرة"),
         "subject": title_from_first_page(text),
     }

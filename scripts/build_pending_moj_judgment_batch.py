@@ -18,7 +18,6 @@ INPUT = ROOT / "indices" / "collector" / "pending-case-review.ndjson"
 OUTPUT = ROOT / "indices" / "target-schema" / "moj-judgments-pending-review"
 SOURCE_ROOT = ROOT / "archive-sources" / "moj"
 BATCH_DIR = ROOT / "manifests" / "batches"
-EXPECTED = 1175
 NAMESPACE = uuid.UUID("d702a836-69be-486b-8c7f-cf6ee3a3b7f2")
 DIACRITICS = re.compile(r"[\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06ED]")
 BIDI = re.compile(r"[\u200e\u200f\u202a-\u202e\u2066-\u2069]")
@@ -67,12 +66,17 @@ def write_ndjson(path: Path, rows: list[dict[str, object]]) -> None:
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--replace", action="store_true")
+    parser.add_argument(
+        "--batch-id",
+        default="moj-remaining-judgments-pending-review-001",
+        help="Review-batch identifier; use a new revision for a regenerated collector snapshot.",
+    )
     args = parser.parse_args()
     if args.replace:
         shutil.rmtree(OUTPUT, ignore_errors=True)
     rows = [json.loads(line) for line in INPUT.read_text(encoding="utf-8").splitlines() if line.strip()]
-    if len(rows) != EXPECTED:
-        raise SystemExit(f"Expected {EXPECTED} records, found {len(rows)}")
+    if not rows:
+        raise SystemExit("No pending collector records available")
 
     source_id = stable_id("source", "ministry-of-justice-saudi-judgments")
     sources = [{
@@ -233,7 +237,7 @@ def main() -> None:
     BATCH_DIR.mkdir(parents=True, exist_ok=True)
     summary = {
         "schema_version": "1.0",
-        "batch_id": "moj-remaining-judgments-pending-review-001",
+        "batch_id": args.batch_id,
         "batch_status": "review",
         "source_file_count": len(source_files),
         "documents_detected": len(documents),
@@ -246,7 +250,7 @@ def main() -> None:
         "public_downloads_enabled": False,
         "failed_count": 0,
     }
-    (BATCH_DIR / "moj-remaining-judgments-pending-review-001.json").write_text(
+    (BATCH_DIR / f"{args.batch_id}.json").write_text(
         json.dumps(summary, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
     )
     print(json.dumps(summary, ensure_ascii=False, indent=2))

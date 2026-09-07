@@ -2,11 +2,11 @@
   "schema_version": "2.0",
   "repository": "drrabab-almobi-dot/smart-legal-researcher-archive",
   "branch": "collector-import",
-  "as_of": "2026-09-06T16:02:52+03:00",
+  "as_of": "2026-09-07T05:14:55+00:00",
   "scope": "active_collection_and_review_only_platform_migration",
   "safety": {
-    "raw_modified": true,
-    "raw_modification_scope": "24 official Ministry of Justice originals added without alteration; 981 derived standalone PDFs retained separately, including 911 confirmed duplicate candidates outside the search index",
+    "raw_modified": false,
+    "raw_modification_scope": "No original legal binary was changed; standalone case PDFs are deterministic derivatives linked to immutable originals by SHA-256 and source page range.",
     "database_modified": true,
     "platform_import_performed": true,
     "platform_import_mode": "review_only",
@@ -39,7 +39,8 @@
     "schema_migrations_applied": [
       "pre_legal_archive_snapshot_20260906_0900",
       "add_independent_legal_document_archive_schema",
-      "add_missing_legal_archive_fk_indexes"
+      "add_missing_legal_archive_fk_indexes",
+      "legal_archive_document_taxonomy"
     ],
     "sources": 3,
     "source_files": 20,
@@ -73,21 +74,18 @@
     "moj_circulars": 339
   },
   "collector_batch_reconciliation": {
-    "ministry_case_boundaries_detected": 3351,
-    "case_pdfs_created": 3351,
-    "collector_case_records_total": 2440,
-    "case_records_ready_for_review": 1055,
-    "skipped_due_to_missing_subject": 24,
-    "manual_field_review_records": 1385,
-    "metadata_incomplete_pending_records": 1385,
-    "reference_collision_pending_records": 25,
-    "recovered_official_moj_originals": 24,
-    "recovered_standalone_judgment_pdfs": 981,
-    "recovered_reference_only_codices": 1,
-    "recovered_exact_duplicate_candidate_pdfs": 911,
-    "recovered_remaining_metadata_review_records": 70,
-    "recovered_remaining_reference_collision_records": 1,
-    "validation": "passed"
+    "source_pdfs_examined": 44,
+    "official_judgment_source_files_represented": 41,
+    "ministry_case_boundaries_detected": 2370,
+    "case_pdfs_created": 2370,
+    "collector_case_records_total": 2370,
+    "case_records_ready_for_review": 1137,
+    "metadata_incomplete_pending_records": 1209,
+    "reference_collision_pending_records": 24,
+    "auto_extraction_field_review_records": 1137,
+    "pending_field_review_records": 1233,
+    "validation": "passed",
+    "batch_policy": "All generated records remain review-only; no database import, search activation, or public download was created by this rebuild."
   },
   "circular_reconciliation": {
     "legacy_metadata_rows": 339,
@@ -142,10 +140,21 @@
     "new_original_binaries_downloaded": 0,
     "latest_check_validation": "passed",
     "automatic_platform_database_write": false,
-    "automatic_publication": false
+    "automatic_publication": false,
+    "authorized_telegram_deposit_worker": {
+      "deployment": "persistent_worker_systemd_timer",
+      "frequency": "every_15_minutes",
+      "status": "armed_but_condition_gated",
+      "conditions": [
+        "private_worker_env",
+        "authorized_telegram_session"
+      ],
+      "automatic_platform_database_write": false,
+      "automatic_publication": false
+    }
   },
   "validation": {
-    "latest_integrity_check": "2026-09-06T16:02:52+03:00",
+    "latest_integrity_check": "2026-09-07T05:14:55+00:00",
     "target_schema_validation": "passed",
     "ndjson_errors": 0,
     "standalone_file_hash_errors": 0,
@@ -188,13 +197,16 @@
       "fallback_title_hash_collisions": 15,
       "interpretation": "The 15 excess occurrences form 14 normalized-title-only groups, all registered for manual review. Their text checksums are distinct, so they are not confirmed document duplicates."
     },
-    "historical_database_hash_mismatches_after_prior_reconciliation": 0
+    "historical_database_hash_mismatches_after_prior_reconciliation": 0,
+    "expanded_review_documents": 2762,
+    "expanded_review_document_files": 2423
   },
   "blocking_or_manual_actions": [
-    "Provide authorised Telegram Web access or a Telegram export containing original binary files.",
     "Recover the five declared source originals holding 3700 quarantined records.",
-    "Review 1385 metadata-incomplete judgments and 25 pending reference-collision pairs before any activation.",
     "Obtain signed/original circular documents before enabling any circular for search or download.",
-    "Obtain written permission from Albaheth before any copying, redistribution, or automated collection; otherwise use it only to identify an official Ministry source URL."
+    "Obtain written permission from Albaheth before any copying, redistribution, or automated collection; otherwise use it only to identify an official Ministry source URL.",
+    "Review 1137 auto-extracted Ministry judgments before any search activation; their fields are evidence-linked but not human-approved.",
+    "Review 1233 Ministry judgments with incomplete metadata, including 24 reference-collision records.",
+    "Create the private Telegram worker environment and complete one interactive account authorization before the 15-minute intake timer can run."
   ]
 }

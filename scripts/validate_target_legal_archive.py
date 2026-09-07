@@ -11,11 +11,13 @@ ROOT = Path(__file__).resolve().parents[1]
 OUTPUT = ROOT / "manifests" / "target-schema-validation.json"
 IMPORTABLE_BATCHES = [
     ("saip", ROOT / "indices" / "target-schema" / "saip-copyright-2019", 53),
-    ("moj_verified", ROOT / "indices" / "target-schema" / "moj-judgments-review", 191),
-    ("moj_pending", ROOT / "indices" / "target-schema" / "moj-judgments-pending-review", 1175),
+    ("moj_verified", ROOT / "indices" / "target-schema" / "moj-judgments-review", None),
+    ("moj_pending", ROOT / "indices" / "target-schema" / "moj-judgments-pending-review", None),
     ("moj_circulars", ROOT / "indices" / "target-schema" / "moj-circulars-review", 339),
 ]
 QUARANTINE = ROOT / "indices" / "target-schema" / "missing-originals-review"
+COLLECTOR_VERIFIED = ROOT / "indices" / "collector" / "case-register.ndjson"
+COLLECTOR_PENDING = ROOT / "indices" / "collector" / "pending-case-review.ndjson"
 
 
 def read_ndjson(path: Path) -> list[dict[str, object]]:
@@ -44,9 +46,14 @@ def main() -> None:
     all_documents: list[dict[str, object]] = []
     all_files: list[dict[str, object]] = []
     batch_summary: dict[str, object] = {}
+    expected_by_batch = {
+        "moj_verified": len(read_ndjson(COLLECTOR_VERIFIED)),
+        "moj_pending": len(read_ndjson(COLLECTOR_PENDING)),
+    }
     for name, directory, expected in IMPORTABLE_BATCHES:
         documents = read_ndjson(directory / "legal-documents.ndjson")
         files = read_ndjson(directory / "document-files.ndjson")
+        expected = expected_by_batch.get(name, expected)
         if len(documents) != expected:
             errors.append(f"{name}: expected {expected} documents, found {len(documents)}")
         if name == "moj_circulars" and files:
@@ -68,7 +75,7 @@ def main() -> None:
         errors.append("one or more records are unexpectedly search eligible")
     if any(not row.get("title") for row in all_documents):
         errors.append("one or more records have no title")
-    allowed_types = {"judgment", "circular", "decision", "principle", "precedent"}
+    allowed_types = {"judgment", "deed", "circular", "decision", "principle", "precedent", "blog_index"}
     if any(row.get("document_type") not in allowed_types for row in all_documents):
         errors.append("invalid document type")
 

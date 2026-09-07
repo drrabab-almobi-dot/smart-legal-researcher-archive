@@ -2,8 +2,8 @@
   "status": "passed",
   "scope": "private_collector_only",
   "platform_import_modified": false,
-  "verified_case_records_ready_for_review": 1055,
-  "case_records_pending_review": 1315,
+  "verified_case_records_ready_for_review": 1137,
+  "case_records_pending_review": 1233,
   "case_pdfs": 2370,
   "case_pdf_source_counts": {
     "moj-judgments-1434-volume-1.pdf": 37,
