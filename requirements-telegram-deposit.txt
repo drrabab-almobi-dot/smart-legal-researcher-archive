@@ -1,0 +1,2 @@
+# Installed only on the private worker runtime; never embed Telegram credentials in Git.
+Telethon>=1.36,<2
