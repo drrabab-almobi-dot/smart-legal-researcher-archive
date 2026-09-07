@@ -16,6 +16,7 @@ LOCK_FILE="$PRIVATE_DIR/worker.lock"
 BRANCH="${ARCHIVE_BRANCH:-collector-import}"
 MAX_POSTS="${TELEGRAM_MAX_POSTS_PER_CYCLE:-25}"
 MAX_FILE_BYTES="${TELEGRAM_MAX_FILE_BYTES:-262144000}"
+MAX_NEW_BYTES="${TELEGRAM_MAX_NEW_BYTES_PER_CYCLE:-1073741824}"
 PUSH_ENABLED="${ARCHIVE_WORKER_PUSH:-0}"
 RUN_ID="$(date -u +%Y%m%dT%H%M%SZ)-$$"
 STARTED_AT="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
@@ -246,7 +247,7 @@ run_json "telegram_pull" "$PULL_RESULT" python3 scripts/pull_telegram_deposit.py
   --apply --channel "$TELEGRAM_CHANNEL" \
   --session "$PRIVATE_DIR/telegram-account.session" \
   --state "$PRIVATE_DIR/state.json" \
-  --limit "$MAX_POSTS" --max-file-bytes "$MAX_FILE_BYTES"
+  --limit "$MAX_POSTS" --max-file-bytes "$MAX_FILE_BYTES" --max-total-bytes "$MAX_NEW_BYTES"
 
 PHASE="processing_private_documents"
 run_json "telegram_process" "$PROCESS_RESULT" python3 scripts/process_telegram_deposit.py --apply

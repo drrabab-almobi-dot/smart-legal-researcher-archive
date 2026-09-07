@@ -204,7 +204,7 @@ async def bootstrap(channel: str, session: Path, state_path: Path, apply: bool) 
         await client.disconnect()
 
 
-async def pull(channel: str, session: Path, state_path: Path, limit: int | None, apply: bool, from_post_id: int | None, max_file_bytes: int) -> dict[str, Any]:
+async def pull(channel: str, session: Path, state_path: Path, limit: int | None, apply: bool, from_post_id: int | None, max_file_bytes: int, max_total_bytes: int) -> dict[str, Any]:
     TelegramClient, _ = telethon()
     api_id, api_hash, _ = api_settings()
     state_exists = state_path.exists()
@@ -235,6 +235,7 @@ async def pull(channel: str, session: Path, state_path: Path, limit: int | None,
     new_binary_duplicates: list[dict[str, str]] = []
     failed_ids: set[int] = set(state["failed_post_ids"])
     latest_seen = int(state["last_scanned_post_id"])
+    newly_preserved_bytes = 0
     try:
         entity = await client.get_entity(channel if channel.startswith("@") else f"@{channel}")
         candidates: dict[int, Any] = {}
@@ -263,11 +264,24 @@ async def pull(channel: str, session: Path, state_path: Path, limit: int | None,
                     raise ValueError(
                         f"attachment_exceeds_configured_limit:{declared_size}>{max_file_bytes}"
                     )
+                if max_total_bytes > 0 and declared_size and newly_preserved_bytes + declared_size > max_total_bytes:
+                    raise ValueError(
+                        f"cycle_attachment_budget_exceeded:{newly_preserved_bytes}+{declared_size}>{max_total_bytes}"
+                    )
                 downloaded = await client.download_media(message, file=str(temp_root))
                 if not downloaded:
                     raise RuntimeError("Telegram did not return an attachment binary")
                 temporary = Path(downloaded)
                 file_sha = digest(temporary)
+                actual_bytes = temporary.stat().st_size
+                if max_file_bytes > 0 and actual_bytes > max_file_bytes:
+                    raise ValueError(
+                        f"downloaded_attachment_exceeds_configured_limit:{actual_bytes}>{max_file_bytes}"
+                    )
+                if max_total_bytes > 0 and newly_preserved_bytes + actual_bytes > max_total_bytes:
+                    raise ValueError(
+                        f"downloaded_attachment_exceeds_cycle_budget:{newly_preserved_bytes}+{actual_bytes}>{max_total_bytes}"
+                    )
                 destination = target_path(channel.lstrip("@"), post_id, filename, file_sha)
                 if apply and not destination.exists():
                     destination.parent.mkdir(parents=True, exist_ok=True)
@@ -288,6 +302,7 @@ async def pull(channel: str, session: Path, state_path: Path, limit: int | None,
                         "official_source_status": "unverified", "search_eligibility": "not_eligible",
                         "notes": "Telegram deposit binary preserved; official provenance, type, reference, and boundaries require review",
                     })
+                    newly_preserved_bytes += actual_bytes
                     canonical = prior_by_sha.get(file_sha)
                     duplicate_key = (str(post_id), file_sha)
                     if canonical and duplicate_key not in recorded_duplicate_keys:
@@ -327,7 +342,7 @@ async def pull(channel: str, session: Path, state_path: Path, limit: int | None,
         write_state(state_path, {"last_scanned_post_id": latest_seen, "failed_post_ids": sorted(failed_ids)})
     return {
         "status": "completed" if not new_failures else "completed_with_failures",
-        "channel": channel.lstrip("@"), "new_binaries_preserved": len(acquired),
+        "channel": channel.lstrip("@"), "new_binaries_preserved": len(acquired), "new_bytes_preserved": newly_preserved_bytes,
         "new_failures": len(new_failures), "new_exact_binary_duplicates": len(new_binary_duplicates), "last_scanned_post_id": latest_seen,
         "pending_retry_post_ids": sorted(failed_ids), "applied": apply,
         "public_search_enabled": False, "platform_database_modified": False,
@@ -346,6 +361,11 @@ def main() -> None:
         default=int(os.environ.get("TELEGRAM_MAX_FILE_BYTES", "262144000")),
         help="Hard ceiling per attachment; oversize files are logged for manual archival, never partially downloaded.",
     )
+    parser.add_argument(
+        "--max-total-bytes", type=int,
+        default=int(os.environ.get("TELEGRAM_MAX_NEW_BYTES_PER_CYCLE", "1073741824")),
+        help="Hard ceiling for new originals in one cycle; excess posts stay in the retry queue for a later bounded cycle.",
+    )
     parser.add_argument("--bootstrap-latest", action="store_true", help="Set cursor to the latest post without downloading history")
     parser.add_argument("--authorize", action="store_true", help="One-time interactive account authorization")
     parser.add_argument("--apply", action="store_true", help="Write preserved originals, registers, and cursor")
@@ -356,7 +376,7 @@ def main() -> None:
     if args.bootstrap_latest:
         result = asyncio.run(bootstrap(args.channel, args.session, args.state, args.apply))
     else:
-        result = asyncio.run(pull(args.channel, args.session, args.state, args.limit, args.apply, args.from_post_id, args.max_file_bytes))
+        result = asyncio.run(pull(args.channel, args.session, args.state, args.limit, args.apply, args.from_post_id, args.max_file_bytes, args.max_total_bytes))
     print(json.dumps(result, ensure_ascii=False, indent=2))
 
 

@@ -1,2 +1,4 @@
 # Installed only on the private worker runtime; never embed Telegram credentials in Git.
+# The continuous worker also requires system Git LFS, qpdf, Poppler, Tesseract,
+# flock, and logrotate; provision these at the worker-host level.
 Telethon>=1.36,<2
