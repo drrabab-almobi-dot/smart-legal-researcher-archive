@@ -3,6 +3,10 @@
 # It never enables search, downloads, platform imports, or public publication.
 set -Eeuo pipefail
 umask 077
+# The repository must remain clean between cycles. Runtime bytecode has no
+# archival value and would otherwise be an untracked file that safely blocks a
+# later cycle, so disable it for every child Python process.
+export PYTHONDONTWRITEBYTECODE=1
 
 WORKER_ROOT="${ARCHIVE_WORKER_ROOT:-/home/ubuntu/legal-archive-worker}"
 REPO="${ARCHIVE_REPOSITORY:-$WORKER_ROOT/repo/smart-legal-researcher-archive}"
