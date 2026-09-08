@@ -2,7 +2,7 @@
   "schema_version": "2.0",
   "repository": "drrabab-almobi-dot/smart-legal-researcher-archive",
   "branch": "collector-import",
-  "as_of": "2026-09-07T05:14:55+00:00",
+  "as_of": "2026-09-08T04:00:28+00:00",
   "scope": "active_collection_and_review_only_platform_migration",
   "safety": {
     "raw_modified": false,
@@ -154,7 +154,7 @@
     }
   },
   "validation": {
-    "latest_integrity_check": "2026-09-07T05:14:55+00:00",
+    "latest_integrity_check": "2026-09-08T04:00:28+00:00",
     "target_schema_validation": "passed",
     "ndjson_errors": 0,
     "standalone_file_hash_errors": 0,
@@ -205,6 +205,7 @@
     "Recover the five declared source originals holding 3700 quarantined records.",
     "Obtain signed/original circular documents before enabling any circular for search or download.",
     "Obtain written permission from Albaheth before any copying, redistribution, or automated collection; otherwise use it only to identify an official Ministry source URL.",
+    "Create the private Telegram worker environment and complete one interactive account authorization before the 15-minute intake timer can run.",
     "Review 1137 auto-extracted Ministry judgments before any search activation; their fields are evidence-linked but not human-approved.",
     "Review 1233 Ministry judgments with incomplete metadata, including 24 reference-collision records.",
     "Create the private Telegram worker environment and complete one interactive account authorization before the 15-minute intake timer can run."

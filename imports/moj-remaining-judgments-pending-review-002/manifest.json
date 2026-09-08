@@ -1,0 +1,180 @@
+{
+  "batch": "moj-remaining-judgments-pending-review-002",
+  "chunks": [
+    {
+      "chunk": 1,
+      "file": "imports/moj-remaining-judgments-pending-review-002/chunk-001.sql",
+      "bytes": 318735,
+      "documents": 50,
+      "duplicates": 15
+    },
+    {
+      "chunk": 2,
+      "file": "imports/moj-remaining-judgments-pending-review-002/chunk-002.sql",
+      "bytes": 328308,
+      "documents": 50,
+      "duplicates": 1
+    },
+    {
+      "chunk": 3,
+      "file": "imports/moj-remaining-judgments-pending-review-002/chunk-003.sql",
+      "bytes": 297385,
+      "documents": 50,
+      "duplicates": 0
+    },
+    {
+      "chunk": 4,
+      "file": "imports/moj-remaining-judgments-pending-review-002/chunk-004.sql",
+      "bytes": 311943,
+      "documents": 50,
+      "duplicates": 0
+    },
+    {
+      "chunk": 5,
+      "file": "imports/moj-remaining-judgments-pending-review-002/chunk-005.sql",
+      "bytes": 298577,
+      "documents": 50,
+      "duplicates": 0
+    },
+    {
+      "chunk": 6,
+      "file": "imports/moj-remaining-judgments-pending-review-002/chunk-006.sql",
+      "bytes": 305113,
+      "documents": 50,
+      "duplicates": 0
+    },
+    {
+      "chunk": 7,
+      "file": "imports/moj-remaining-judgments-pending-review-002/chunk-007.sql",
+      "bytes": 289958,
+      "documents": 50,
+      "duplicates": 0
+    },
+    {
+      "chunk": 8,
+      "file": "imports/moj-remaining-judgments-pending-review-002/chunk-008.sql",
+      "bytes": 304259,
+      "documents": 50,
+      "duplicates": 0
+    },
+    {
+      "chunk": 9,
+      "file": "imports/moj-remaining-judgments-pending-review-002/chunk-009.sql",
+      "bytes": 303129,
+      "documents": 50,
+      "duplicates": 0
+    },
+    {
+      "chunk": 10,
+      "file": "imports/moj-remaining-judgments-pending-review-002/chunk-010.sql",
+      "bytes": 300844,
+      "documents": 50,
+      "duplicates": 0
+    },
+    {
+      "chunk": 11,
+      "file": "imports/moj-remaining-judgments-pending-review-002/chunk-011.sql",
+      "bytes": 294910,
+      "documents": 50,
+      "duplicates": 1
+    },
+    {
+      "chunk": 12,
+      "file": "imports/moj-remaining-judgments-pending-review-002/chunk-012.sql",
+      "bytes": 286856,
+      "documents": 50,
+      "duplicates": 2
+    },
+    {
+      "chunk": 13,
+      "file": "imports/moj-remaining-judgments-pending-review-002/chunk-013.sql",
+      "bytes": 298614,
+      "documents": 50,
+      "duplicates": 0
+    },
+    {
+      "chunk": 14,
+      "file": "imports/moj-remaining-judgments-pending-review-002/chunk-014.sql",
+      "bytes": 293018,
+      "documents": 50,
+      "duplicates": 0
+    },
+    {
+      "chunk": 15,
+      "file": "imports/moj-remaining-judgments-pending-review-002/chunk-015.sql",
+      "bytes": 298471,
+      "documents": 50,
+      "duplicates": 0
+    },
+    {
+      "chunk": 16,
+      "file": "imports/moj-remaining-judgments-pending-review-002/chunk-016.sql",
+      "bytes": 305506,
+      "documents": 50,
+      "duplicates": 0
+    },
+    {
+      "chunk": 17,
+      "file": "imports/moj-remaining-judgments-pending-review-002/chunk-017.sql",
+      "bytes": 299464,
+      "documents": 50,
+      "duplicates": 3
+    },
+    {
+      "chunk": 18,
+      "file": "imports/moj-remaining-judgments-pending-review-002/chunk-018.sql",
+      "bytes": 306661,
+      "documents": 50,
+      "duplicates": 1
+    },
+    {
+      "chunk": 19,
+      "file": "imports/moj-remaining-judgments-pending-review-002/chunk-019.sql",
+      "bytes": 297340,
+      "documents": 50,
+      "duplicates": 0
+    },
+    {
+      "chunk": 20,
+      "file": "imports/moj-remaining-judgments-pending-review-002/chunk-020.sql",
+      "bytes": 306249,
+      "documents": 50,
+      "duplicates": 0
+    },
+    {
+      "chunk": 21,
+      "file": "imports/moj-remaining-judgments-pending-review-002/chunk-021.sql",
+      "bytes": 312497,
+      "documents": 50,
+      "duplicates": 0
+    },
+    {
+      "chunk": 22,
+      "file": "imports/moj-remaining-judgments-pending-review-002/chunk-022.sql",
+      "bytes": 306880,
+      "documents": 50,
+      "duplicates": 0
+    },
+    {
+      "chunk": 23,
+      "file": "imports/moj-remaining-judgments-pending-review-002/chunk-023.sql",
+      "bytes": 294769,
+      "documents": 50,
+      "duplicates": 0
+    },
+    {
+      "chunk": 24,
+      "file": "imports/moj-remaining-judgments-pending-review-002/chunk-024.sql",
+      "bytes": 295992,
+      "documents": 50,
+      "duplicates": 1
+    },
+    {
+      "chunk": 25,
+      "file": "imports/moj-remaining-judgments-pending-review-002/chunk-025.sql",
+      "bytes": 204228,
+      "documents": 33,
+      "duplicates": 0
+    }
+  ]
+}
