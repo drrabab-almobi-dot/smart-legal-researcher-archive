@@ -1,0 +1,43 @@
+name: Collector - resolve discovered judgments to official archive
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [collector-import]
+    paths:
+      - 'manifests/discovery/albaheth-discovery-*.csv'
+      - 'scripts/resolve_discovery_to_official.py'
+      - '.github/workflows/resolve-discovery-official.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: resolve-discovery-official
+  cancel-in-progress: false
+
+jobs:
+  resolve:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: collector-import
+          fetch-depth: 1
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Match discovery records to preserved official archive
+        run: python scripts/resolve_discovery_to_official.py
+      - name: Commit resolution and official queue
+        run: |
+          if git diff --quiet && [ -z "$(git status --porcelain)" ]; then
+            echo 'No resolution changes.'
+            exit 0
+          fi
+          git config user.name 'rabab-legal-collector'
+          git config user.email 'collector@users.noreply.github.com'
+          git add manifests/discovery/official-resolution.csv manifests/incoming/collector-official-urls.txt
+          git commit -m 'collector: resolve discovery records to official sources'
+          git push origin HEAD:collector-import
