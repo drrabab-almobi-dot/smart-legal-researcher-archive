@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate bounded, idempotent SQL chunks for pending MOJ judgments."""
+"""Generate bounded, idempotent SQL chunks for the current pending MOJ judgment review dataset."""
 from __future__ import annotations
 
 import json
@@ -9,13 +9,18 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 INDEX = ROOT / "indices" / "target-schema" / "moj-judgments-pending-review"
-OUTPUT_DIR = ROOT / "imports" / "moj-remaining-judgments-pending-review-001"
+BATCH_NAME = "moj-remaining-judgments-pending-review-002"
+OUTPUT_DIR = ROOT / "imports" / BATCH_NAME
+LEGACY_OUTPUT_DIR = ROOT / "imports" / "moj-remaining-judgments-pending-review-001"
 NAMESPACE = uuid.UUID("d702a836-69be-486b-8c7f-cf6ee3a3b7f2")
 CHUNK_SIZE = 50
 
 
 def records(name: str) -> list[dict[str, object]]:
-    return [json.loads(line) for line in (INDEX / name).read_text(encoding="utf-8").splitlines() if line.strip()]
+    path = INDEX / name
+    if not path.exists():
+        return []
+    return [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
 
 
 def payload(data: list[dict[str, object]]) -> str:
@@ -31,13 +36,26 @@ def main() -> None:
     documents = records("legal-documents.ndjson")
     all_files = records("document-files.ndjson")
     duplicates = records("duplicate-candidates.ndjson")
-    if not (len(sources) == 1 and len(source_files) == 17 and len(documents) == 1175 and len(all_files) == 1175 and len(duplicates) == 4):
-        raise SystemExit("Unexpected pending Ministry batch cardinality")
+
+    if len(sources) != 1:
+        raise SystemExit(f"Expected exactly one Ministry source, found {len(sources)}")
+    if not source_files or not documents:
+        raise SystemExit("Pending Ministry review dataset is empty")
+    if len(documents) != len(all_files):
+        raise SystemExit(f"Pending document/file cardinality mismatch: documents={len(documents)} files={len(all_files)}")
+
     files_by_document = {str(row["document_id"]): row for row in all_files}
+    document_ids = {str(row["id"]) for row in documents}
+    if document_ids != set(files_by_document):
+        raise SystemExit("Pending document/file ID sets do not match")
+
     duplicates_by_document: dict[str, list[dict[str, object]]] = {}
     for row in duplicates:
         duplicates_by_document.setdefault(str(row["document_id"]), []).append(row)
     source_id = str(sources[0]["id"])
+    files_count = len(source_files)
+
+    shutil.rmtree(LEGACY_OUTPUT_DIR, ignore_errors=True)
     shutil.rmtree(OUTPUT_DIR, ignore_errors=True)
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     manifest: list[dict[str, object]] = []
@@ -47,11 +65,11 @@ def main() -> None:
         chunk_files = [files_by_document[str(row["id"])] for row in chunk_docs]
         chunk_duplicates = [candidate for row in chunk_docs for candidate in duplicates_by_document.get(str(row["id"]), [])]
         number = offset // CHUNK_SIZE + 1
-        batch_name = f"moj-remaining-judgments-pending-review-001-chunk-{number:02d}"
+        batch_name = f"{BATCH_NAME}-chunk-{number:03d}"
         batch_id = str(uuid.uuid5(NAMESPACE, f"archive-batch:{batch_name}"))
         count = len(chunk_docs)
         duplicate_count = len(chunk_duplicates)
-        sql = f"""-- Bounded review-only pending Ministry judgment chunk {number:02d}.
+        sql = f"""-- Bounded review-only pending Ministry judgment chunk {number:03d}.
 BEGIN;
 SET LOCAL statement_timeout = '120s';
 SET LOCAL lock_timeout = '10s';
@@ -65,11 +83,11 @@ ON CONFLICT (id) DO NOTHING;
 WITH payload AS (SELECT {payload(source_files)} AS data)
 INSERT INTO public.source_files (id,source_id,original_filename,storage_path,original_url,mime_type,file_size,sha256,page_count,acquisition_source,acquired_at,processing_status)
 SELECT (x->>'id')::uuid,(x->>'source_id')::uuid,x->>'original_filename',x->>'storage_path',x->>'original_url',x->>'mime_type',(x->>'file_size')::bigint,x->>'sha256',(x->>'page_count')::integer,x->>'acquisition_source',(x->>'acquired_at')::timestamptz,x->>'processing_status'
-FROM payload CROSS JOIN LATERAL jsonb_array_elements(payload.data) AS x LIMIT 25
+FROM payload CROSS JOIN LATERAL jsonb_array_elements(payload.data) AS x LIMIT 100
 ON CONFLICT DO NOTHING;
 
 INSERT INTO public.archive_batches (id,source_id,batch_name,started_at,completed_at,files_count,documents_detected,documents_imported,duplicates_count,review_count,rejected_count,failed_count,status,commit_sha,notes)
-SELECT '{batch_id}'::uuid,'{source_id}'::uuid,'{batch_name}',now(),now(),17,{count},{count},{duplicate_count},{count},0,0,'review',NULL,'Pending metadata review; not search eligible and not downloadable.'
+SELECT '{batch_id}'::uuid,'{source_id}'::uuid,'{batch_name}',now(),now(),{files_count},{count},{count},{duplicate_count},{count},0,0,'review',NULL,'Pending metadata review; not search eligible and not downloadable.'
 LIMIT 1 ON CONFLICT (id) DO NOTHING;
 
 WITH payload AS (SELECT {payload(chunk_docs)} AS data)
@@ -87,7 +105,7 @@ ON CONFLICT DO NOTHING;
 WITH payload AS (SELECT {payload(chunk_duplicates)} AS data)
 INSERT INTO public.duplicate_candidates (id,document_id,matched_external_id,match_type,similarity_score,decision,reason)
 SELECT (x->>'id')::uuid,(x->>'document_id')::uuid,x->>'matched_external_id',x->>'match_type',(x->>'similarity_score')::numeric,x->>'decision',x->>'reason'
-FROM payload CROSS JOIN LATERAL jsonb_array_elements(payload.data) AS x LIMIT 10
+FROM payload CROSS JOIN LATERAL jsonb_array_elements(payload.data) AS x LIMIT 100
 ON CONFLICT (id) DO NOTHING;
 
 COMMIT;
@@ -96,12 +114,12 @@ SELECT '{batch_name}' AS batch_name,
        (SELECT count(*) FROM public.document_files WHERE document_id IN (SELECT (x->>'id')::uuid FROM jsonb_array_elements({payload(chunk_docs)}) AS x LIMIT 60)) AS document_files
 LIMIT 1;
 """
-        output = OUTPUT_DIR / f"chunk-{number:02d}.sql"
+        output = OUTPUT_DIR / f"chunk-{number:03d}.sql"
         output.write_text(sql, encoding="utf-8")
         manifest.append({"chunk": number, "file": str(output.relative_to(ROOT)), "bytes": output.stat().st_size, "documents": count, "duplicates": duplicate_count})
 
-    (OUTPUT_DIR / "manifest.json").write_text(json.dumps({"batch":"moj-remaining-judgments-pending-review-001","chunks":manifest},ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
-    print(json.dumps({"chunks":len(manifest),"documents":sum(int(x["documents"]) for x in manifest),"duplicates":sum(int(x["duplicates"]) for x in manifest),"max_bytes":max(int(x["bytes"]) for x in manifest)},ensure_ascii=False))
+    (OUTPUT_DIR / "manifest.json").write_text(json.dumps({"batch":BATCH_NAME,"chunks":manifest},ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
+    print(json.dumps({"batch":BATCH_NAME,"source_files":files_count,"chunks":len(manifest),"documents":sum(int(x["documents"]) for x in manifest),"duplicates":sum(int(x["duplicates"]) for x in manifest),"max_bytes":max(int(x["bytes"]) for x in manifest)},ensure_ascii=False))
 
 
 if __name__ == "__main__":
