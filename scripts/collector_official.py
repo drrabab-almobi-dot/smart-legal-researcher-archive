@@ -3,9 +3,9 @@
 
 Reads URLs from manifests/incoming/collector-official-urls.txt, downloads only
 allow-listed official Saudi legal/government sources, hashes every payload,
-keeps a durable checkpoint, prevents duplicate storage by SHA-256, and writes
-an append-only processing log. It never scrapes albaheth.app or other third-
-party platforms.
+keeps a durable checkpoint, prevents duplicate storage by URL and SHA-256,
+and writes append-only processing logs. It never scrapes albaheth.app or
+other third-party platforms.
 """
 from __future__ import annotations
 
@@ -26,6 +26,8 @@ CHECKPOINT = ROOT / "manifests" / "collector" / "official-checkpoint.json"
 LOG = ROOT / "manifests" / "collector" / "official-processing-log.csv"
 DUP = ROOT / "manifests" / "collector" / "official-duplicates.csv"
 OUT = ROOT / "archive-sources" / "official-incremental"
+SOURCE_REGISTER = ROOT / "manifests" / "source-register.csv"
+LEGACY_IMPORT_LOG = ROOT / "manifests" / "collector" / "import-log.csv"
 
 ALLOWED_SUFFIXES = (
     "moj.gov.sa",
@@ -50,10 +52,7 @@ def safe_name(url: str, idx: int, content_type: str) -> str:
     base = Path(path).name or f"record-{idx:06d}"
     base = re.sub(r"[^A-Za-z0-9._-]+", "-", base).strip("-.") or f"record-{idx:06d}"
     if "." not in base:
-        if "pdf" in content_type.lower():
-            base += ".pdf"
-        else:
-            base += ".html"
+        base += ".pdf" if "pdf" in content_type.lower() else ".html"
     return f"{idx:06d}-{base}"
 
 
@@ -64,7 +63,7 @@ def sha256_bytes(data: bytes) -> str:
 def load_checkpoint() -> dict:
     if CHECKPOINT.exists():
         return json.loads(CHECKPOINT.read_text(encoding="utf-8"))
-    return {"next_index": 0, "processed": 0, "saved": 0, "duplicates": 0, "failed": 0}
+    return {"next_index": 0, "processed": 0, "saved": 0, "duplicates": 0, "failed": 0, "skipped_known_url": 0}
 
 
 def save_checkpoint(cp: dict) -> None:
@@ -84,11 +83,44 @@ def known_hashes() -> dict[str, str]:
     if LOG.exists():
         with LOG.open(encoding="utf-8", newline="") as f:
             for row in csv.DictReader(f):
-                h = row.get("sha256") or ""
-                p = row.get("saved_path") or ""
+                h = (row.get("sha256") or "").strip()
+                p = (row.get("saved_path") or "").strip()
                 if h and p and row.get("status") == "saved":
                     found[h] = p
+    if SOURCE_REGISTER.exists():
+        with SOURCE_REGISTER.open(encoding="utf-8", newline="") as f:
+            for row in csv.DictReader(f):
+                vals = list(row.values())
+                for val in vals:
+                    s = (val or "").strip().lower()
+                    if re.fullmatch(r"[0-9a-f]{64}", s):
+                        name = (row.get("source_file") or row.get("file") or row.get("name") or "source-register")
+                        found.setdefault(s, name)
+                        break
+    if LEGACY_IMPORT_LOG.exists():
+        with LEGACY_IMPORT_LOG.open(encoding="utf-8", newline="") as f:
+            for row in csv.DictReader(f):
+                h = (row.get("sha256") or "").strip().lower()
+                if re.fullmatch(r"[0-9a-f]{64}", h):
+                    found.setdefault(h, (row.get("source_file") or "legacy-import"))
     return found
+
+
+def known_urls() -> set[str]:
+    urls: set[str] = set()
+    for path in (LOG, LEGACY_IMPORT_LOG, SOURCE_REGISTER):
+        if not path.exists():
+            continue
+        try:
+            with path.open(encoding="utf-8", newline="") as f:
+                for row in csv.DictReader(f):
+                    for key in ("url", "source_url", "original_url"):
+                        value = (row.get(key) or "").strip()
+                        if value.startswith("http"):
+                            urls.add(value)
+        except Exception:
+            continue
+    return urls
 
 
 def main() -> int:
@@ -96,10 +128,7 @@ def main() -> int:
         print(f"Missing input manifest: {INPUT}", file=sys.stderr)
         return 2
 
-    entries = [
-        line.strip() for line in INPUT.read_text(encoding="utf-8").splitlines()
-        if line.strip() and not line.lstrip().startswith("#")
-    ]
+    entries = [line.strip() for line in INPUT.read_text(encoding="utf-8").splitlines() if line.strip() and not line.lstrip().startswith("#")]
     cp = load_checkpoint()
     start = int(cp.get("next_index", 0))
     if start >= len(entries):
@@ -110,6 +139,7 @@ def main() -> int:
     ensure_csv(DUP, ["index","url","sha256","canonical_path","decision"])
     OUT.mkdir(parents=True, exist_ok=True)
     hashes = known_hashes()
+    urls = known_urls()
 
     stop = min(len(entries), start + BATCH_LIMIT)
     for idx in range(start, stop):
@@ -121,6 +151,14 @@ def main() -> int:
             with LOG.open("a", encoding="utf-8", newline="") as f:
                 csv.writer(f).writerow([idx, url, "", 0, "", "rejected", "", "host not allow-listed"])
             cp["failed"] = int(cp.get("failed", 0)) + 1
+            cp["next_index"] = idx + 1
+            save_checkpoint(cp)
+            continue
+
+        if url in urls:
+            with LOG.open("a", encoding="utf-8", newline="") as f:
+                csv.writer(f).writerow([idx, url, "", 0, "", "known_url", "", "already present in archive registers"])
+            cp["skipped_known_url"] = int(cp.get("skipped_known_url", 0)) + 1
             cp["next_index"] = idx + 1
             save_checkpoint(cp)
             continue
@@ -144,6 +182,7 @@ def main() -> int:
                 dest.write_bytes(data)
                 rel = dest.relative_to(ROOT).as_posix()
                 hashes[digest] = rel
+                urls.add(url)
                 with LOG.open("a", encoding="utf-8", newline="") as f:
                     csv.writer(f).writerow([idx, url, digest, len(data), ctype, "saved", rel, "original payload preserved"])
                 cp["saved"] = int(cp.get("saved", 0)) + 1
