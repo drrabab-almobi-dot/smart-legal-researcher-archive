@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate bounded, idempotent SQL chunks for the MOJ review batch."""
+"""Generate bounded, idempotent SQL chunks for the full verified MOJ review batch."""
 from __future__ import annotations
 
 import json
@@ -9,7 +9,9 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 INDEX = ROOT / "indices" / "target-schema" / "moj-judgments-review"
-OUTPUT_DIR = ROOT / "imports" / "moj-1434-five-volumes-review-001"
+BATCH_NAME = "moj-all-verified-judgments-review-002"
+OUTPUT_DIR = ROOT / "imports" / BATCH_NAME
+LEGACY_OUTPUT_DIR = ROOT / "imports" / "moj-1434-five-volumes-review-001"
 NAMESPACE = uuid.UUID("d702a836-69be-486b-8c7f-cf6ee3a3b7f2")
 CHUNK_SIZE = 6
 
@@ -33,10 +35,11 @@ def render_chunk(
     document_files: list[dict[str, object]],
 ) -> str:
     source_id = str(sources[0]["id"])
-    batch_name = f"moj-1434-five-volumes-review-001-chunk-{number:02d}"
+    batch_name = f"{BATCH_NAME}-chunk-{number:03d}"
     batch_id = str(uuid.uuid5(NAMESPACE, f"archive-batch:{batch_name}"))
     count = len(documents)
-    return f"""-- Bounded review-only Ministry judgment import chunk {number:02d}.
+    files_count = len(source_files)
+    return f"""-- Bounded review-only Ministry judgment import chunk {number:03d}.
 BEGIN;
 SET LOCAL statement_timeout = '120s';
 SET LOCAL lock_timeout = '10s';
@@ -55,14 +58,14 @@ SELECT (x->>'id')::uuid,(x->>'source_id')::uuid,x->>'original_filename',x->>'sto
        x->>'mime_type',(x->>'file_size')::bigint,x->>'sha256',(x->>'page_count')::integer,
        x->>'acquisition_source',(x->>'acquired_at')::timestamptz,x->>'processing_status'
 FROM payload CROSS JOIN LATERAL jsonb_array_elements(payload.data) AS x
-LIMIT 10
+LIMIT 50
 ON CONFLICT DO NOTHING;
 
 INSERT INTO public.archive_batches (
   id,source_id,batch_name,started_at,completed_at,files_count,documents_detected,documents_imported,
   duplicates_count,review_count,rejected_count,failed_count,status,commit_sha,notes
 )
-SELECT '{batch_id}'::uuid,'{source_id}'::uuid,'{batch_name}',now(),now(),5,{count},{count},0,{count},0,0,
+SELECT '{batch_id}'::uuid,'{source_id}'::uuid,'{batch_name}',now(),now(),{files_count},{count},{count},0,{count},0,0,
        'review',NULL,'Official originals and standalone PDFs verified; manual field review pending.'
 LIMIT 1
 ON CONFLICT (id) DO NOTHING;
@@ -114,9 +117,25 @@ def main() -> None:
     source_files = records("source-files.ndjson")
     documents = records("legal-documents.ndjson")
     all_files = records("document-files.ndjson")
+
+    if len(sources) != 1:
+        raise SystemExit(f"Expected exactly one Ministry source, found {len(sources)}")
+    if not source_files or not documents:
+        raise SystemExit("Verified Ministry review dataset is empty")
+    if len(documents) != len(all_files):
+        raise SystemExit(
+            f"Verified document/file cardinality mismatch: documents={len(documents)} files={len(all_files)}"
+        )
+
     files_by_document = {str(item["document_id"]): item for item in all_files}
-    if not (len(sources) == 1 and len(source_files) == 5 and len(documents) == 191 and len(all_files) == 191):
-        raise SystemExit("Unexpected input cardinality")
+    document_ids = {str(item["id"]) for item in documents}
+    file_document_ids = set(files_by_document)
+    if document_ids != file_document_ids:
+        missing = len(document_ids - file_document_ids)
+        orphaned = len(file_document_ids - document_ids)
+        raise SystemExit(f"Verified document/file ID mismatch: missing={missing} orphaned={orphaned}")
+
+    shutil.rmtree(LEGACY_OUTPUT_DIR, ignore_errors=True)
     shutil.rmtree(OUTPUT_DIR, ignore_errors=True)
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     manifest: list[dict[str, object]] = []
@@ -124,7 +143,7 @@ def main() -> None:
         chunk_docs = documents[offset:offset + CHUNK_SIZE]
         chunk_files = [files_by_document[str(item["id"])] for item in chunk_docs]
         number = offset // CHUNK_SIZE + 1
-        output = OUTPUT_DIR / f"chunk-{number:02d}.sql"
+        output = OUTPUT_DIR / f"chunk-{number:03d}.sql"
         output.write_text(render_chunk(number, sources, source_files, chunk_docs, chunk_files), encoding="utf-8")
         manifest.append({
             "chunk": number,
@@ -135,10 +154,16 @@ def main() -> None:
             "last_document_id": chunk_docs[-1]["id"],
         })
     (OUTPUT_DIR / "manifest.json").write_text(
-        json.dumps({"batch": "moj-1434-five-volumes-review-001", "chunks": manifest}, ensure_ascii=False, indent=2) + "\n",
+        json.dumps({"batch": BATCH_NAME, "chunks": manifest}, ensure_ascii=False, indent=2) + "\n",
         encoding="utf-8",
     )
-    print(json.dumps({"chunks": len(manifest), "documents": sum(int(x["documents"]) for x in manifest), "max_bytes": max(int(x["bytes"]) for x in manifest)}, ensure_ascii=False))
+    print(json.dumps({
+        "batch": BATCH_NAME,
+        "source_files": len(source_files),
+        "chunks": len(manifest),
+        "documents": sum(int(x["documents"]) for x in manifest),
+        "max_bytes": max(int(x["bytes"]) for x in manifest),
+    }, ensure_ascii=False))
 
 
 if __name__ == "__main__":
