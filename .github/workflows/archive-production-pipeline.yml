@@ -1,0 +1,87 @@
+name: Archive - production review pipeline
+
+on:
+  push:
+    branches: [collector-import]
+    paths:
+      - '.github/triggers/archive-production-run.txt'
+      - '.github/workflows/archive-production-pipeline.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: archive-production-review
+  cancel-in-progress: false
+
+jobs:
+  build-review-dataset:
+    if: github.ref == 'refs/heads/collector-import'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: collector-import
+          fetch-depth: 1
+          lfs: true
+
+      - name: Pull archive LFS objects
+        run: git lfs pull
+
+      - name: Install PDF tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq poppler-utils qpdf
+
+      - name: Validate collector archive first
+        run: python3 scripts/validate_collector_archive.py
+
+      - name: Build all verified judgments as review-only records
+        run: python3 scripts/build_moj_judgment_target_batches.py --replace --all-verified
+
+      - name: Build all pending judgments as review-only records
+        run: python3 scripts/build_pending_moj_judgment_batch.py --replace --batch-id moj-remaining-judgments-pending-review-002
+
+      - name: Reconcile generated document file hashes
+        run: python3 scripts/reconcile_target_document_file_hashes.py
+
+      - name: Validate complete target archive
+        run: python3 scripts/validate_target_legal_archive.py
+
+      - name: Build staged import chunks only
+        run: |
+          python3 scripts/build_moj_judgment_import_chunks.py
+          python3 scripts/build_pending_moj_import_chunks.py
+
+      - name: Refresh archive status
+        run: python3 scripts/refresh_archive_status_20260907.py
+
+      - name: Commit review pipeline outputs
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'rabab-legal-archive'
+          git config user.email 'archive@users.noreply.github.com'
+          git add \
+            indices/target-schema/moj-judgments-review \
+            indices/target-schema/moj-judgments-pending-review \
+            manifests/batches \
+            manifests/target-schema-validation.json \
+            manifests/archive-status.json \
+            imports
+          if ! git diff --cached --quiet; then
+            git commit -m 'archive: build complete 2370-judgment review dataset'
+            git pull --rebase origin collector-import
+            git push origin collector-import
+          else
+            echo 'Review dataset already current.'
+          fi
+
+      - name: Safety assertion
+        run: |
+          echo 'No merge to main.'
+          echo 'No database write.'
+          echo 'No public search activation.'
+          echo 'Outputs remain review-only until explicit approval.'
