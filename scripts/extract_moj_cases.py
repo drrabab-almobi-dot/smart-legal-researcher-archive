@@ -77,16 +77,67 @@ def sha256_file(path: Path) -> str:
     return digest.hexdigest()
 
 
+ARABIC_LETTER_RANGES = ("ء", "غ", "ف", "ي")
+
+
+def _is_arabic_letter(ch: str) -> bool:
+    return ("ء" <= ch <= "غ") or ("ف" <= ch <= "ي")
+
+
+# The letter that can attach directly in front of the definite article "ال"
+# without a space (و/ف/ب/ك: "and/so/with/like"). Anything else immediately
+# before an "ا" means we are inside a word, not at the article's boundary.
+_ATTACHABLE_PROCLITICS = "وفبك"
+_SWAP_TRIGGERS = "حجخمأ"
+
+
+def _fix_swapped_al_prefix(text: str) -> str:
+    """Undo a specific, well-documented Ministry PDF extraction bug.
+
+    These legacy InDesign PDFs consistently swap the letter of the
+    definite article prefix with the very next letter whenever that letter
+    is one of the trigger letters above. The swap always sits at the start
+    of the stem (optionally with one attached proclitic before it) and the
+    word always continues afterward, so both are checked before undoing it -
+    a mid-word coincidence or a genuine short word standing alone is left
+    untouched. Only the text used for metadata detection is touched; the
+    original PDF and its derived page span are never modified.
+    """
+    chars = list(text)
+    n = len(chars)
+    i = 0
+    while i < n - 2:
+        if chars[i] == "ا" and chars[i + 1] in _SWAP_TRIGGERS and chars[i + 2] == "ل":
+            before = chars[i - 1] if i > 0 else None
+            at_word_start = before is None or not _is_arabic_letter(before)
+            after_proclitic = (
+                before is not None
+                and before in _ATTACHABLE_PROCLITICS
+                and (i - 1 == 0 or not _is_arabic_letter(chars[i - 2]))
+            )
+            continues = i + 3 < n and _is_arabic_letter(chars[i + 3])
+            if (at_word_start or after_proclitic) and continues:
+                chars[i], chars[i + 1], chars[i + 2] = "ا", "ل", chars[i + 1]
+                i += 3
+                continue
+        i += 1
+    return "".join(chars)
+
+
+KNOWN_VISUAL_ORDER_FIXES = {
+    "احملكمة": "المحكمة",
+    "احملاكم": "المحاكم",
+    "اهلل": "الله",
+}
+
+
 def normalise(value: str) -> str:
     value = unicodedata.normalize("NFKC", value or "").translate(DIGITS)
     value = BIDI.sub("", value)
     value = DIACRITICS.sub("", value).replace("ـ", "")
-    # The Ministry's legacy InDesign PDFs sometimes extract a small, consistent
-    # set of Arabic visual-order spellings.  These substitutions only normalize
-    # the extracted text used for metadata detection; neither the official
-    # source PDF nor its derived page span is changed.
-    value = value.replace("احملكمة", "المحكمة").replace("احملاكم", "المحاكم")
-    value = value.replace("املحكمة", "المحكمة").replace("االستئناف", "الاستئناف")
+    for broken, fixed in KNOWN_VISUAL_ORDER_FIXES.items():
+        value = value.replace(broken, fixed)
+    value = _fix_swapped_al_prefix(value)
     return re.sub(r"\s+", " ", value).strip()
 
 
